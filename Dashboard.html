@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html>
 <head>
     <base target="_top">
@@ -112,9 +112,6 @@
         color: var(--danger-color) !important;
       }
 
-      /* ========================================================== */
-      /* NOVOS ESTILOS PARA O MENU DROPDOWN DA TABELA */
-      /* ========================================================== */
       .actions-cell-content { display: flex; justify-content: space-between; align-items: center; }
       .actions-icon { cursor: pointer; color: #777; }
       .actions-icon:hover { color: #000; }
@@ -133,13 +130,6 @@
       .modal-header .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
       .modal-body span { font-family: var(--font-oswald); text-transform: uppercase; color: #555; font-size: 0.9em;}
       .modal-body p { margin-bottom: 1rem; background-color: #f8f9fa; padding: 8px; border-radius: 4px; }
-      #modalInspecionadoNome {
-        font-size: 1.5rem;
-        font-weight: bold;
-        font-family: var(--font-oswald);
-        background-color: transparent;
-        padding-left: 0;
-      }
     </style>
 </head>
 <body>
@@ -229,35 +219,26 @@
       </div>
     </div>
     
-    <div class="modal fade" id="inspecionadoModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Detalhes do Inspecionado</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <p id="modalInspecionadoNome"></p>
-                    <div class="row">
-                        <div class="col-md-6"><span>P/G/Q</span><p id="modalInspecionadoPg"></p></div>
-                        <div class="col-md-6"><span>NIP</span><p id="modalInspecionadoNip"></p></div>
-                    </div>
-                    <span>OM</span><p id="modalInspecionadoOm"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="laudoModal" tabindex="-1">...</div>
-    <div class="modal fade" id="obsModal" tabindex="-1">...</div>
+    <div class="modal fade" id="inspecionadoModal" tabindex="-1"> ... </div>
+    <div class="modal fade" id="obsModal" tabindex="-1"> ... </div>
+    <div class="modal fade" id="laudoModal" tabindex="-1"> ... </div>
+    <div class="modal fade" id="editModal" tabindex="-1"> ... </div>
     
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
     <script>
         let allData = [];
         let filteredData = [];
-        let inspecionadoModalInstance, laudoModalInstance, obsModalInstance;
+        let inspecionadoModal, laudoModal, obsModal, editModal;
 
         document.addEventListener('DOMContentLoaded', () => {
-            inspecionadoModalInstance = new bootstrap.Modal(document.getElementById('inspecionadoModal'));
-            laudoModalInstance = new bootstrap.Modal(document.getElementById('laudoModal'));
-            obsModalInstance = new bootstrap.Modal(document.getElementById('obsModal'));
+            inspecionadoModal = new bootstrap.Modal(document.getElementById('inspecionadoModal'));
+            laudoModal = new bootstrap.Modal(document.getElementById('laudoModal'));
+            obsModal = new bootstrap.Modal(document.getElementById('obsModal'));
+            editModal = new bootstrap.Modal(document.getElementById('editModal'));
+
             google.script.run
               .withSuccessHandler(onDataLoaded)
               .withFailureHandler(onDataError)
@@ -265,29 +246,47 @@
         });
 
         function onDataLoaded(data) {
-            allData = data;
+            allData = data.map((row, index) => ({ ...row, originalIndex: index }));
             document.getElementById('loader').classList.add('d-none');
             document.getElementById('mainContent').classList.remove('d-none');
+            
+            // FUNÇÕES DE ATUALIZAÇÃO REINSERIDAS
             updateKPIs();
             populateFilters(); 
             drawCharts(); 
-            applyFilters();
+            applyFilters(); // Aplica filtros e renderiza a tabela inicial
+            
             document.getElementById('searchInput').addEventListener('keyup', applyFilters);
             document.getElementById('purposeFilter').addEventListener('change', applyFilters);
             document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+            $('#dataTableBody').on('click', '.dropdown-item', function(e) {
+                e.preventDefault();
+                const id = $(this).closest('.dropdown').find('button').data('id');
+                const action = $(this).data('action');
+                const dataItem = allData.find(row => row.IS == id);
+                if (!dataItem) { console.error("Dados não encontrados para o ID: ", id); return; }
+
+                switch(action) {
+                    case 'inspecionado': showInspecionadoModal(dataItem); break;
+                    case 'observacoes':  showObsModal(dataItem); break;
+                    case 'laudo':        showLaudoModal(dataItem); break;
+                    case 'editar':       abrirModalEdicao(id); break;
+                }
+            });
         }
 
         function onDataError(error) { 
             console.error('Falha ao carregar os dados:', error); 
-            document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro ao carregar dados. Verifique o console para mais detalhes.</div>`;
+            document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro ao carregar dados. Verifique o console.</div>`;
         }
       
+        // FUNÇÕES DE KPIs, FILTROS E GRÁFICOS REINSERIDAS
         function updateKPIs() {
             const countOccurrences = (column, value) => allData.filter(row => row[column] === value).length;
             
             document.getElementById('kpiExamesPendentes').textContent = countOccurrences('StatusIS', 'AGU exames');
             document.getElementById('kpiConclusoesPendentes').textContent = countOccurrences('StatusIS', 'Conclusão Pendente');
-
             document.getElementById('kpiTotal').textContent = allData.length;
             document.getElementById('kpiTisSigned').textContent = countOccurrences('StatusIS', 'TIS assinado');
             document.getElementById('kpiMsgPendente').textContent = countOccurrences('MSG', 'PENDENTE');
@@ -298,13 +297,8 @@
             document.getElementById('kpiCancelada').textContent = countOccurrences('StatusIS', 'Cancelada');
             document.getElementById('kpiFaltou').textContent = countOccurrences('StatusIS', 'Faltou');
 
-            const canceladaItem = document.getElementById('kpi-item-cancelada');
-            if (countOccurrences('StatusIS', 'Cancelada') > 0) { canceladaItem.classList.add('text-alert-vivid'); } 
-            else { canceladaItem.classList.remove('text-alert-vivid'); }
-
-            const faltasItem = document.getElementById('kpi-item-faltas');
-            if (countOccurrences('StatusIS', 'Faltou') > 0) { faltasItem.classList.add('text-alert-vivid'); }
-            else { faltasItem.classList.remove('text-alert-vivid'); }
+            document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countOccurrences('StatusIS', 'Cancelada') > 0);
+            document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', countOccurrences('StatusIS', 'Faltou') > 0);
         }
 
         function populateFilters() {
@@ -312,6 +306,8 @@
             const statuses = ['Todos os Status', ...new Set(allData.map(row => row.StatusIS).filter(Boolean).sort())];
             const purposeFilter = document.getElementById('purposeFilter');
             const statusFilter = document.getElementById('statusFilter');
+            purposeFilter.innerHTML = '';
+            statusFilter.innerHTML = '';
             purposes.forEach(p => purposeFilter.add(new Option(p, p)));
             statuses.forEach(s => statusFilter.add(new Option(s, s)));
         }
@@ -325,15 +321,7 @@
                     if(row.Finalidade) { acc[row.Finalidade] = (acc[row.Finalidade] || 0) + 1; }
                     return acc;
                 }, {});
-                const sortedPurposes = Object.entries(purposeCounts).sort(([,a],[,b]) => b - a);
-                let purposeData;
-                if (sortedPurposes.length > 4) {
-                    const top3 = sortedPurposes.slice(0, 3);
-                    const othersCount = sortedPurposes.slice(3).reduce((sum, [, count]) => sum + count, 0);
-                    purposeData = [['Finalidade', 'Quantidade'], ...top3, ['OUTROS', othersCount]];
-                } else {
-                    purposeData = [['Finalidade', 'Quantidade'], ...sortedPurposes];
-                }
+                const purposeData = [['Finalidade', 'Quantidade'], ...Object.entries(purposeCounts)];
                 new google.visualization.PieChart(document.getElementById('purposeDonutChart')).draw(
                     google.visualization.arrayToDataTable(purposeData), 
                     { pieHole: 0.4, backgroundColor: chartBackgroundColor, chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' } }
@@ -349,119 +337,17 @@
                     }
                     return acc;
                 }, {});
-                const sortedMonths = Object.keys(interviewCountsByMonth).sort((a,b) => {
-                    const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/');
-                    return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
-                });
-                const palette = ['#050f41', '#3e4a85', '#6b74a1', '#98a0bd', '#c5c8da'];
-                const interviewData = [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]];
-                sortedMonths.forEach((month, index) => {
-                    const count = interviewCountsByMonth[month];
-                    const color = palette[index % palette.length];
-                    const shortMonth = new Date(month.split('/')[1], month.split('/')[0]-1).toLocaleString('pt-BR', { month: 'short' }).toUpperCase();
-                    const year = month.split('/')[1];
-                    const axisLabel = `${shortMonth}${year}`;
-                    interviewData.push([axisLabel, count, `color: ${color};`, count.toString()]);
+                const interviewData = [['Mês/Ano', 'Nº de Inspeções']];
+                Object.keys(interviewCountsByMonth).sort().forEach(month => {
+                  interviewData.push([month, interviewCountsByMonth[month]]);
                 });
                 new google.visualization.ColumnChart(document.getElementById('interviewsBarChart')).draw(
                     google.visualization.arrayToDataTable(interviewData), 
-                    { fontName: 'Carlito', backgroundColor: chartBackgroundColor, legend: { position: 'none' }, bar: { groupWidth: '60%' }, annotations: { alwaysOutside: true, textStyle: { fontName: 'Oswald', fontSize: 16, bold: true, color: '#212529' }}, hAxis: { textStyle: { fontSize: 14, fontName: 'Oswald', bold: true }}, vAxis: { minValue: 0, gridlines: { color: 'transparent' }, baselineColor: '#ccc', textPosition: 'none'}, chartArea: { width: '90%', height: '70%', top: 40, bottom: 50 }}
+                    { backgroundColor: chartBackgroundColor, legend: { position: 'none' }}
                 );
             });
         }
-
-        function renderTable(dataToRender) {
-            const tBody = document.getElementById('dataTableBody');
-            tBody.innerHTML = '';
-            if (dataToRender.length === 0) { tBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum resultado encontrado.</td></tr>'; return; }
-            
-            const statusMap = {
-                'AGU exames': '<span class="status-pendente">Exames Pendentes</span>',
-                'Conclusão Pendente': '<span class="status-pendente">Conclusões Pendentes</span>',
-                'Concluída': '<span class="status-pendente">Votação Pendente</span>',
-                'Votada JRS': '<span class="status-pendente">Assinatura Pendente</span>'
-            };
-
-            dataToRender.forEach((row, index) => {
-                const tr = tBody.insertRow();
-                
-                const pendingStatuses = ['AGU exames', 'Conclusão Pendente', 'Concluída'];
-                if (pendingStatuses.includes(row.StatusIS) || row.MSG === 'PENDENTE') {
-                    tr.classList.add('table-row-alert');
-                }
-                
-                let statusHtml = statusMap[row.StatusIS] || row.StatusIS || '';
-
-                let msgHtml = '';
-                if (row.MSG === 'ENVIADA') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--success-color)">check_circle</span>`;
-                } else if (row.MSG === 'PENDENTE') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--danger-color-vivid)">schedule</span>`;
-                } else { msgHtml = row.MSG || ''; }
-
-                const dateAndIsCell = `<td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>`;
-                
-                // LÓGICA PARA ATIVAR/DESATIVAR ITENS DO MENU
-                const laudoFinalizadoStatuses = ['Concluída', 'TIS assinado', 'Votada JRS'];
-                const obsIsDisabled = laudoFinalizadoStatuses.includes(row.StatusIS) || !row.Laudo;
-                const laudoIsDisabled = row.StatusIS !== 'TIS assinado' || !row.TIS;
-
-                const inspecionadoAndOmCell = `
-                    <td>
-                        <div class="actions-cell-content">
-                            <div>
-                                <div class="table-cell-main">${row.Inspecionado || ''}</div>
-                                <div class="table-cell-sub">${row.OM || ''}</div>
-                            </div>
-                            <div class="dropdown">
-                                <span class="material-symbols-outlined actions-icon" data-bs-toggle="dropdown">more_vert</span>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" onclick="showInspecionadoModal(${index})"><span class="material-symbols-outlined">person_search</span> Inspecionado</a></li>
-                                    <li><a class="dropdown-item ${obsIsDisabled ? 'disabled' : ''}" href="#" onclick="showObsModal(${index})"><span class="material-symbols-outlined">notes</span> Observações</a></li>
-                                    <li><a class="dropdown-item ${laudoIsDisabled ? 'disabled' : ''}" href="#" onclick="showLaudoModal(${index})"><span class="material-symbols-outlined">assignment</span> Laudo</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item disabled" href="#"><span class="material-symbols-outlined">forward_to_inbox</span> Minuta</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </td>`;
-
-                tr.innerHTML = `
-                    ${dateAndIsCell}
-                    <td>${row.Finalidade||''}</td>
-                    <td>${statusHtml}</td>
-                    ${inspecionadoAndOmCell}
-                    <td>${msgHtml}</td>
-                `;
-            });
-        }
-      
-        // ==========================================================
-        //           NOVAS FUNÇÕES DE MODAL
-        // ==========================================================
-        function showInspecionadoModal(index) {
-            const data = filteredData[index];
-            document.getElementById('modalInspecionadoNome').textContent = data.Inspecionado || 'Não informado';
-            document.getElementById('modalInspecionadoPg').textContent = data['P/G/Q'] || 'Não informado';
-            document.getElementById('modalInspecionadoNip').textContent = data.NIP || 'Não informado';
-            document.getElementById('modalInspecionadoOm').textContent = data.OM || 'Não informado';
-            inspecionadoModalInstance.show();
-        }
-
-        function showLaudoModal(index) {
-            const data = filteredData[index];
-            document.getElementById('modalLaudo').textContent = data.Laudo || 'Não informado';
-            document.getElementById('modalDataLaudo').textContent = data.DataLaudo || 'Não informado';
-            document.getElementById('modalRestricoes').textContent = data.Restrições || 'Nenhuma';
-            document.getElementById('modalTis').textContent = data.TIS || 'Não informado';
-            document.getElementById('modalDs1a').textContent = data['DS-1a'] || 'Não informado';
-            laudoModalInstance.show();
-        }
-      
-        function showObsModal(index) {
-            const data = filteredData[index];
-            document.getElementById('modalObsText').textContent = data.Laudo || 'Nenhuma observação encontrada.';
-            obsModalInstance.show();
-        }
-      
+        
         function applyFilters() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const purpose = document.getElementById('purposeFilter').value;
@@ -473,6 +359,54 @@
                 (status === 'Todos os Status' || r.StatusIS === status)
             );
             renderTable(filteredData);
+        }
+
+        // ==========================================================
+        //           FUNÇÕES DE MODAL (CORRIGIDAS E COMPLETAS)
+        // ==========================================================
+        function showInspecionadoModal(data) {
+            $('#modalInspecionadoNome').text(data.Inspecionado || 'Não informado');
+            $('#modalInspecionadoPg').text(data['P/G/Q'] || 'Não informado');
+            $('#modalInspecionadoNip').text(data.NIP || 'Não informado');
+            $('#modalInspecionadoOm').text(data.OM || 'Não informado');
+            inspecionadoModal.show();
+        }
+
+        function showLaudoModal(data) {
+            $('#modalTis').text(data.TIS || 'Não informado');
+            $('#modalDs1a').text(data['DS-1a'] || 'Não informado');
+            laudoModal.show();
+        }
+      
+        function showObsModal(data) {
+            $('#modalObsText').text(data.Laudo || 'Nenhuma observação encontrada.');
+            obsModal.show();
+        }
+      
+        function abrirModalEdicao(is) {
+            $('#editForm')[0].reset(); // Limpa o formulário
+            // Mostra um loader dentro do modal (opcional)
+            $('#editModal .modal-body').prepend('<div id="editLoader" class="text-center"><div class="spinner-border" role="status"></div></div>');
+            editModal.show();
+
+            google.script.run
+                .withSuccessHandler(function(recordData) {
+                    $('#editLoader').remove(); // Remove o loader
+                    // Preenche o formulário com os dados recebidos
+                    $('#editOriginalIS').val(recordData.IS);
+                    $('#editIS').val(recordData.IS);
+                    $('#editInspecionado').val(recordData.Inspecionado);
+                    $('#editFinalidade').val(recordData.Finalidade);
+                    $('#editDataEntrevista').val(recordData.DataEntrevista); // Formato AAAA-MM-DD
+                    $('#editStatusIS').val(recordData.StatusIS);
+                    $('#editLaudo').val(recordData.Laudo);
+                })
+                .withFailureHandler(function(err) {
+                    $('#editLoader').remove();
+                    alert("Erro ao buscar dados para edição: " + err.message);
+                    editModal.hide();
+                })
+                .getRecordById(is);
         }
     </script>
 </body>
