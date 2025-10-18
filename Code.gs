@@ -1,5 +1,5 @@
 // =========================================================================
-//            ARQUIVO: Code.gs (Versão Estável com Correção Definitiva)
+//            ARQUIVO: Code.gs (Versão com função para Editar)
 // =========================================================================
 /**
  * @OnlyCurrentDoc
@@ -8,7 +8,7 @@
 
 // Configurações Globais
 const CONFIG = {
-  SHEET_ID: "12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw",
+  SHEET_ID: "12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw", // ID da sua planilha
   CONTROL_SHEET_NAME: "ListaControle",
   REF_SHEET_NAME: "ListasRef",
   MILITARY_SHEET_NAME: "MilitaresHNRe",
@@ -25,23 +25,24 @@ function doGet(e) {
 }
 
 // =========================================================================
-//          FUNÇÃO DE BUSCA DE DADOS CORRIGIDA E ROBUSTA
+//          FUNÇÃO DE BUSCA DE DADOS GERAIS PARA O DASHBOARD
 // =========================================================================
 function getDashboardData() {
   try {
-    // ESTA É A CORREÇÃO: Usa o ID explícito da planilha
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID); 
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
     const sheet = ss.getSheetByName(CONFIG.CONTROL_SHEET_NAME);
-
     if (!sheet) { throw new Error(`A aba '${CONFIG.CONTROL_SHEET_NAME}' não foi encontrada.`); }
+    
     const dataRange = sheet.getDataRange();
     const values = dataRange.getValues();
-    const headers = values.shift(); 
+    const headers = values.shift(); // Remove o cabeçalho
+    
     const data = values.map(row => {
       const obj = {};
       headers.forEach((header, index) => {
         if (row[index] instanceof Date) {
-          obj[header] = row[index].toLocaleDateString('pt-BR');
+          // Formata a data para dd/MM/yyyy para consistência
+          obj[header] = Utilities.formatDate(new Date(row[index]), Session.getScriptTimeZone(), "dd/MM/yyyy");
         } else {
           obj[header] = row[index];
         }
@@ -78,7 +79,7 @@ function getDropdownData() {
     if (!refSheet) throw new Error(`A aba '${CONFIG.REF_SHEET_NAME}' não foi encontrada.`);
     const data = refSheet.getDataRange().getValues();
     if (data.length < 2) throw new Error(`A aba '${CONFIG.REF_SHEET_NAME}' está vazia.`);
-    const headers = data[0].map(h => h.toString().toUpperCase().trim()); 
+    const headers = data[0].map(h => h.toString().toUpperCase().trim());
     const getUniqueColumnValues = (columnName) => {
       const colIndex = headers.indexOf(columnName.toUpperCase());
       if (colIndex === -1) { throw new Error(`A coluna '${columnName}' não foi encontrada.`); }
@@ -92,7 +93,7 @@ function getDropdownData() {
       restricoesOptions: getUniqueColumnValues('RESTRIÇÕES')
     };
   } catch (e) {
-    throw new Error(e.message); 
+    throw new Error(e.message);
   }
 }
 
@@ -132,5 +133,49 @@ function addNewInspection(formData) {
     return { status: 'success', message: 'Inspeção adicionada com sucesso!' };
   } catch (e) {
     throw new Error('Falha ao salvar: ' + e.message);
+  }
+}
+
+// =========================================================================
+//   NOVA FUNÇÃO ADICIONADA: BUSCA DADOS DE UMA ÚNICA INSPEÇÃO POR ID
+// =========================================================================
+function getRecordById(is) {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    const sheet = ss.getSheetByName(CONFIG.CONTROL_SHEET_NAME);
+    if (!sheet) { throw new Error(`A aba '${CONFIG.CONTROL_SHEET_NAME}' não foi encontrada.`); }
+
+    const dataRange = sheet.getDataRange();
+    const values = dataRange.getValues();
+    const headers = values.shift(); // Pega o cabeçalho
+    
+    // Encontra o índice da coluna 'IS'
+    const idColumnIndex = headers.indexOf('IS');
+    if (idColumnIndex === -1) {
+      throw new Error("A coluna 'IS' não foi encontrada na planilha.");
+    }
+    
+    // Procura pela linha que corresponde ao 'is' fornecido
+    const recordRow = values.find(row => row[idColumnIndex] == is);
+    
+    if (!recordRow) {
+      throw new Error(`Nenhum registro encontrado com a IS: ${is}`);
+    }
+
+    // Constrói o objeto de dados para a linha encontrada
+    const recordData = {};
+    headers.forEach((header, index) => {
+        if (recordRow[index] instanceof Date) {
+            // Formata a data para AAAA-MM-DD para preencher campos input type="date"
+            recordData[header] = Utilities.formatDate(new Date(recordRow[index]), Session.getScriptTimeZone(), "yyyy-MM-dd");
+        } else {
+            recordData[header] = recordRow[index];
+        }
+    });
+    
+    return recordData;
+  } catch (e) {
+    Logger.log(`ERRO em getRecordById(${is}): ${e.toString()}`);
+    throw new Error(`Falha ao buscar registro: ${e.message}`);
   }
 }
