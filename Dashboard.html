@@ -58,7 +58,7 @@
       }
 
       .dashboard-content { padding: 30px; }
-      .dashboard-title-wrapper { display: flex; justify-content: center; width: 100%; margin: 20px 0 40px 0; }
+      .dashboard-title-wrapper { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
       .dashboard-title, .section-title { 
         display: flex; align-items: center; justify-content: center;
         font-family: var(--font-oswald); font-size: 32px; font-weight: 700; 
@@ -127,6 +127,22 @@
         background-color: transparent;
         padding-left: 0;
       }
+      .modal-body .d-none { display: none !important; }
+
+      .global-filter-bar {
+        background-color: var(--light-gray-1);
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e9e9e9;
+        margin-bottom: 2rem;
+      }
+      .global-filter-bar .form-label {
+        font-family: var(--font-oswald);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        color: #555;
+      }
     </style>
 </head>
 <body>
@@ -156,6 +172,19 @@
         </div>
 
         <div id="mainContent" class="d-none">
+            <div class="global-filter-bar">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="yearFilter" class="form-label">Ano</label>
+                        <select id="yearFilter" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="monthFilter" class="form-label">Mês</label>
+                        <select id="monthFilter" class="form-select"></select>
+                    </div>
+                </div>
+            </div>
+
             <div class="row g-4 mb-4">
               <div class="col-lg-6">
                 <div class="kpi-block">
@@ -194,8 +223,9 @@
                 </div>
             </div>
             <div class="row mb-4">
-              <div class="col-lg-6 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Inspeções por Finalidade</h4><div id="purposeDonutChart"></div></div></div>
-              <div class="col-lg-6 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Entrevistas por Mês</h4><div id="interviewsBarChart"></div></div></div>
+              <div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;" id="finalidadeChartTitle"></h4><div id="purposeDonutChart"></div></div></div>
+              <div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Entrevistas por Mês</h4><div id="interviewsBarChart"></div></div></div>
+              <div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Tipo de Inspeção</h4><div id="tipoInspecaoPieChart"></div></div></div>
             </div>
             <div class="row"><div class="col-12"><div class="table-container">
               <h2 class="section-title">
@@ -224,8 +254,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="modalDetailsInspecionado"></p>
-                    <p id="modalDetailsFinalidade"></p>
+                    <p id="modalDetailsInspecionado" style="color: var(--primary-color); font-size: 1.4rem;"></p>
+                    <p id="modalDetailsFinalidade" style="font-size: 1.2rem; font-weight: bold; margin-top: -1rem;"></p>
                     <hr>
                     <div id="laudo-section">
                       <span>Laudo</span><p id="modalDetailsLaudo"></p>
@@ -234,11 +264,8 @@
                       <span>Restrições</span><p id="modalDetailsRestricoes"></p>
                     </div>
                     <div class="row">
-                        <div class="col-md-4" id="status-section"><span>Status</span><p id="modalDetailsStatus"></p></div>
                         <div class="col-md-4" id="dataLaudo-section"><span>Data do Laudo</span><p id="modalDetailsDataLaudo"></p></div>
                         <div class="col-md-4" id="tis-section"><span>TIS</span><p id="modalDetailsTis"></p></div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4" id="ds1a-section"><span>DS-1a</span><p id="modalDetailsDs1a"></p></div>
                     </div>
                 </div>
@@ -249,7 +276,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        let allData = [];
+        let allDashboardData = [];
+        let allTableData = [];
         let filteredData = [];
         let detailsModalInstance;
 
@@ -261,14 +289,24 @@
               .getDashboardData();
         });
 
-        function onDataLoaded(data) {
-            allData = data;
+        function onDataLoaded(response) {
+            allDashboardData = response.dashboardData.map(row => {
+                const date = parseDate(row.EventDate);
+                return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null};
+            });
+            allTableData = response.tableData;
+            
             document.getElementById('loader').classList.add('d-none');
             document.getElementById('mainContent').classList.remove('d-none');
-            updateKPIs();
-            populateFilters(); 
-            drawCharts(); 
+            
+            populateGlobalFilters(allDashboardData);
+            applyGlobalFilters();
+            
+            populateFilters(allTableData); 
             applyFilters();
+
+            document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters);
+            document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters);
             document.getElementById('searchInput').addEventListener('keyup', applyFilters);
             document.getElementById('purposeFilter').addEventListener('change', applyFilters);
             document.getElementById('statusFilter').addEventListener('change', applyFilters);
@@ -276,93 +314,119 @@
 
         function onDataError(error) { 
             console.error('Falha ao carregar os dados:', error); 
-            document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro ao carregar dados. Verifique o console para mais detalhes.</div>`;
+            document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro ao carregar dados: ${error.message}</div>`;
         }
       
-        function updateKPIs() {
-            const countOccurrences = (column, value) => allData.filter(row => row[column] === value).length;
+        function updateKPIs(data) {
+            const countIn = (arr, column, value) => arr.filter(row => row[column] === value).length;
+            const validData = data.filter(row => row.StatusIS !== 'Faltou');
+
+            document.getElementById('kpiTotal').textContent = validData.length;
+            document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado');
+            document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames');
+            document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente');
+            document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída');
+            document.getElementById('kpiFaltou').textContent = data.length - validData.length;
             
-            document.getElementById('kpiExamesPendentes').textContent = countOccurrences('StatusIS', 'AGU exames');
-            document.getElementById('kpiConclusoesPendentes').textContent = countOccurrences('StatusIS', 'Conclusão Pendente');
-            document.getElementById('kpiTotal').textContent = allData.length;
-            document.getElementById('kpiTisSigned').textContent = countOccurrences('StatusIS', 'TIS assinado');
-            document.getElementById('kpiMsgPendente').textContent = countOccurrences('MSG', 'PENDENTE');
-            document.getElementById('kpiMsgEnviada').textContent = countOccurrences('MSG', 'ENVIADA');
-            document.getElementById('kpiVotacaoPendente').textContent = countOccurrences('StatusIS', 'Concluída');
-            document.getElementById('kpiAuditoria').textContent = countOccurrences('StatusIS', 'Auditoria');
-            document.getElementById('kpiJsd').textContent = countOccurrences('StatusIS', 'JSD');
-            document.getElementById('kpiCancelada').textContent = countOccurrences('StatusIS', 'Cancelada');
-            document.getElementById('kpiFaltou').textContent = countOccurrences('StatusIS', 'Faltou');
+            const rotinaData = data.filter(row => row.type === 'Rotina');
+            document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA');
+            document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria');
+            document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD');
+            document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE');
+            document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada');
 
-            const canceladaItem = document.getElementById('kpi-item-cancelada');
-            if (countOccurrences('StatusIS', 'Cancelada') > 0) { canceladaItem.classList.add('text-alert-vivid'); } 
-            else { canceladaItem.classList.remove('text-alert-vivid'); }
-
-            const faltasItem = document.getElementById('kpi-item-faltas');
-            if (countOccurrences('StatusIS', 'Faltou') > 0) { faltasItem.classList.add('text-alert-vivid'); }
-            else { faltasItem.classList.remove('text-alert-vivid'); }
+            document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0);
+            document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0);
         }
 
-        function populateFilters() {
-            const purposes = ['Todas as Finalidades', ...new Set(allData.map(row => row.Finalidade).filter(Boolean).sort())];
-            const statuses = ['Todos os Status', ...new Set(allData.map(row => row.StatusIS).filter(Boolean).sort())];
+        function populateFilters(tableData) {
+            const purposes = ['Todas as Finalidades', ...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())];
+            const statuses = ['Todos os Status', ...new Set(tableData.map(row => row.StatusIS).filter(Boolean).sort())];
             const purposeFilter = document.getElementById('purposeFilter');
             const statusFilter = document.getElementById('statusFilter');
+            purposeFilter.innerHTML = '';
+            statusFilter.innerHTML = '';
             purposes.forEach(p => purposeFilter.add(new Option(p, p)));
             statuses.forEach(s => statusFilter.add(new Option(s, s)));
         }
 
-        function drawCharts() {
+        // ==========================================================
+        //           FUNÇÃO drawCharts ATUALIZADA
+        // ==========================================================
+        function drawCharts(kpiAndPieData, barChartData) {
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(() => {
-                const chartBackgroundColor = 'transparent';
-                
-                const purposeCounts = allData.reduce((acc, row) => {
-                    if(row.Finalidade) { acc[row.Finalidade] = (acc[row.Finalidade] || 0) + 1; }
-                    return acc;
-                }, {});
-                const sortedPurposes = Object.entries(purposeCounts).sort(([,a],[,b]) => b - a);
-                let purposeData;
-                if (sortedPurposes.length > 4) {
-                    const top3 = sortedPurposes.slice(0, 3);
-                    const othersCount = sortedPurposes.slice(3).reduce((sum, [, count]) => sum + count, 0);
-                    purposeData = [['Finalidade', 'Quantidade'], ...top3, ['OUTROS', othersCount]];
-                } else {
-                    purposeData = [['Finalidade', 'Quantidade'], ...sortedPurposes];
-                }
-                new google.visualization.PieChart(document.getElementById('purposeDonutChart')).draw(
-                    google.visualization.arrayToDataTable(purposeData), 
-                    { pieHole: 0.4, backgroundColor: chartBackgroundColor, chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' } }
-                );
-                
-                const interviewCountsByMonth = allData.reduce((acc, row) => {
-                    if (row.DataEntrevista && row.DataEntrevista.includes('/')) {
-                        const parts = row.DataEntrevista.split('/');
-                        if(parts.length === 3) {
-                           const monthYear = `${parts[1]}/${parts[2]}`;
-                           acc[monthYear] = (acc[monthYear] || 0) + 1;
-                        }
+                try {
+                    const chartOptions = { 
+                        backgroundColor: 'transparent', 
+                        chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
+                        animation: { startup: true, duration: 1000, easing: 'out' }
+                    };
+
+                    // Gráfico 1: Donut de Finalidades de Rotina
+                    document.getElementById('finalidadeChartTitle').textContent = 'Finalidades das IS de Rotina';
+                    const rotinaData = kpiAndPieData.filter(r => r.type === 'Rotina');
+                    const purposeCounts = rotinaData.reduce((acc, row) => {
+                        if(row.Finalidade) { acc[row.Finalidade] = (acc[row.Finalidade] || 0) + 1; }
+                        return acc;
+                    }, {});
+                    const sortedPurposes = Object.entries(purposeCounts).sort(([,a],[,b]) => b - a);
+                    let purposeData;
+                    if (sortedPurposes.length > 4) {
+                        const top3 = sortedPurposes.slice(0, 3);
+                        const othersCount = sortedPurposes.slice(3).reduce((sum, [, count]) => sum + count, 0);
+                        purposeData = [['Finalidade', 'Quantidade'], ...top3, ['OUTROS', othersCount]];
+                    } else {
+                        purposeData = [['Finalidade', 'Quantidade'], ...sortedPurposes];
                     }
-                    return acc;
-                }, {});
-                const sortedMonths = Object.keys(interviewCountsByMonth).sort((a,b) => {
-                    const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/');
-                    return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
-                });
-                const palette = ['#050f41', '#3e4a85', '#6b74a1', '#98a0bd', '#c5c8da'];
-                const interviewData = [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]];
-                sortedMonths.forEach((month, index) => {
-                    const count = interviewCountsByMonth[month];
-                    const color = palette[index % palette.length];
-                    const shortMonth = new Date(month.split('/')[1], month.split('/')[0]-1).toLocaleString('pt-BR', { month: 'short' }).toUpperCase();
-                    const year = month.split('/')[1];
-                    const axisLabel = `${shortMonth}${year}`;
-                    interviewData.push([axisLabel, count, `color: ${color};`, count.toString()]);
-                });
-                new google.visualization.ColumnChart(document.getElementById('interviewsBarChart')).draw(
-                    google.visualization.arrayToDataTable(interviewData), 
-                    { fontName: 'Carlito', backgroundColor: chartBackgroundColor, legend: { position: 'none' }, bar: { groupWidth: '60%' }, annotations: { alwaysOutside: true, textStyle: { fontName: 'Oswald', fontSize: 16, bold: true, color: '#212529' }}, hAxis: { textStyle: { fontSize: 14, fontName: 'Oswald', bold: true }}, vAxis: { minValue: 0, gridlines: { color: 'transparent' }, baselineColor: '#ccc', textPosition: 'none'}, chartArea: { width: '90%', height: '70%', top: 40, bottom: 50 }}
-                );
+                    new google.visualization.PieChart(document.getElementById('purposeDonutChart')).draw(
+                        google.visualization.arrayToDataTable(purposeData), 
+                        { ...chartOptions, pieHole: 0.4 }
+                    );
+                    
+                    // Gráfico 2: Barras de Entrevistas por Mês
+                    const validDataForBarChart = barChartData.filter(row => row.StatusIS !== 'Faltou');
+                    const interviewCountsByMonth = validDataForBarChart.reduce((acc, row) => {
+                        if (row.EventDate) {
+                            const monthYear = row.EventDate.substring(3);
+                            acc[monthYear] = (acc[monthYear] || 0) + 1;
+                        }
+                        return acc;
+                    }, {});
+                    const sortedMonths = Object.keys(interviewCountsByMonth).sort((a,b) => {
+                        const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/');
+                        return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
+                    });
+                    const palette = ['#050f41', '#3e4a85', '#6b74a1', '#98a0bd', '#c5c8da'];
+                    const interviewData = [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]];
+                    sortedMonths.forEach((month, index) => {
+                        const count = interviewCountsByMonth[month];
+                        const color = palette[index % palette.length];
+                        const shortMonth = new Date(month.split('/')[1], month.split('/')[0]-1).toLocaleString('pt-BR', { month: 'short' }).toUpperCase();
+                        const year = month.split('/')[1];
+                        const axisLabel = `${shortMonth}${year}`;
+                        interviewData.push([axisLabel, count, `color: ${color};`, count.toString()]);
+                    });
+                    new google.visualization.ColumnChart(document.getElementById('interviewsBarChart')).draw(
+                        google.visualization.arrayToDataTable(interviewData), 
+                        { ...chartOptions, fontName: 'Carlito', legend: { position: 'none' }, bar: { groupWidth: '60%' }, annotations: { alwaysOutside: true, textStyle: { fontName: 'Oswald', fontSize: 16, bold: true, color: '#212529' }}, hAxis: { textStyle: { fontSize: 14, fontName: 'Oswald', bold: true }}, vAxis: { minValue: 0, gridlines: { color: 'transparent' }, baselineColor: '#ccc', textPosition: 'none'}, chartArea: { width: '90%', height: '70%', top: 40, bottom: 50 }}
+                    );
+
+                    // Gráfico 3: Pizza 'Tipo de Inspeção'
+                    const validDataForPie = kpiAndPieData.filter(row => row.StatusIS !== 'Faltou');
+                    const typeCounts = validDataForPie.reduce((acc, row) => {
+                        const typeName = row.type === 'Rotina' ? 'IS de Rotina' : 'Concursos';
+                        acc[typeName] = (acc[typeName] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const tipoInspecaoData = [['Tipo', 'Quantidade'], ...Object.entries(typeCounts)];
+                    new google.visualization.PieChart(document.getElementById('tipoInspecaoPieChart')).draw(
+                        google.visualization.arrayToDataTable(tipoInspecaoData), 
+                        chartOptions
+                    );
+                } catch (e) {
+                    console.error("Erro ao desenhar os gráficos:", e.message);
+                }
             });
         }
 
@@ -422,14 +486,19 @@
             const subtitulo = [data['P/G/Q'], data.NIP, data.Inspecionado, data.OM ? `(${data.OM})` : ''].filter(String).join(' ');
             document.getElementById('modalDetailsInspecionado').textContent = subtitulo;
             
-            document.getElementById('modalDetailsFinalidade').textContent = data.Finalidade || '';
-            document.getElementById('modalDetailsFinalidade').style.color = 'var(--dark-gray-3)';
-            document.getElementById('modalDetailsFinalidade').style.fontSize = '1.2rem';
+            const finalidadeStatus = [data.Finalidade, data.StatusIS].filter(String).join(' - ');
+            const finalidadeElement = document.getElementById('modalDetailsFinalidade');
+            finalidadeElement.textContent = finalidadeStatus;
+            
+            if (data.MSG === 'ENVIADA') {
+                finalidadeElement.style.color = 'var(--success-color)';
+            } else {
+                finalidadeElement.style.color = 'var(--danger-color-vivid)';
+            }
             
             const fields = [
                 { id: 'modalDetailsLaudo', value: data.Laudo, sectionId: 'laudo-section' },
                 { id: 'modalDetailsRestricoes', value: data.Restrições, sectionId: 'restricoes-section' },
-                { id: 'modalDetailsStatus', value: data.StatusIS, sectionId: 'status-section' },
                 { id: 'modalDetailsDataLaudo', value: data.DataLaudo, sectionId: 'dataLaudo-section' },
                 { id: 'modalDetailsTis', value: data.TIS, sectionId: 'tis-section' },
                 { id: 'modalDetailsDs1a', value: data['DS-1a'], sectionId: 'ds1a-section' }
@@ -450,12 +519,62 @@
             detailsModalInstance.show();
         }
 
+        // ==========================================================
+        //           NOVAS FUNÇÕES DE FILTRO GLOBAL
+        // ==========================================================
+        function populateGlobalFilters(data) {
+            const yearFilter = document.getElementById('yearFilter');
+            const monthFilter = document.getElementById('monthFilter');
+            
+            const years = [...new Set(data.map(r => r.year).filter(Boolean))].sort((a,b) => b - a);
+            yearFilter.innerHTML = '<option value="todos">Todos os Anos</option>';
+            years.forEach(y => yearFilter.add(new Option(y, y)));
+
+            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            monthFilter.innerHTML = '<option value="todos">Todos os Meses</option>';
+            monthNames.forEach((name, index) => monthFilter.add(new Option(name, index)));
+
+            if (years.length > 0) {
+                const mostRecentDate = new Date(Math.max(...data.filter(r => r.year).map(r => new Date(r.year, r.month))));
+                yearFilter.value = mostRecentDate.getFullYear();
+                monthFilter.value = mostRecentDate.getMonth();
+            }
+        }
+
+        function applyGlobalFilters() {
+            const year = document.getElementById('yearFilter').value;
+            const month = document.getElementById('monthFilter').value;
+
+            // Filtro por ano para o gráfico de barras
+            const yearFilteredData = allDashboardData.filter(row => {
+                return (year === 'todos' || row.year == year);
+            });
+
+            // Filtro completo para KPIs e outros gráficos
+            const fullyFilteredData = yearFilteredData.filter(row => {
+                return (month === 'todos' || row.month == month);
+            });
+
+            updateKPIs(fullyFilteredData);
+            // Passa os conjuntos de dados corretos para a função de desenho
+            drawCharts(fullyFilteredData, yearFilteredData);
+        }
+        
+        function parseDate(dateString) {
+            if (!dateString || typeof dateString !== 'string' || !dateString.includes('/')) return null;
+            const parts = dateString.split('/');
+            if (parts.length !== 3) return null;
+            // Trata anos com 2 ou 4 dígitos
+            const year = parseInt(parts[2], 10) < 100 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10);
+            return new Date(year, parts[1] - 1, parts[0]);
+        }
+        
         function applyFilters() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const purpose = document.getElementById('purposeFilter').value;
             const status = document.getElementById('statusFilter').value;
             
-            filteredData = allData.filter(r => 
+            filteredData = allTableData.filter(r => 
                 (!search || (r.Inspecionado||'').toLowerCase().includes(search)) &&
                 (purpose === 'Todas as Finalidades' || r.Finalidade === purpose) &&
                 (status === 'Todos os Status' || r.StatusIS === status)
