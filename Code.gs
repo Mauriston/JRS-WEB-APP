@@ -1,5 +1,5 @@
 // =========================================================================
-//            ARQUIVO: Code.gs (Versão Estável com Correção Definitiva)
+//            ARQUIVO: Code.gs (Versão Final e Completa)
 // =========================================================================
 /**
  * @OnlyCurrentDoc
@@ -10,6 +10,7 @@
 const CONFIG = {
   SHEET_ID: "12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw",
   CONTROL_SHEET_NAME: "ListaControle",
+  CONCURSOS_SHEET_NAME: "ListaConcursos",
   REF_SHEET_NAME: "ListasRef",
   MILITARY_SHEET_NAME: "MilitaresHNRe",
   HEADER_ROW: 1
@@ -25,34 +26,71 @@ function doGet(e) {
 }
 
 // =========================================================================
-//          FUNÇÃO DE BUSCA DE DADOS CORRIGIDA E ROBUSTA
+//          FUNÇÃO PRINCIPAL DE BUSCA DE DADOS (ATUALIZADA)
 // =========================================================================
+/**
+ * Orquestra a busca de dados das abas 'ListaControle' e 'ListaConcursos',
+ * os padroniza e retorna um objeto com os dados combinados para os gráficos
+ * e os dados originais para a tabela.
+ */
 function getDashboardData() {
   try {
-    // ESTA É A CORREÇÃO: Usa o ID explícito da planilha
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID); 
-    const sheet = ss.getSheetByName(CONFIG.CONTROL_SHEET_NAME);
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    
+    // Busca e processa dados da aba de Rotina
+    const controleData = _getSheetDataAsObjects(ss, CONFIG.CONTROL_SHEET_NAME, 'Rotina', 'DataEntrevista');
+    
+    // Busca e processa dados da aba de Concursos
+    const concursosData = _getSheetDataAsObjects(ss, CONFIG.CONCURSOS_SHEET_NAME, 'Concurso', 'Data');
 
-    if (!sheet) { throw new Error(`A aba '${CONFIG.CONTROL_SHEET_NAME}' não foi encontrada.`); }
-    const dataRange = sheet.getDataRange();
-    const values = dataRange.getValues();
-    const headers = values.shift(); 
-    const data = values.map(row => {
-      const obj = {};
-      headers.forEach((header, index) => {
-        if (row[index] instanceof Date) {
-          obj[header] = row[index].toLocaleDateString('pt-BR');
-        } else {
-          obj[header] = row[index];
-        }
-      });
-      return obj;
-    });
-    return data;
+    // Retorna o objeto consolidado para o cliente
+    return {
+      dashboardData: [...controleData, ...concursosData], // Dados combinados para KPIs e gráficos
+      tableData: controleData // Apenas dados de 'ListaControle' para a tabela, como solicitado
+    };
+
   } catch (e) {
     Logger.log('ERRO EM getDashboardData: ' + e.toString());
     throw new Error('Falha no servidor ao buscar dados: ' + e.message);
   }
+}
+
+
+// =========================================================================
+//          FUNÇÕES AUXILIARES DE PROCESSAMENTO DE DADOS
+// =========================================================================
+
+/**
+ * Função genérica para ler uma aba, converter para um array de objetos,
+ * e adicionar/padronizar campos.
+ * @param {Spreadsheet} ss - A planilha aberta.
+ * @param {string} sheetName - O nome da aba a ser lida.
+ * @param {string} type - O tipo de inspeção ('Rotina' ou 'Concurso').
+ * @param {string} dateColumnName - O nome da coluna de data na aba.
+ * @returns {Array<Object>} Um array de objetos representando os dados.
+ */
+function _getSheetDataAsObjects(ss, sheetName, type, dateColumnName) {
+  const sheet = ss.getSheetByName(sheetName);
+  if (!sheet) { throw new Error(`A aba '${sheetName}' não foi encontrada.`); }
+  
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return [];
+
+  const headers = values.shift();
+  return values.map(row => {
+    const obj = { type: type }; // Adiciona o tipo a cada linha
+    headers.forEach((header, index) => {
+      if (header) { // Ignora colunas sem cabeçalho
+        let value = row[index];
+        // Padroniza a coluna de data para um nome comum: 'EventDate'
+        if (header === dateColumnName) {
+          obj['EventDate'] = (value instanceof Date) ? value.toLocaleDateString('pt-BR') : value;
+        }
+        obj[header] = (value instanceof Date) ? value.toLocaleDateString('pt-BR') : value;
+      }
+    });
+    return obj;
+  });
 }
 
 // =========================================================================
