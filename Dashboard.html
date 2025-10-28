@@ -23,40 +23,18 @@
         --light-gray-1: #fcfcfc;
         --dark-gray-3: #6c757d; 
       }
-      body {
-        font-family: var(--font-carlito);
-        background-color: #f4f4f9;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-      }
+      body {font-family: 'Carlito', sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333;}
       .container-main { max-width: 1400px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, .1); overflow: hidden; }
-
       .header-box { display: flex; align-items: center; background-color: var(--primary-color); color: #fff; padding: 20px 30px; }
       .header-logo { height: 65px; margin-right: 25px; }
-      .header-text h1 { font-family: var(--font-oswald); font-size: 32px; margin: 0; font-weight: 700; line-height: 1.1; }
-      .header-text p { font-family: var(--font-carlito); font-size: 18px; margin: 5px 0 0; opacity: .9; }
+      .header-text h1 { font-family: 'Oswald', sans-serif; font-size: 32px; margin: 0; font-weight: 700; line-height: 1.1; }
+      .header-text p { font-family: 'Carlito', sans-serif; font-size: 18px; margin: 5px 0 0; opacity: .9; }
       
-      .icon-btn {
-          margin-left: auto;
-          color: white;
-          text-decoration: none;
-          background-color: rgba(255, 255, 255, 0.2);
-          border-radius: 50%;
-          width: 60px;
-          height: 60px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background-color 0.3s;
-      }
-      .icon-btn:hover {
-          background-color: rgba(255, 255, 255, 0.4);
-          color: white;
-      }
-      .icon-btn .material-symbols-outlined {
-          font-size: 32px;
-      }
+      /* --- ESTILOS PARA NAVEGAÇÃO (ATUALIZADO) --- */
+      .header-actions{display:flex;margin-left:auto;gap:15px}
+      .IconButton{display:flex;align-items:center;justify-content:center;width:55px;height:55px;border-radius:50%;background-color:rgba(255,255,255,0.1);color:#fff;cursor:pointer;transition:background-color .2s ease-in-out; text-decoration: none;}
+      .IconButton:hover{background-color:rgba(255,255,255,0.2)}
+      .IconButton .material-symbols-outlined { font-size: 30px; }
 
       .dashboard-content { padding: 30px; }
       .dashboard-title-wrapper { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
@@ -144,6 +122,39 @@
         font-size: 0.9rem;
         color: #555;
       }
+      /* --- ESTILOS PARA O SWITCH DE FILTRO (ATUALIZADO) --- */
+      .form-switch {
+        padding-left: 0; 
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .form-switch .form-check-input {
+          width: 3.5em;
+          height: 1.8em;
+          cursor: pointer;
+          margin-left: 0;
+      }
+      .form-switch .form-check-input:checked {
+        background-color: var(--danger-color-vivid);
+        border-color: var(--danger-color-vivid);
+      }
+      .form-switch .form-check-label {
+        font-family: var(--font-oswald);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 1.1rem; 
+        color: var(--danger-color-vivid);
+        cursor: pointer;
+      }
+      /* --- ESTILOS PARA O FILTRO DE STATUS MULTISSELEÇÃO (NOVO) --- */
+      #statusFilterMenu {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 0.5rem 0;
+      }
+      #statusFilterMenu li { padding: 0.25rem 1rem; }
+      #statusFilterMenu .form-check-label { cursor: pointer; }
     </style>
 </head>
 <body>
@@ -154,9 +165,14 @@
           <h1>JUNTA REGULAR DE SAÚDE</h1>
           <p>HOSPITAL NAVAL DE RECIFE</p>
         </div>
-        <a href="<?= ScriptApp.getService().getUrl() ?>?page=form" class="icon-btn" title="Nova IS">
-            <span class="material-symbols-outlined">person_add</span>
-        </a>
+        <div class="header-actions">
+            <div class="IconButton" onclick="navigateTo('formulario')" title="Formulário de Inspeção">
+              <span class="material-symbols-outlined">description</span>
+            </div>
+            <div class="IconButton" onclick="navigateTo('parecer')" title="Gerar Parecer">
+              <span class="material-symbols-outlined">edit_note</span>
+            </div>
+        </div>
       </div>
 
       <div class="dashboard-content">
@@ -231,17 +247,29 @@
             <div class="row"><div class="col-12"><div class="table-container">
               <h2 class="section-title">
                   <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">patient_list</span>
-                  DETALHES DAS INSPEÇÕES
-              </h2>
-              <div class="row g-3 mb-3">
-                <div class="col-md-4"><input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome do inspecionado..."></div>
-                <div class="col-md-4"><select id="purposeFilter" class="form-select"></select></div>
-                <div class="col-md-4"><select id="statusFilter" class="form-select"></select></div>
+                  INSPEÇÕES DE SAÚDE
+            </h2>
+        </div>
+
+        <div id="loader" class="text-center">
+          <div class="spinner-border" style="width: 3rem; height: 3rem; color: var(--primary-color);" role="status"></div>
+          <p class="mt-2">A carregar dados...</p>
+        </div>
+
+        <div id="mainContent" class="d-none">
+            <div class="global-filter-bar"><div class="row g-3 align-items-end"><div class="col-md-3"><label for="yearFilter" class="form-label">Ano</label><select id="yearFilter" class="form-select"></select></div><div class="col-md-3"><label for="monthFilter" class="form-label">Mês</label><select id="monthFilter" class="form-select"></select></div></div></div>
+            <div class="row g-4 mb-4"><div class="col-lg-6"><div class="kpi-block"><div class="kpi-item level-1 text-center"><p class="kpi-value" id="kpiTotal">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">summarize</span>Total de Inspeções</h6></div><hr><div class="row text-center"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiTisSigned">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>TIS Assinados</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgEnviada" style="color:var(--success-color);">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>MSG Enviadas</h6></div></div><hr><div class="row text-center"><div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiAuditoria">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">policy</span>Auditoria CPMM</h6></div><div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiJsd">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">manage_search</span>Revisão JSD</h6></div></div></div></div><div class="col-lg-6"><div class="kpi-block kpi-block-alert"><div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pending_actions</span>MSG Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiExamesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lab_profile</span>Exames Pendentes</h6></div></div></div><hr class="my-0"><div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiConclusoesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">help</span>Conclusões Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiVotacaoPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">gavel</span>Votações Pendentes</h6></div></div></div></div></div></div>
+            <div class="row g-4 mb-4 justify-content-center"><div class="col-md-6 col-lg-5"><div class="kpi-block"><div class="row text-center"><div class="col-6 kpi-item level-3" id="kpi-item-cancelada"><p class="kpi-value" id="kpiCancelada">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cancel</span>Canceladas</h6></div><div class="col-6 kpi-item level-3" id="kpi-item-faltas"><p class="kpi-value" id="kpiFaltou">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person_off</span>Faltas</h6></div></div></div></div></div>
+            <div class="row mb-4"><div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;" id="finalidadeChartTitle"></h4><div id="purposeDonutChart"></div></div></div><div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Entrevistas por Mês</h4><div id="interviewsBarChart"></div></div></div><div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Tipo de Inspeção</h4><div id="tipoInspecaoPieChart"></div></div></div></div>
+            <div class="row"><div class="col-12"><div class="table-container">
+              <h2 class="section-title"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">patient_list</span> DETALHES DAS INSPEÇÕES</h2>
+              <div class="row g-3 mb-3 align-items-end">
+                <div class="col-md-3"><input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome..."></div>
+                <div class="col-md-3"><select id="purposeFilter" class="form-select"></select></div>
+                <div class="col-md-3"><div class="dropdown"><button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="statusFilterBtn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">Status</button><ul class="dropdown-menu w-100" id="statusFilterMenu" aria-labelledby="statusFilterBtn"></ul></div></div>
+                <div class="col-md-3 d-flex align-items-center"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="pendingMsgFilter"><label class="form-check-label" for="pendingMsgFilter">MSG Pendente</label></div></div>
               </div>
-              <div class="table-responsive"><table class="table table-hover">
-                <thead><tr><th>Data / IS</th><th>Finalidade</th><th>Status</th><th>Inspecionado / OM</th><th>MSG</th></tr></thead>
-                <tbody id="dataTableBody"></tbody>
-              </table></div>
+              <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Data / IS</th><th>Finalidade</th><th>Status</th><th>Inspecionado / OM</th><th>MSG</th></tr></thead><tbody id="dataTableBody"></tbody></table></div>
             </div></div></div>
         </div>
       </div>
@@ -292,83 +320,89 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        let allDashboardData = [];
-        let allTableData = [];
-        let filteredData = [];
-        let detailsModalInstance;
+        let allDashboardData = []; let allTableData = []; let filteredData = []; let detailsModalInstance;
 
         document.addEventListener('DOMContentLoaded', () => {
             detailsModalInstance = new bootstrap.Modal(document.getElementById('detailsModal'));
-            google.script.run
-              .withSuccessHandler(onDataLoaded)
-              .withFailureHandler(onDataError)
-              .getDashboardData();
+            google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onDataError).getDashboardData();
         });
 
         function onDataLoaded(response) {
-            allDashboardData = response.dashboardData.map(row => {
-                const date = parseDate(row.EventDate);
-                return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null};
-            });
-            allTableData = response.tableData;
-            
-            document.getElementById('loader').classList.add('d-none');
-            document.getElementById('mainContent').classList.remove('d-none');
-            
-            populateGlobalFilters(allDashboardData);
-            applyGlobalFilters();
-            
-            populateFilters(allTableData); 
-            applyFilters();
+            try {
+                allDashboardData = response.dashboardData.map(row => { const date = parseDate(row.EventDate); return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null}; });
+                allTableData = response.tableData;
+                
+                document.getElementById('loader').classList.add('d-none');
+                document.getElementById('mainContent').classList.remove('d-none');
+                
+                populateGlobalFilters(allDashboardData);
+                applyGlobalFilters();
+                populateFilters(allTableData); 
+                applyFilters();
 
-            document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters);
-            document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters);
-            document.getElementById('searchInput').addEventListener('keyup', applyFilters);
-            document.getElementById('purposeFilter').addEventListener('change', applyFilters);
-            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+                document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters);
+                document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters);
+                document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+                document.getElementById('purposeFilter').addEventListener('change', applyFilters);
+                document.getElementById('pendingMsgFilter').addEventListener('change', applyFilters);
+                document.getElementById('statusFilterMenu').addEventListener('change', applyFilters);
+            } catch(e) {
+                console.error("Erro fatal em onDataLoaded: ", e);
+                document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Ocorreu um erro crítico ao processar os dados: ${e.message}</div>`;
+            }
         }
 
         function onDataError(error) { 
-            console.error('Falha ao carregar os dados:', error); 
+            console.error('Falha ao carregar os dados do backend:', error); 
             document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro ao carregar dados: ${error.message}</div>`;
         }
       
-        function updateKPIs(data) {
-            const countIn = (arr, column, value) => arr.filter(row => row[column] === value).length;
-            const validData = data.filter(row => row.StatusIS !== 'Faltou');
-
-            document.getElementById('kpiTotal').textContent = validData.length;
-            document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado');
-            document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames');
-            document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente');
-            document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída');
-            document.getElementById('kpiFaltou').textContent = data.length - validData.length;
-            
-            const rotinaData = data.filter(row => row.type === 'Rotina');
-            document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA');
-            document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria');
-            document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD');
-            document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE');
-            document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada');
-
-            document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0);
-            document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0);
-        }
+        function updateKPIs(data) { const countIn = (arr, column, value) => arr.filter(row => row[column] === value).length; const validData = data.filter(row => row.StatusIS !== 'Faltou'); document.getElementById('kpiTotal').textContent = validData.length; document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado'); document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames'); document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente'); document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída'); document.getElementById('kpiFaltou').textContent = data.length - validData.length; const rotinaData = data.filter(row => row.type === 'Rotina'); document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA'); document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria'); document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD'); document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE'); document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada'); document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0); document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0); }
 
         function populateFilters(tableData) {
             const purposes = ['Todas as Finalidades', ...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())];
-            const statuses = ['Todos os Status', ...new Set(tableData.map(row => row.StatusIS).filter(Boolean).sort())];
             const purposeFilter = document.getElementById('purposeFilter');
-            const statusFilter = document.getElementById('statusFilter');
             purposeFilter.innerHTML = '';
-            statusFilter.innerHTML = '';
             purposes.forEach(p => purposeFilter.add(new Option(p, p)));
-            statuses.forEach(s => statusFilter.add(new Option(s, s)));
+
+            const statuses = [...new Set(tableData.map(row => row.StatusIS).filter(Boolean).sort())];
+            const statusMenu = document.getElementById('statusFilterMenu');
+            statusMenu.innerHTML = '';
+            statuses.forEach((s, index) => {
+                const li = document.createElement('li');
+                const id = `status-check-${index}`;
+                li.innerHTML = `<div class="form-check"><input class="form-check-input" type="checkbox" value="${s}" id="${id}"><label class="form-check-label" for="${id}">${s}</label></div>`;
+                statusMenu.appendChild(li);
+            });
+        }
+        
+        function applyFilters() {
+            try {
+                const search = document.getElementById('searchInput').value.toLowerCase();
+                const purpose = document.getElementById('purposeFilter').value;
+                const pendingOnly = document.getElementById('pendingMsgFilter').checked;
+                
+                const selectedStatusNodes = document.querySelectorAll('#statusFilterMenu input[type="checkbox"]:checked');
+                const selectedStatuses = Array.from(selectedStatusNodes).map(cb => cb.value);
+
+                const statusBtn = document.getElementById('statusFilterBtn');
+                if (selectedStatuses.length === 0) { statusBtn.textContent = 'Status (Todos)'; } 
+                else if (selectedStatuses.length === 1) { statusBtn.textContent = `Status (${selectedStatuses[0]})`; } 
+                else { statusBtn.textContent = `Status (${selectedStatuses.length} selecionados)`; }
+                
+                filteredData = allTableData.filter(r => 
+                    (!search || (r.Inspecionado||'').toLowerCase().includes(search)) &&
+                    (purpose === 'Todas as Finalidades' || r.Finalidade === purpose) &&
+                    (selectedStatuses.length === 0 || selectedStatuses.includes(r.StatusIS)) &&
+                    (!pendingOnly || r.MSG === 'PENDENTE')
+                );
+                renderTable(filteredData);
+            } catch(e) {
+                console.error("Erro ao aplicar filtros: ", e);
+                document.getElementById('dataTableBody').innerHTML = `<tr><td colspan="5" class="text-center text-danger">Erro ao filtrar dados: ${e.message}</td></tr>`;
+            }
         }
 
-        // ==========================================================
-        //           FUNÇÃO drawCharts ATUALIZADA
-        // ==========================================================
         function drawCharts(kpiAndPieData, barChartData) {
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(() => {
@@ -378,8 +412,6 @@
                         chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
                         animation: { startup: true, duration: 1000, easing: 'out' }
                     };
-
-                    // Gráfico 1: Donut de Finalidades de Rotina
                     document.getElementById('finalidadeChartTitle').textContent = 'Finalidades das IS de Rotina';
                     const rotinaData = kpiAndPieData.filter(r => r.type === 'Rotina');
                     const purposeCounts = rotinaData.reduce((acc, row) => {
@@ -399,8 +431,6 @@
                         google.visualization.arrayToDataTable(purposeData), 
                         { ...chartOptions, pieHole: 0.4 }
                     );
-                    
-                    // Gráfico 2: Barras de Entrevistas por Mês
                     const validDataForBarChart = barChartData.filter(row => row.StatusIS !== 'Faltou');
                     const interviewCountsByMonth = validDataForBarChart.reduce((acc, row) => {
                         if (row.EventDate) {
@@ -427,8 +457,6 @@
                         google.visualization.arrayToDataTable(interviewData), 
                         { ...chartOptions, fontName: 'Carlito', legend: { position: 'none' }, bar: { groupWidth: '60%' }, annotations: { alwaysOutside: true, textStyle: { fontName: 'Oswald', fontSize: 16, bold: true, color: '#212529' }}, hAxis: { textStyle: { fontSize: 14, fontName: 'Oswald', bold: true }}, vAxis: { minValue: 0, gridlines: { color: 'transparent' }, baselineColor: '#ccc', textPosition: 'none'}, chartArea: { width: '90%', height: '70%', top: 40, bottom: 50 }}
                     );
-
-                    // Gráfico 3: Pizza 'Tipo de Inspeção'
                     const validDataForPie = kpiAndPieData.filter(row => row.StatusIS !== 'Faltou');
                     const typeCounts = validDataForPie.reduce((acc, row) => {
                         const typeName = row.type === 'Rotina' ? 'IS de Rotina' : 'Concursos';
@@ -460,21 +488,16 @@
 
             dataToRender.forEach((row, index) => {
                 const tr = tBody.insertRow();
-                
                 const pendingStatuses = ['AGU exames', 'Conclusão Pendente', 'Concluída'];
                 if (pendingStatuses.includes(row.StatusIS) || row.MSG === 'PENDENTE') {
                     tr.classList.add('table-row-alert');
                 }
-                
                 let statusHtml = statusMap[row.StatusIS] || row.StatusIS || '';
-
                 let msgHtml = '';
                 if (row.MSG === 'ENVIADA') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--success-color)">check_circle</span>`;
                 } else if (row.MSG === 'PENDENTE') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--danger-color-vivid)">schedule</span>`;
                 } else { msgHtml = row.MSG || ''; }
-
                 const dateAndIsCell = `<td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>`;
-                
                 const inspecionadoAndOmCell = `
                     <td>
                         <div class="actions-cell-content">
@@ -485,41 +508,23 @@
                             <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(${index})">more_vert</span>
                         </div>
                     </td>`;
-
-                tr.innerHTML = `
-                    ${dateAndIsCell}
-                    <td>${row.Finalidade||''}</td>
-                    <td>${statusHtml}</td>
-                    ${inspecionadoAndOmCell}
-                    <td>${msgHtml}</td>
-                `;
+                tr.innerHTML = `${dateAndIsCell}<td>${row.Finalidade||''}</td><td>${statusHtml}</td>${inspecionadoAndOmCell}<td>${msgHtml}</td>`;
             });
         }
       
         function showDetailsModal(index) {
             const data = filteredData[index];
-
             const subtitulo = [data['P/G/Q'], data.NIP, data.Inspecionado, data.OM ? `(${data.OM})` : ''].filter(String).join(' ');
             document.getElementById('modalDetailsInspecionado').textContent = subtitulo;
-            
             const finalidadeStatus = [data.Finalidade, data.StatusIS].filter(String).join(' - ');
             const finalidadeElement = document.getElementById('modalDetailsFinalidade');
             finalidadeElement.textContent = finalidadeStatus;
-            
             if (data.MSG === 'ENVIADA') {
                 finalidadeElement.style.color = 'var(--success-color)';
             } else {
                 finalidadeElement.style.color = 'var(--danger-color-vivid)';
             }
-            
-            const fields = [
-                { id: 'modalDetailsLaudo', value: data.Laudo, sectionId: 'laudo-section' },
-                { id: 'modalDetailsRestricoes', value: data.Restrições, sectionId: 'restricoes-section' },
-                { id: 'modalDetailsDataLaudo', value: data.DataLaudo, sectionId: 'dataLaudo-section' },
-                { id: 'modalDetailsTis', value: data.TIS, sectionId: 'tis-section' },
-                { id: 'modalDetailsDs1a', value: data['DS-1a'], sectionId: 'ds1a-section' }
-            ];
-
+            const fields = [ { id: 'modalDetailsLaudo', value: data.Laudo, sectionId: 'laudo-section' }, { id: 'modalDetailsRestricoes', value: data.Restrições, sectionId: 'restricoes-section' }, { id: 'modalDetailsDataLaudo', value: data.DataLaudo, sectionId: 'dataLaudo-section' }, { id: 'modalDetailsTis', value: data.TIS, sectionId: 'tis-section' }, { id: 'modalDetailsDs1a', value: data['DS-1a'], sectionId: 'ds1a-section' } ];
             fields.forEach(field => {
                 const element = document.getElementById(field.id);
                 const section = document.getElementById(field.sectionId);
@@ -531,7 +536,6 @@
                     section.classList.add('d-none');
                 }
             });
-            
             const minutaSection = document.getElementById('minuta-msg-section');
             if (data.MSG === 'ENVIADA' || data.MSG === 'Enviada') {
                 let minutaText = `INSPEÇÃO DE SAÚDE FIM ${data.Finalidade || 'não informada'} - ${subtitulo} \n\nALFA - PTC que a JRS/HNRe concluiu em ${data.DataLaudo || 'data não informada'} a IS FIM ${data.Finalidade || 'não informada'} atinente ao ${subtitulo} e exarou o seguinte laudo: "${data.Laudo || 'não informado'}"`;
@@ -539,31 +543,23 @@
                     minutaText += ` Deverá ser afastado de: ${data.Restrições}. `;
                 }
                 minutaText += ` ACD TIS nº ${data.TIS || 'não informado'}; e \n\nBRAVO - O REF TIS (modelo DS-1A) pode ser verificado digitalmente por meio do acesso ao sítio "https://sinais.dsm.mb/tisonline", informando o código de validação "${data['DS-1a'] || 'não informado'}" e selecionando a opção “Download do TIS” BT`;
-                
                 document.getElementById('modalMinutaMsgText').textContent = minutaText;
                 minutaSection.classList.remove('d-none');
             } else {
                 minutaSection.classList.add('d-none');
             }
-            
             detailsModalInstance.show();
         }
 
-        // ==========================================================
-        //           NOVAS FUNÇÕES DE FILTRO GLOBAL
-        // ==========================================================
         function populateGlobalFilters(data) {
             const yearFilter = document.getElementById('yearFilter');
             const monthFilter = document.getElementById('monthFilter');
-            
             const years = [...new Set(data.map(r => r.year).filter(Boolean))].sort((a,b) => b - a);
             yearFilter.innerHTML = '<option value="todos">Todos os Anos</option>';
             years.forEach(y => yearFilter.add(new Option(y, y)));
-
             const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
             monthFilter.innerHTML = '<option value="todos">Todos os Meses</option>';
             monthNames.forEach((name, index) => monthFilter.add(new Option(name, index)));
-
             if (years.length > 0) {
                 const mostRecentDate = new Date(Math.max(...data.filter(r => r.year).map(r => new Date(r.year, r.month))));
                 yearFilter.value = mostRecentDate.getFullYear();
@@ -574,19 +570,13 @@
         function applyGlobalFilters() {
             const year = document.getElementById('yearFilter').value;
             const month = document.getElementById('monthFilter').value;
-
-            // Filtro por ano para o gráfico de barras
             const yearFilteredData = allDashboardData.filter(row => {
                 return (year === 'todos' || row.year == year);
             });
-
-            // Filtro completo para KPIs e outros gráficos
             const fullyFilteredData = yearFilteredData.filter(row => {
                 return (month === 'todos' || row.month == month);
             });
-
             updateKPIs(fullyFilteredData);
-            // Passa os conjuntos de dados corretos para a função de desenho
             drawCharts(fullyFilteredData, yearFilteredData);
         }
         
@@ -594,23 +584,25 @@
             if (!dateString || typeof dateString !== 'string' || !dateString.includes('/')) return null;
             const parts = dateString.split('/');
             if (parts.length !== 3) return null;
-            // Trata anos com 2 ou 4 dígitos
             const year = parseInt(parts[2], 10) < 100 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10);
             return new Date(year, parts[1] - 1, parts[0]);
         }
         
-        function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const purpose = document.getElementById('purposeFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            
-            filteredData = allTableData.filter(r => 
-                (!search || (r.Inspecionado||'').toLowerCase().includes(search)) &&
-                (purpose === 'Todas as Finalidades' || r.Finalidade === purpose) &&
-                (status === 'Todos os Status' || r.StatusIS === status)
-            );
-            renderTable(filteredData);
+        
+    </script>
+    
+    <script>
+      let BASE_URL = '';
+      function navigateTo(page) {
+        if (BASE_URL) {
+          window.top.location.href = BASE_URL + '?page=' + page;
         }
+      }
+      document.addEventListener('DOMContentLoaded', () => {
+        google.script.run.withSuccessHandler((url) => {
+          BASE_URL = url;
+        }).getWebAppUrl();
+      });
     </script>
 </body>
 </html>
