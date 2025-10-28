@@ -1,174 +1,616 @@
-// =========================================================================
-//            ARQUIVO: Code.gs (Versão Final e Completa)
-// =========================================================================
-/**
- * @OnlyCurrentDoc
- * @AuthScope https://www.googleapis.com/auth/spreadsheets
- */
 
-// Configurações Globais
-const CONFIG = {
-  SHEET_ID: "12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw",
-  CONTROL_SHEET_NAME: "ListaControle",
-  CONCURSOS_SHEET_NAME: "ListaConcursos",
-  REF_SHEET_NAME: "ListasRef",
-  MILITARY_SHEET_NAME: "MilitaresHNRe",
-  HEADER_ROW: 1
-};
-
-function doGet(e) {
-  let page = e.parameter.page;
-  if (!page || page == 'form') {
-    return HtmlService.createTemplateFromFile('Formulario').evaluate().setTitle('JRS - Adicionar Inspeção').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
-  } else if (page == 'dashboard') {
-    return HtmlService.createTemplateFromFile('Dashboard').evaluate().setTitle('JRS - Dashboard de Inspeções').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
-  }
-}
-
-// =========================================================================
-//          FUNÇÃO PRINCIPAL DE BUSCA DE DADOS (ATUALIZADA)
-// =========================================================================
-/**
- * Orquestra a busca de dados das abas 'ListaControle' e 'ListaConcursos',
- * os padroniza e retorna um objeto com os dados combinados para os gráficos
- * e os dados originais para a tabela.
- */
-function getDashboardData() {
-  try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Oswald:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
-    // Busca e processa dados da aba de Rotina
-    const controleData = _getSheetDataAsObjects(ss, CONFIG.CONTROL_SHEET_NAME, 'Rotina', 'DataEntrevista');
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    // Busca e processa dados da aba de Concursos
-    const concursosData = _getSheetDataAsObjects(ss, CONFIG.CONCURSOS_SHEET_NAME, 'Concurso', 'Data');
+    <style>
+      :root {
+        --primary-color: #050f41;
+        --danger-color: #990000;
+        --danger-color-vivid: #d9534f;
+        --danger-color-light: #fef5f5;
+        --success-color: #146c43;
+        --link-color: #0d6efd;
+        --font-oswald: 'Oswald', sans-serif;
+        --font-carlito: 'Carlito', sans-serif;
+        --light-gray-1: #fcfcfc;
+        --dark-gray-3: #6c757d; 
+      }
+      body {
+        font-family: var(--font-carlito);
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+      .container-main { max-width: 1400px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, .1); overflow: hidden; }
 
-    // Retorna o objeto consolidado para o cliente
-    return {
-      dashboardData: [...controleData, ...concursosData], // Dados combinados para KPIs e gráficos
-      tableData: controleData // Apenas dados de 'ListaControle' para a tabela, como solicitado
-    };
+      .header-box { display: flex; align-items: center; background-color: var(--primary-color); color: #fff; padding: 20px 30px; }
+      .header-logo { height: 65px; margin-right: 25px; }
+      .header-text h1 { font-family: var(--font-oswald); font-size: 32px; margin: 0; font-weight: 700; line-height: 1.1; }
+      .header-text p { font-family: var(--font-carlito); font-size: 18px; margin: 5px 0 0; opacity: .9; }
+      
+      .icon-btn {
+          margin-left: auto;
+          color: white;
+          text-decoration: none;
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.3s;
+      }
+      .icon-btn:hover {
+          background-color: rgba(255, 255, 255, 0.4);
+          color: white;
+      }
+      .icon-btn .material-symbols-outlined {
+          font-size: 32px;
+      }
 
-  } catch (e) {
-    Logger.log('ERRO EM getDashboardData: ' + e.toString());
-    throw new Error('Falha no servidor ao buscar dados: ' + e.message);
-  }
-}
+      .dashboard-content { padding: 30px; }
+      .dashboard-title-wrapper { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
+      .dashboard-title, .section-title { 
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-oswald); font-size: 32px; font-weight: 700; 
+        text-transform: uppercase; gap: 15px; color: #333;
+      }
+      .dashboard-title { margin-bottom: 0; }
+      .section-title { margin-top: 40px; margin-bottom: 25px; }
+      .dashboard-title .material-symbols-outlined,
+      .section-title .material-symbols-outlined { font-size: 38px !important; }
 
+      .kpi-value { margin-bottom: 0.5rem !important; }
+      #loader { text-align: center; padding: 50px; }
+      
+      .kpi-block { border-radius: 8px; border: 1px solid #e0e0e0; padding: 1.2rem; height: 100%; }
+      .kpi-block-alert { background-color: var(--danger-color-light); border-color: var(--danger-color-vivid); display: flex; flex-direction: column; }
+      .kpi-item { margin-bottom: 0.5rem; }
+      .kpi-title { font-family: var(--font-oswald); text-transform: uppercase; font-weight: 800; color: #555; display: flex; align-items: center; gap: 8px; }
+      .kpi-value { font-family: var(--font-oswald); font-weight: 700; line-height: 1; margin: 0; }
+      
+      .kpi-item.level-1 .kpi-title { font-size: 1.2rem; }
+      .kpi-item.level-1 .kpi-value { font-size: 5rem; }
+      .kpi-item.level-2 .kpi-title { font-size: 1.1rem; }
+      .kpi-item.level-2 .kpi-value { font-size: 3.5rem; }
+      .kpi-item.level-3 .kpi-title { font-size: 0.9rem; }
+      .kpi-item.level-3 .kpi-value { font-size: 2.2rem; }
 
-// =========================================================================
-//          FUNÇÕES AUXILIARES DE PROCESSAMENTO DE DADOS
-// =========================================================================
+      .kpi-block-alert .kpi-title, .kpi-block-alert .kpi-value { color: var(--danger-color); }
+      .kpi-block-alert .kpi-title { color: var(--danger-color-vivid); }
+      .text-alert-vivid .kpi-title,
+      .text-alert-vivid .kpi-value,
+      .text-alert-vivid .material-symbols-outlined { color: var(--danger-color-vivid) !important; }
+      
+      .chart-container { background-color: var(--light-gray-1); padding: 20px; border-radius: 8px; border: 1px solid #e9e9e9; height: 400px; }
+      .table-container { background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+      
+      .status-pendente { font-weight: bold; }
+      
+      .table-cell-main { font-weight: bold; color: #333; }
+      .table-cell-sub { font-size: 0.8em; color: var(--dark-gray-3); }
+      
+      .table-row-alert td, 
+      .table-row-alert .table-cell-main,
+      .table-row-alert .table-cell-sub {
+        background-color: var(--danger-color-light) !important;
+        color: var(--danger-color) !important;
+        font-weight: bold !important;
+      }
+      .table-hover > tbody > tr.table-row-alert:hover > * {
+        --bs-table-hover-bg: #f5e3e3;
+        background-color: var(--bs-table-hover-bg) !important;
+        color: var(--danger-color) !important;
+      }
+      
+      .actions-cell-content { display: flex; justify-content: space-between; align-items: center; }
+      .actions-icon { cursor: pointer; color: #777; }
+      .actions-icon:hover { color: #000; }
+      
+      .modal-header { background-color: var(--primary-color); color: white; }
+      .modal-header .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+      .modal-body span { font-family: var(--font-oswald); text-transform: uppercase; color: #050f41; font-size: 1.2rem;}
+      .modal-body p { margin-bottom: 1rem; background-color: #f8f9fa; padding: 8px; border-radius: 4px; }
+      #modalDetailsInspecionado {
+        font-size: 1.5rem;
+        font-weight: bold;
+        font-family: var(--font-oswald);
+        background-color: transparent;
+        padding-left: 0;
+      }
+      .modal-body .d-none { display: none !important; }
 
-/**
- * Função genérica para ler uma aba, converter para um array de objetos,
- * e adicionar/padronizar campos.
- * @param {Spreadsheet} ss - A planilha aberta.
- * @param {string} sheetName - O nome da aba a ser lida.
- * @param {string} type - O tipo de inspeção ('Rotina' ou 'Concurso').
- * @param {string} dateColumnName - O nome da coluna de data na aba.
- * @returns {Array<Object>} Um array de objetos representando os dados.
- */
-function _getSheetDataAsObjects(ss, sheetName, type, dateColumnName) {
-  const sheet = ss.getSheetByName(sheetName);
-  if (!sheet) { throw new Error(`A aba '${sheetName}' não foi encontrada.`); }
-  
-  const values = sheet.getDataRange().getValues();
-  if (values.length < 2) return [];
+      .global-filter-bar {
+        background-color: var(--light-gray-1);
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e9e9e9;
+        margin-bottom: 2rem;
+      }
+      .global-filter-bar .form-label {
+        font-family: var(--font-oswald);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        color: #555;
+      }
+    </style>
+</head>
+<body>
+    <div class="container-main">
+      <div class="header-box">
+        <img src="https://i.imgur.com/KUbQz08.png" alt="Logo HNRe" class="header-logo">
+        <div class="header-text">
+          <h1>JUNTA REGULAR DE SAÚDE</h1>
+          <p>HOSPITAL NAVAL DE RECIFE</p>
+        </div>
+        <a href="<?= ScriptApp.getService().getUrl() ?>?page=form" class="icon-btn" title="Nova IS">
+            <span class="material-symbols-outlined">person_add</span>
+        </a>
+      </div>
 
-  const headers = values.shift();
-  return values.map(row => {
-    const obj = { type: type }; // Adiciona o tipo a cada linha
-    headers.forEach((header, index) => {
-      if (header) { // Ignora colunas sem cabeçalho
-        let value = row[index];
-        // Padroniza a coluna de data para um nome comum: 'EventDate'
-        if (header === dateColumnName) {
-          obj['EventDate'] = (value instanceof Date) ? value.toLocaleDateString('pt-BR') : value;
+      <div class="dashboard-content">
+        <div class="dashboard-title-wrapper">
+            <h2 class="dashboard-title">
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_information</span>
+              INSPEÇÕES DE SAÚDE
+            </h2>
+        </div>
+
+        <div id="loader" class="text-center">
+          <div class="spinner-border" style="width: 3rem; height: 3rem; color: var(--primary-color);" role="status"></div>
+          <p class="mt-2">A carregar dados...</p>
+        </div>
+
+        <div id="mainContent" class="d-none">
+            <div class="global-filter-bar">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="yearFilter" class="form-label">Ano</label>
+                        <select id="yearFilter" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="monthFilter" class="form-label">Mês</label>
+                        <select id="monthFilter" class="form-select"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+              <div class="col-lg-6">
+                <div class="kpi-block">
+                  <div class="kpi-item level-1 text-center"><p class="kpi-value" id="kpiTotal">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">summarize</span>Total de Inspeções</h6></div><hr>
+                  <div class="row text-center">
+                    <div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiTisSigned">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>TIS Assinados</h6></div>
+                    <div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgEnviada" style="color:var(--success-color);">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>MSG Enviadas</h6></div>
+                  </div><hr>
+                  <div class="row text-center">
+                    <div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiAuditoria">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">policy</span>Auditoria CPMM</h6></div>
+                    <div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiJsd">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">manage_search</span>Revisão JSD</h6></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="kpi-block kpi-block-alert">
+                  <div class="flex-fill d-flex align-items-center"><div class="row text-center w-100">
+                      <div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pending_actions</span>MSG Pendentes</h6></div>
+                      <div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiExamesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lab_profile</span>Exames Pendentes</h6></div>
+                  </div></div><hr class="my-0">
+                  <div class="flex-fill d-flex align-items-center"><div class="row text-center w-100">
+                      <div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiConclusoesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">help</span>Conclusões Pendentes</h6></div>
+                      <div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiVotacaoPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">gavel</span>Votações Pendentes</h6></div>
+                  </div></div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-4 mb-4 justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="kpi-block">
+                        <div class="row text-center">
+                           <div class="col-6 kpi-item level-3" id="kpi-item-cancelada"><p class="kpi-value" id="kpiCancelada">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cancel</span>Canceladas</h6></div>
+                           <div class="col-6 kpi-item level-3" id="kpi-item-faltas"><p class="kpi-value" id="kpiFaltou">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person_off</span>Faltas</h6></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;" id="finalidadeChartTitle"></h4><div id="purposeDonutChart"></div></div></div>
+              <div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Entrevistas por Mês</h4><div id="interviewsBarChart"></div></div></div>
+              <div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Tipo de Inspeção</h4><div id="tipoInspecaoPieChart"></div></div></div>
+            </div>
+            <div class="row"><div class="col-12"><div class="table-container">
+              <h2 class="section-title">
+                  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">patient_list</span>
+                  DETALHES DAS INSPEÇÕES
+              </h2>
+              <div class="row g-3 mb-3">
+                <div class="col-md-4"><input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome do inspecionado..."></div>
+                <div class="col-md-4"><select id="purposeFilter" class="form-select"></select></div>
+                <div class="col-md-4"><select id="statusFilter" class="form-select"></select></div>
+              </div>
+              <div class="table-responsive"><table class="table table-hover">
+                <thead><tr><th>Data / IS</th><th>Finalidade</th><th>Status</th><th>Inspecionado / OM</th><th>MSG</th></tr></thead>
+                <tbody id="dataTableBody"></tbody>
+              </table></div>
+            </div></div></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="detailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes da Inspeção</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalDetailsInspecionado"></p>
+                    <p id="modalDetailsFinalidade"></p>
+                    <hr>
+                    <div id="laudo-section">
+                      <span>Laudo</span><p id="modalDetailsLaudo"></p>
+                    </div>
+                    <div id="restricoes-section">
+                      <span>Restrições</span><p id="modalDetailsRestricoes"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4" id="dataLaudo-section"><span>Data do Laudo</span><p id="modalDetailsDataLaudo"></p></div>
+                        <div class="col-md-4" id="tis-section"><span>TIS</span><p id="modalDetailsTis"></p></div>
+                        <div class="col-md-4" id="ds1a-section"><span>DS-1a</span><p id="modalDetailsDs1a"></p></div>
+                    </div>
+
+                    <div id="minuta-msg-section" class="accordion mt-3 d-none">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinuta">
+                                    MINUTA MSG
+                                </button>
+                            </h2>
+                            <div id="collapseMinuta" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <p id="modalMinutaMsgText" style="white-space: pre-wrap;"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        let allDashboardData = [];
+        let allTableData = [];
+        let filteredData = [];
+        let detailsModalInstance;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            detailsModalInstance = new bootstrap.Modal(document.getElementById('detailsModal'));
+            google.script.run
+              .withSuccessHandler(onDataLoaded)
+              .withFailureHandler(onDataError)
+              .getDashboardData();
+        });
+
+        function onDataLoaded(response) {
+            allDashboardData = response.dashboardData.map(row => {
+                const date = parseDate(row.EventDate);
+                return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null};
+            });
+            allTableData = response.tableData;
+            
+            document.getElementById('loader').classList.add('d-none');
+            document.getElementById('mainContent').classList.remove('d-none');
+            
+            populateGlobalFilters(allDashboardData);
+            applyGlobalFilters();
+            
+            populateFilters(allTableData); 
+            applyFilters();
+
+            document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters);
+            document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters);
+            document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+            document.getElementById('purposeFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
         }
-        obj[header] = (value instanceof Date) ? value.toLocaleDateString('pt-BR') : value;
-      }
-    });
-    return obj;
-  });
-}
 
-// =========================================================================
-//          FUNÇÕES PARA O FORMULÁRIO (CÓDIGO ORIGINAL INALTERADO)
-// =========================================================================
-function getHnreMilitaryData() {
-  try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    const sheet = ss.getSheetByName(CONFIG.MILITARY_SHEET_NAME);
-    if (!sheet) return [];
-    const range = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3);
-    return range.getValues().map(row => ({ pg: row[0], nip: row[1], inspecionado: row[2] })).filter(m => m.inspecionado);
-  } catch (e) {
-    throw new Error(e.message);
-  }
-}
+        function onDataError(error) { 
+            console.error('Falha ao carregar os dados:', error); 
+            document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro ao carregar dados: ${error.message}</div>`;
+        }
+      
+        function updateKPIs(data) {
+            const countIn = (arr, column, value) => arr.filter(row => row[column] === value).length;
+            const validData = data.filter(row => row.StatusIS !== 'Faltou');
 
-function getDropdownData() {
-  try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    if (!ss) throw new Error("Não foi possível abrir a planilha.");
-    const refSheet = ss.getSheetByName(CONFIG.REF_SHEET_NAME);
-    if (!refSheet) throw new Error(`A aba '${CONFIG.REF_SHEET_NAME}' não foi encontrada.`);
-    const data = refSheet.getDataRange().getValues();
-    if (data.length < 2) throw new Error(`A aba '${CONFIG.REF_SHEET_NAME}' está vazia.`);
-    const headers = data[0].map(h => h.toString().toUpperCase().trim()); 
-    const getUniqueColumnValues = (columnName) => {
-      const colIndex = headers.indexOf(columnName.toUpperCase());
-      if (colIndex === -1) { throw new Error(`A coluna '${columnName}' não foi encontrada.`); }
-      return [...new Set(data.slice(1).map(row => row[colIndex]).filter(String))];
-    };
-    return {
-      finalidadeOptions: getUniqueColumnValues('FINALIDADES'),
-      omOptions: getUniqueColumnValues('OM'),
-      pgOptions: getUniqueColumnValues('P/G'),
-      statusOptions: getUniqueColumnValues('STATUS'),
-      restricoesOptions: getUniqueColumnValues('RESTRIÇÕES')
-    };
-  } catch (e) {
-    throw new Error(e.message); 
-  }
-}
+            document.getElementById('kpiTotal').textContent = validData.length;
+            document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado');
+            document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames');
+            document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente');
+            document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída');
+            document.getElementById('kpiFaltou').textContent = data.length - validData.length;
+            
+            const rotinaData = data.filter(row => row.type === 'Rotina');
+            document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA');
+            document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria');
+            document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD');
+            document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE');
+            document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada');
 
-function addNewInspection(formData) {
-  try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    const sheet = ss.getSheetByName(CONFIG.CONTROL_SHEET_NAME);
-    if (!sheet) throw new Error(`A aba '${CONFIG.CONTROL_SHEET_NAME}' não foi encontrada.`);
-    const headers = sheet.getRange(CONFIG.HEADER_ROW, 1, 1, sheet.getLastColumn()).getValues()[0];
-    let restricoesString = '';
-    if (formData.restricoes && formData.restricoes.length > 0) {
-      const outrosIndex = formData.restricoes.indexOf('Outros');
-      if (outrosIndex > -1 && formData.outrosRestricao) {
-        formData.restricoes.splice(outrosIndex, 1, formData.outrosRestricao.trim());
-      }
-      restricoesString = formData.restricoes.join(', ');
-    }
-    const newRow = headers.map(header => {
-      switch (header) {
-        case 'IS': return formData.is || '';
-        case 'DataEntrevista': return formData.dataEntrevista ? new Date(formData.dataEntrevista.replace(/-/g, '/')) : null;
-        case 'Finalidade': return formData.finalidade || '';
-        case 'OM': return formData.om || '';
-        case 'P/G/Q': return formData.pg || '';
-        case 'NIP': return formData.nip || '';
-        case 'Inspecionado': return formData.inspecionado || '';
-        case 'StatusIS': return formData.statusIS || '';
-        case 'DataLaudo': return formData.dataLaudo ? new Date(formData.dataLaudo.replace(/-/g, '/')) : null;
-        case 'Laudo': return formData.laudo || '';
-        case 'Restrições': return restricoesString;
-        case 'TIS': return formData.tis || '';
-        case 'DS-1a': return formData.ds1a || '';
-        default: return '';
-      }
-    });
-    sheet.appendRow(newRow);
-    return { status: 'success', message: 'Inspeção adicionada com sucesso!' };
-  } catch (e) {
-    throw new Error('Falha ao salvar: ' + e.message);
-  }
-}
+            document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0);
+            document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0);
+        }
+
+        function populateFilters(tableData) {
+            const purposes = ['Todas as Finalidades', ...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())];
+            const statuses = ['Todos os Status', ...new Set(tableData.map(row => row.StatusIS).filter(Boolean).sort())];
+            const purposeFilter = document.getElementById('purposeFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            purposeFilter.innerHTML = '';
+            statusFilter.innerHTML = '';
+            purposes.forEach(p => purposeFilter.add(new Option(p, p)));
+            statuses.forEach(s => statusFilter.add(new Option(s, s)));
+        }
+
+        // ==========================================================
+        //           FUNÇÃO drawCharts ATUALIZADA
+        // ==========================================================
+        function drawCharts(kpiAndPieData, barChartData) {
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(() => {
+                try {
+                    const chartOptions = { 
+                        backgroundColor: 'transparent', 
+                        chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' },
+                        animation: { startup: true, duration: 1000, easing: 'out' }
+                    };
+
+                    // Gráfico 1: Donut de Finalidades de Rotina
+                    document.getElementById('finalidadeChartTitle').textContent = 'Finalidades das IS de Rotina';
+                    const rotinaData = kpiAndPieData.filter(r => r.type === 'Rotina');
+                    const purposeCounts = rotinaData.reduce((acc, row) => {
+                        if(row.Finalidade) { acc[row.Finalidade] = (acc[row.Finalidade] || 0) + 1; }
+                        return acc;
+                    }, {});
+                    const sortedPurposes = Object.entries(purposeCounts).sort(([,a],[,b]) => b - a);
+                    let purposeData;
+                    if (sortedPurposes.length > 4) {
+                        const top3 = sortedPurposes.slice(0, 3);
+                        const othersCount = sortedPurposes.slice(3).reduce((sum, [, count]) => sum + count, 0);
+                        purposeData = [['Finalidade', 'Quantidade'], ...top3, ['OUTROS', othersCount]];
+                    } else {
+                        purposeData = [['Finalidade', 'Quantidade'], ...sortedPurposes];
+                    }
+                    new google.visualization.PieChart(document.getElementById('purposeDonutChart')).draw(
+                        google.visualization.arrayToDataTable(purposeData), 
+                        { ...chartOptions, pieHole: 0.4 }
+                    );
+                    
+                    // Gráfico 2: Barras de Entrevistas por Mês
+                    const validDataForBarChart = barChartData.filter(row => row.StatusIS !== 'Faltou');
+                    const interviewCountsByMonth = validDataForBarChart.reduce((acc, row) => {
+                        if (row.EventDate) {
+                            const monthYear = row.EventDate.substring(3);
+                            acc[monthYear] = (acc[monthYear] || 0) + 1;
+                        }
+                        return acc;
+                    }, {});
+                    const sortedMonths = Object.keys(interviewCountsByMonth).sort((a,b) => {
+                        const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/');
+                        return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
+                    });
+                    const palette = ['#050f41', '#3e4a85', '#6b74a1', '#98a0bd', '#c5c8da'];
+                    const interviewData = [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]];
+                    sortedMonths.forEach((month, index) => {
+                        const count = interviewCountsByMonth[month];
+                        const color = palette[index % palette.length];
+                        const shortMonth = new Date(month.split('/')[1], month.split('/')[0]-1).toLocaleString('pt-BR', { month: 'short' }).toUpperCase();
+                        const year = month.split('/')[1];
+                        const axisLabel = `${shortMonth}${year}`;
+                        interviewData.push([axisLabel, count, `color: ${color};`, count.toString()]);
+                    });
+                    new google.visualization.ColumnChart(document.getElementById('interviewsBarChart')).draw(
+                        google.visualization.arrayToDataTable(interviewData), 
+                        { ...chartOptions, fontName: 'Carlito', legend: { position: 'none' }, bar: { groupWidth: '60%' }, annotations: { alwaysOutside: true, textStyle: { fontName: 'Oswald', fontSize: 16, bold: true, color: '#212529' }}, hAxis: { textStyle: { fontSize: 14, fontName: 'Oswald', bold: true }}, vAxis: { minValue: 0, gridlines: { color: 'transparent' }, baselineColor: '#ccc', textPosition: 'none'}, chartArea: { width: '90%', height: '70%', top: 40, bottom: 50 }}
+                    );
+
+                    // Gráfico 3: Pizza 'Tipo de Inspeção'
+                    const validDataForPie = kpiAndPieData.filter(row => row.StatusIS !== 'Faltou');
+                    const typeCounts = validDataForPie.reduce((acc, row) => {
+                        const typeName = row.type === 'Rotina' ? 'IS de Rotina' : 'Concursos';
+                        acc[typeName] = (acc[typeName] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const tipoInspecaoData = [['Tipo', 'Quantidade'], ...Object.entries(typeCounts)];
+                    new google.visualization.PieChart(document.getElementById('tipoInspecaoPieChart')).draw(
+                        google.visualization.arrayToDataTable(tipoInspecaoData), 
+                        chartOptions
+                    );
+                } catch (e) {
+                    console.error("Erro ao desenhar os gráficos:", e.message);
+                }
+            });
+        }
+
+        function renderTable(dataToRender) {
+            const tBody = document.getElementById('dataTableBody');
+            tBody.innerHTML = '';
+            if (dataToRender.length === 0) { tBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum resultado encontrado.</td></tr>'; return; }
+            
+            const statusMap = {
+                'AGU exames': '<span class="status-pendente">Exames Pendentes</span>',
+                'Conclusão Pendente': '<span class="status-pendente">Conclusões Pendentes</span>',
+                'Concluída': '<span class="status-pendente">Votação Pendente</span>',
+                'Votada JRS': '<span class="status-pendente">Assinatura Pendente</span>'
+            };
+
+            dataToRender.forEach((row, index) => {
+                const tr = tBody.insertRow();
+                
+                const pendingStatuses = ['AGU exames', 'Conclusão Pendente', 'Concluída'];
+                if (pendingStatuses.includes(row.StatusIS) || row.MSG === 'PENDENTE') {
+                    tr.classList.add('table-row-alert');
+                }
+                
+                let statusHtml = statusMap[row.StatusIS] || row.StatusIS || '';
+
+                let msgHtml = '';
+                if (row.MSG === 'ENVIADA') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--success-color)">check_circle</span>`;
+                } else if (row.MSG === 'PENDENTE') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--danger-color-vivid)">schedule</span>`;
+                } else { msgHtml = row.MSG || ''; }
+
+                const dateAndIsCell = `<td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>`;
+                
+                const inspecionadoAndOmCell = `
+                    <td>
+                        <div class="actions-cell-content">
+                            <div>
+                                <div class="table-cell-main">${row.Inspecionado || ''}</div>
+                                <div class="table-cell-sub">${row.OM || ''}</div>
+                            </div>
+                            <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(${index})">more_vert</span>
+                        </div>
+                    </td>`;
+
+                tr.innerHTML = `
+                    ${dateAndIsCell}
+                    <td>${row.Finalidade||''}</td>
+                    <td>${statusHtml}</td>
+                    ${inspecionadoAndOmCell}
+                    <td>${msgHtml}</td>
+                `;
+            });
+        }
+      
+        function showDetailsModal(index) {
+            const data = filteredData[index];
+
+            const subtitulo = [data['P/G/Q'], data.NIP, data.Inspecionado, data.OM ? `(${data.OM})` : ''].filter(String).join(' ');
+            document.getElementById('modalDetailsInspecionado').textContent = subtitulo;
+            
+            const finalidadeStatus = [data.Finalidade, data.StatusIS].filter(String).join(' - ');
+            const finalidadeElement = document.getElementById('modalDetailsFinalidade');
+            finalidadeElement.textContent = finalidadeStatus;
+            
+            if (data.MSG === 'ENVIADA') {
+                finalidadeElement.style.color = 'var(--success-color)';
+            } else {
+                finalidadeElement.style.color = 'var(--danger-color-vivid)';
+            }
+            
+            const fields = [
+                { id: 'modalDetailsLaudo', value: data.Laudo, sectionId: 'laudo-section' },
+                { id: 'modalDetailsRestricoes', value: data.Restrições, sectionId: 'restricoes-section' },
+                { id: 'modalDetailsDataLaudo', value: data.DataLaudo, sectionId: 'dataLaudo-section' },
+                { id: 'modalDetailsTis', value: data.TIS, sectionId: 'tis-section' },
+                { id: 'modalDetailsDs1a', value: data['DS-1a'], sectionId: 'ds1a-section' }
+            ];
+
+            fields.forEach(field => {
+                const element = document.getElementById(field.id);
+                const section = document.getElementById(field.sectionId);
+                if (field.value) {
+                    element.textContent = field.value;
+                    section.classList.remove('d-none');
+                } else {
+                    element.textContent = '';
+                    section.classList.add('d-none');
+                }
+            });
+            
+            const minutaSection = document.getElementById('minuta-msg-section');
+            if (data.MSG === 'ENVIADA' || data.MSG === 'Enviada') {
+                let minutaText = `INSPEÇÃO DE SAÚDE FIM ${data.Finalidade || 'não informada'} - ${subtitulo} \n\nALFA - PTC que a JRS/HNRe concluiu em ${data.DataLaudo || 'data não informada'} a IS FIM ${data.Finalidade || 'não informada'} atinente ao ${subtitulo} e exarou o seguinte laudo: "${data.Laudo || 'não informado'}"`;
+                if (data.Restrições && data.Restrições.toUpperCase() !== 'LTS') {
+                    minutaText += ` Deverá ser afastado de: ${data.Restrições}. `;
+                }
+                minutaText += ` ACD TIS nº ${data.TIS || 'não informado'}; e \n\nBRAVO - O REF TIS (modelo DS-1A) pode ser verificado digitalmente por meio do acesso ao sítio "https://sinais.dsm.mb/tisonline", informando o código de validação "${data['DS-1a'] || 'não informado'}" e selecionando a opção “Download do TIS” BT`;
+                
+                document.getElementById('modalMinutaMsgText').textContent = minutaText;
+                minutaSection.classList.remove('d-none');
+            } else {
+                minutaSection.classList.add('d-none');
+            }
+            
+            detailsModalInstance.show();
+        }
+
+        // ==========================================================
+        //           NOVAS FUNÇÕES DE FILTRO GLOBAL
+        // ==========================================================
+        function populateGlobalFilters(data) {
+            const yearFilter = document.getElementById('yearFilter');
+            const monthFilter = document.getElementById('monthFilter');
+            
+            const years = [...new Set(data.map(r => r.year).filter(Boolean))].sort((a,b) => b - a);
+            yearFilter.innerHTML = '<option value="todos">Todos os Anos</option>';
+            years.forEach(y => yearFilter.add(new Option(y, y)));
+
+            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            monthFilter.innerHTML = '<option value="todos">Todos os Meses</option>';
+            monthNames.forEach((name, index) => monthFilter.add(new Option(name, index)));
+
+            if (years.length > 0) {
+                const mostRecentDate = new Date(Math.max(...data.filter(r => r.year).map(r => new Date(r.year, r.month))));
+                yearFilter.value = mostRecentDate.getFullYear();
+                monthFilter.value = mostRecentDate.getMonth();
+            }
+        }
+
+        function applyGlobalFilters() {
+            const year = document.getElementById('yearFilter').value;
+            const month = document.getElementById('monthFilter').value;
+
+            // Filtro por ano para o gráfico de barras
+            const yearFilteredData = allDashboardData.filter(row => {
+                return (year === 'todos' || row.year == year);
+            });
+
+            // Filtro completo para KPIs e outros gráficos
+            const fullyFilteredData = yearFilteredData.filter(row => {
+                return (month === 'todos' || row.month == month);
+            });
+
+            updateKPIs(fullyFilteredData);
+            // Passa os conjuntos de dados corretos para a função de desenho
+            drawCharts(fullyFilteredData, yearFilteredData);
+        }
+        
+        function parseDate(dateString) {
+            if (!dateString || typeof dateString !== 'string' || !dateString.includes('/')) return null;
+            const parts = dateString.split('/');
+            if (parts.length !== 3) return null;
+            // Trata anos com 2 ou 4 dígitos
+            const year = parseInt(parts[2], 10) < 100 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10);
+            return new Date(year, parts[1] - 1, parts[0]);
+        }
+        
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const purpose = document.getElementById('purposeFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            filteredData = allTableData.filter(r => 
+                (!search || (r.Inspecionado||'').toLowerCase().includes(search)) &&
+                (purpose === 'Todas as Finalidades' || r.Finalidade === purpose) &&
+                (status === 'Todos os Status' || r.StatusIS === status)
+            );
+            renderTable(filteredData);
+        }
+    </script>
+</body>
+</html>
