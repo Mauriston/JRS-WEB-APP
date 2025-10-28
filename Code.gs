@@ -1,174 +1,203 @@
-// =========================================================================
-//            ARQUIVO: Code.gs (Versão Final e Completa)
-// =========================================================================
-/**
- * @OnlyCurrentDoc
- * @AuthScope https://www.googleapis.com/auth/spreadsheets
- */
 
-// Configurações Globais
-const CONFIG = {
-  SHEET_ID: "12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw",
-  CONTROL_SHEET_NAME: "ListaControle",
-  CONCURSOS_SHEET_NAME: "ListaConcursos",
-  REF_SHEET_NAME: "ListasRef",
-  MILITARY_SHEET_NAME: "MilitaresHNRe",
-  HEADER_ROW: 1
+
+// ================================================================= //
+//                      CONFIGURAÇÕES GLOBAIS                        //
+// ================================================================= //
+
+// --- Configs do Formulário de Inspeção e Dashboard (ORIGINAL) ---
+const ss = SpreadsheetApp.getActiveSpreadsheet();
+const listasRefSheet = ss.getSheetByName('ListasRef');
+const listaControleSheet = ss.getSheetByName('ListaControle');
+const militaresHnreSheet = ss.getSheetByName('MilitaresHNRe');
+const concursosSheet = ss.getSheetByName('ListaConcursos');
+
+// --- Configs do Gerador de Pareceres (NOVO) ---
+const TEMPLATE_IDS = {
+  'Psiquiatria': '1dBBPpAUigm9DFUWqyP0NkTEVGxeHWwKZF8dnoJ7xqP8',
+  'Psicologia': '1eQiRCtmF-V1Etn7fp6AbhTGZbYkqJlLrQYGjLRfePqQ',
+  'Hepatologia': '12-s0h077A6hwipVe4oARcor4cNMKeAGOl6elV-pk_HQ',
+  'Cardiologia': '1woGqRVEpe7hQkqZiPrPn2bUgIgcN7MtImn0plq8fbLE',
+  'Ortopedia': '1qmi93Y_kZpNZEeYcqhSA41KVsZ4gFE1MqkK6kbAsheI'
 };
+// ATENÇÃO: Verifique se o ID da planilha de militares do formulário de pareceres é o mesmo da de inspeções.
+// Se forem planilhas diferentes, mantenha as duas constantes com nomes diferentes.
+// Se for a mesma, pode usar uma só. Abaixo, considerei que podem ser diferentes.
+const SHEET_ID_PARECER_MILITARES = "1yqZYEh2apMezknd0_0sBBEbliV3jwoDEw43FipXwsUQ"; 
+const PDF_FOLDER_ID = "176YQTOOWXuE78Xul49XYpJsVNyu-eZFi";
+
+const PERITO_EMAILS = {
+  'CT Mauriston': 'mauriston.martins@marinha.mil.br',
+  'CT Júlio César': 'julio.xaiver@marinha.mil.br',
+  '1T Salyne': 'salyne.martins@marinha.mil.br',
+  '1T Luz': 'lucas.luz@marinha.mil.br',
+  '2T Trindade': 'marcelo.trindade@marinha.mil.br'
+};
+
+// ================================================================= //
+//          ROTEADOR PRINCIPAL E FUNÇÕES DE SERVIÇO WEB              //
+// ================================================================= //
 
 function doGet(e) {
   let page = e.parameter.page;
-  if (!page || page == 'form') {
-    return HtmlService.createTemplateFromFile('Formulario').evaluate().setTitle('JRS - Adicionar Inspeção').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
-  } else if (page == 'dashboard') {
-    return HtmlService.createTemplateFromFile('Dashboard').evaluate().setTitle('JRS - Dashboard de Inspeções').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+  if (page == 'dashboard') {
+    return HtmlService.createTemplateFromFile('Dashboard').evaluate().setTitle('Dashboard JRS').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } else if (page == 'parecer') {
+    return HtmlService.createTemplateFromFile('Parecer').evaluate().setTitle('Gerador de Pareceres').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
+  // Página padrão é 'formulario'
+  return HtmlService.createTemplateFromFile('Formulario').evaluate().setTitle('Formulário JRS').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-// =========================================================================
-//          FUNÇÃO PRINCIPAL DE BUSCA DE DADOS (ATUALIZADA)
-// =========================================================================
-/**
- * Orquestra a busca de dados das abas 'ListaControle' e 'ListaConcursos',
- * os padroniza e retorna um objeto com os dados combinados para os gráficos
- * e os dados originais para a tabela.
- */
-function getDashboardData() {
-  try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    
-    // Busca e processa dados da aba de Rotina
-    const controleData = _getSheetDataAsObjects(ss, CONFIG.CONTROL_SHEET_NAME, 'Rotina', 'DataEntrevista');
-    
-    // Busca e processa dados da aba de Concursos
-    const concursosData = _getSheetDataAsObjects(ss, CONFIG.CONCURSOS_SHEET_NAME, 'Concurso', 'Data');
-
-    // Retorna o objeto consolidado para o cliente
-    return {
-      dashboardData: [...controleData, ...concursosData], // Dados combinados para KPIs e gráficos
-      tableData: controleData // Apenas dados de 'ListaControle' para a tabela, como solicitado
-    };
-
-  } catch (e) {
-    Logger.log('ERRO EM getDashboardData: ' + e.toString());
-    throw new Error('Falha no servidor ao buscar dados: ' + e.message);
-  }
+function getWebAppUrl() {
+  return ScriptApp.getService().getUrl();
 }
 
-
-// =========================================================================
-//          FUNÇÕES AUXILIARES DE PROCESSAMENTO DE DADOS
-// =========================================================================
-
-/**
- * Função genérica para ler uma aba, converter para um array de objetos,
- * e adicionar/padronizar campos.
- * @param {Spreadsheet} ss - A planilha aberta.
- * @param {string} sheetName - O nome da aba a ser lida.
- * @param {string} type - O tipo de inspeção ('Rotina' ou 'Concurso').
- * @param {string} dateColumnName - O nome da coluna de data na aba.
- * @returns {Array<Object>} Um array de objetos representando os dados.
- */
-function _getSheetDataAsObjects(ss, sheetName, type, dateColumnName) {
-  const sheet = ss.getSheetByName(sheetName);
-  if (!sheet) { throw new Error(`A aba '${sheetName}' não foi encontrada.`); }
-  
-  const values = sheet.getDataRange().getValues();
-  if (values.length < 2) return [];
-
-  const headers = values.shift();
-  return values.map(row => {
-    const obj = { type: type }; // Adiciona o tipo a cada linha
-    headers.forEach((header, index) => {
-      if (header) { // Ignora colunas sem cabeçalho
-        let value = row[index];
-        // Padroniza a coluna de data para um nome comum: 'EventDate'
-        if (header === dateColumnName) {
-          obj['EventDate'] = (value instanceof Date) ? value.toLocaleDateString('pt-BR') : value;
-        }
-        obj[header] = (value instanceof Date) ? value.toLocaleDateString('pt-BR') : value;
-      }
-    });
-    return obj;
-  });
-}
-
-// =========================================================================
-//          FUNÇÕES PARA O FORMULÁRIO (CÓDIGO ORIGINAL INALTERADO)
-// =========================================================================
-function getHnreMilitaryData() {
-  try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    const sheet = ss.getSheetByName(CONFIG.MILITARY_SHEET_NAME);
-    if (!sheet) return [];
-    const range = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3);
-    return range.getValues().map(row => ({ pg: row[0], nip: row[1], inspecionado: row[2] })).filter(m => m.inspecionado);
-  } catch (e) {
-    throw new Error(e.message);
-  }
-}
+// ================================================================= //
+//     FUNÇÕES DO FORMULÁRIO DE INSPEÇÃO E DASHBOARD (ORIGINAL)      //
+// ================================================================= //
 
 function getDropdownData() {
   try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    if (!ss) throw new Error("Não foi possível abrir a planilha.");
-    const refSheet = ss.getSheetByName(CONFIG.REF_SHEET_NAME);
-    if (!refSheet) throw new Error(`A aba '${CONFIG.REF_SHEET_NAME}' não foi encontrada.`);
-    const data = refSheet.getDataRange().getValues();
-    if (data.length < 2) throw new Error(`A aba '${CONFIG.REF_SHEET_NAME}' está vazia.`);
-    const headers = data[0].map(h => h.toString().toUpperCase().trim()); 
-    const getUniqueColumnValues = (columnName) => {
-      const colIndex = headers.indexOf(columnName.toUpperCase());
-      if (colIndex === -1) { throw new Error(`A coluna '${columnName}' não foi encontrada.`); }
-      return [...new Set(data.slice(1).map(row => row[colIndex]).filter(String))];
-    };
-    return {
-      finalidadeOptions: getUniqueColumnValues('FINALIDADES'),
-      omOptions: getUniqueColumnValues('OM'),
-      pgOptions: getUniqueColumnValues('P/G'),
-      statusOptions: getUniqueColumnValues('STATUS'),
-      restricoesOptions: getUniqueColumnValues('RESTRIÇÕES')
-    };
+    const omOptions = listasRefSheet.getRange('B2:B' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
+    const pgOptions = listasRefSheet.getRange('C2:C' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
+    const finalidadeOptions = listasRefSheet.getRange('A2:A' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
+    const statusOptions = listasRefSheet.getRange('F2:F' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
+    const restricoesOptions = listasRefSheet.getRange('G2:G' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
+    return { omOptions, pgOptions, finalidadeOptions, statusOptions, restricoesOptions };
   } catch (e) {
-    throw new Error(e.message); 
+    console.error("Erro em getDropdownData: " + e.message);
+    throw new Error("Não foi possível buscar os dados para os menus.");
+  }
+}
+
+// FUNÇÃO RENOMEADA
+function getHnreMilitaryDataForForm() {
+  try {
+    const data = militaresHnreSheet.getRange('A2:C' + militaresHnreSheet.getLastRow()).getValues();
+    return data.map(row => ({ inspecionado: row[2], pg: row[0], nip: row[1] })).filter(m => m.inspecionado);
+  } catch (e) {
+    console.error("Erro em getHnreMilitaryDataForForm: " + e.message);
+    throw new Error("Não foi possível buscar os dados dos militares.");
   }
 }
 
 function addNewInspection(formData) {
   try {
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    const sheet = ss.getSheetByName(CONFIG.CONTROL_SHEET_NAME);
-    if (!sheet) throw new Error(`A aba '${CONFIG.CONTROL_SHEET_NAME}' não foi encontrada.`);
-    const headers = sheet.getRange(CONFIG.HEADER_ROW, 1, 1, sheet.getLastColumn()).getValues()[0];
-    let restricoesString = '';
-    if (formData.restricoes && formData.restricoes.length > 0) {
-      const outrosIndex = formData.restricoes.indexOf('Outros');
-      if (outrosIndex > -1 && formData.outrosRestricao) {
-        formData.restricoes.splice(outrosIndex, 1, formData.outrosRestricao.trim());
-      }
-      restricoesString = formData.restricoes.join(', ');
+    const headers = listaControleSheet.getRange(1, 1, 1, listaControleSheet.getLastColumn()).getValues()[0];
+    let restricoesString = formData.restricoes.join(', ');
+    if (formData.restricoes.includes('Outros') && formData.outrosRestricao) {
+      restricoesString = restricoesString.replace('Outros', `Outros: ${formData.outrosRestricao}`);
     }
-    const newRow = headers.map(header => {
-      switch (header) {
-        case 'IS': return formData.is || '';
-        case 'DataEntrevista': return formData.dataEntrevista ? new Date(formData.dataEntrevista.replace(/-/g, '/')) : null;
-        case 'Finalidade': return formData.finalidade || '';
-        case 'OM': return formData.om || '';
-        case 'P/G/Q': return formData.pg || '';
-        case 'NIP': return formData.nip || '';
-        case 'Inspecionado': return formData.inspecionado || '';
-        case 'StatusIS': return formData.statusIS || '';
-        case 'DataLaudo': return formData.dataLaudo ? new Date(formData.dataLaudo.replace(/-/g, '/')) : null;
-        case 'Laudo': return formData.laudo || '';
-        case 'Restrições': return restricoesString;
-        case 'TIS': return formData.tis || '';
-        case 'DS-1a': return formData.ds1a || '';
-        default: return '';
-      }
-    });
-    sheet.appendRow(newRow);
+
+    const rowData = {
+      'OM': formData.om,
+      'Inspecionado': formData.inspecionado,
+      'P/G/Q': formData.pg,
+      'NIP': formData.nip,
+      'IS': formData.is,
+      'Finalidade': formData.finalidade,
+      'DataEntrevista': formData.dataEntrevista,
+      'StatusIS': formData.statusIS,
+      'TIS': formData.tis,
+      'DS-1a': formData.ds1a,
+      'Laudo': formData.laudo,
+      'DataLaudo': formData.dataLaudo,
+      'Restrições': restricoesString
+    };
+
+    const newRow = headers.map(header => rowData[header] || null);
+    listaControleSheet.appendRow(newRow);
+    
     return { status: 'success', message: 'Inspeção adicionada com sucesso!' };
-  } catch (e) {
-    throw new Error('Falha ao salvar: ' + e.message);
+  } catch(e) {
+    console.error("Erro em addNewInspection: " + e.message);
+    return { status: 'error', message: `Falha ao adicionar: ${e.message}` };
   }
 }
+
+function getDashboardData() {
+  try {
+    const rotinaData = listaControleSheet.getRange('A2:N' + listaControleSheet.getLastRow()).getValues();
+    const concursoData = concursosSheet.getRange('A2:I' + concursosSheet.getLastRow()).getValues();
+
+    const dashboardData = rotinaData.map(r => ({
+      EventDate: r[1] ? new Date(r[1]).toLocaleDateString('pt-BR') : '', StatusIS: r[7], Finalidade: r[2], MSG: r[13], type: 'Rotina'
+    }));
+    concursoData.forEach(r => {
+      dashboardData.push({
+        EventDate: r[0] ? new Date(r[0]).toLocaleDateString('pt-BR') : '', StatusIS: r[8], Finalidade: r[6], MSG: '', type: 'Concurso'
+      });
+    });
+
+    const tableData = rotinaData.map(r => ({
+      DataEntrevista: r[1] ? new Date(r[1]).toLocaleDateString('pt-BR') : '', IS: r[0], Finalidade: r[2], StatusIS: r[7], Inspecionado: r[6], OM: r[3], 'P/G/Q': r[4], NIP: r[5], Laudo: r[9], DataLaudo: r[8] ? new Date(r[8]).toLocaleDateString('pt-BR') : '', Restrições: r[10], TIS: r[11], 'DS-1a': r[12], MSG: r[13],
+    }));
+    return { dashboardData, tableData };
+  } catch(e) {
+    console.error("Erro em getDashboardData: " + e.message);
+    throw new Error("Falha ao carregar dados do Dashboard.");
+  }
+}
+
+// ================================================================= //
+//           FUNÇÕES DO GERADOR DE PARECERES (NOVO MÓDULO)           //
+// ================================================================= //
+
+// FUNÇÃO RENOMEADA
+function getHnreMilitaryDataForParecer() {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID_PARECER_MILITARES).getSheetByName("MILITAR"); // Usando a constante específica
+    const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
+    const militaryList = data.filter(row => row[2] === "HNRE" && row[1]).map(row => ({ nip: row[0], name: row[1], posto: row[3] })).sort((a, b) => a.name.localeCompare(b.name));
+    return militaryList;
+  } catch (e) {
+    Logger.log('Erro em getHnreMilitaryDataForParecer: ' + e.toString());
+    return { error: e.toString() };
+  }
+}
+
+function processForm(formData) {
+  try {
+    const pdfFolder = DriveApp.getFolderById(PDF_FOLDER_ID);
+    const templateId = TEMPLATE_IDS[formData.ESPECIALIDADE];
+    const templateDoc = DriveApp.getFileById(templateId);
+    const newDocName = `Parecer - ${formData.NOME} - ${new Date().toLocaleDateString('pt-BR')}`;
+    const newDocFile = templateDoc.makeCopy(newDocName, pdfFolder);
+    const doc = DocumentApp.openById(newDocFile.getId());
+    const body = doc.getBody();
+    let peritoFullName = getPeritoFullName(formData.PERITO_SELECAO);
+    let posto = getPeritoPosto(formData.PERITO_SELECAO);
+    let membroValue = '';
+    switch (formData.PERITO_SELECAO) { case 'CT Mauriston': membroValue = 'Presidente'; break; case 'CT Júlio César': membroValue = 'Médico Perito Isolado'; break; case '1T Salyne': case '1T Luz': membroValue = 'Membro da Junta Regular de Saúde'; break; case '2T Trindade': membroValue = 'Médico Perito Isolado'; break; }
+    const hoje = new Date(); const dia = hoje.getDate(); const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]; const nomeMes = meses[hoje.getMonth()]; const ano = hoje.getFullYear(); const dataAtual = `${dia} de ${nomeMes} de ${ano}`;
+    body.replaceText(`{{NOME}}`, formData.NOME || ''); body.replaceText(`{{GRAU_HIERARQUICO}}`, formData.GRAU_HIERARQUICO || ''); body.replaceText(`{{NIP_MAT}}`, formData.NIP_MAT || ''); body.replaceText(`{{FINALIDADE_INSP}}`, formData.FINALIDADE_INSP || ''); body.replaceText(`{{INFO_COMPLEMENTARES}}`, formData.INFO_COMPLEMENTARES || ''); body.replaceText(`{{PERITO}}`, peritoFullName.toUpperCase()); body.replaceText(`{{POSTO}}`, posto); body.replaceText(`{{DATA}}`, dataAtual); body.replaceText(`{{MEMBRO}}`, membroValue);
+    doc.saveAndClose();
+    const pdfFile = pdfFolder.createFile(newDocFile.getAs(MimeType.PDF)).setName(newDocName + ".pdf");
+    pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    newDocFile.setTrashed(true);
+    return { success: true, pdfUrl: pdfFile.getUrl(), pdfId: pdfFile.getId() };
+  } catch (error) {
+    Logger.log('Erro em processForm: ' + error.toString());
+    return { success: false, message: error.toString() };
+  }
+}
+
+function sendPdfByEmail(pdfId, formData, emailTarget) {
+  try {
+    const pdfFile = DriveApp.getFileById(pdfId);
+    const peritoSelecionado = formData.PERITO_SELECAO;
+    const peritoEmail = PERITO_EMAILS[peritoSelecionado] || '';
+    const peritoFullName = getPeritoFullName(peritoSelecionado);
+    const recipient = emailTarget === 'zimbra' ? peritoEmail : 'hnre.jrs@marinha.mil.br';
+    const subject = `SOL PARECER PSIQ ${formData.GRAU_HIERARQUICO} ${formData.NOME}`;
+    const body = `TRM em anexo SOL de parecer psiquiátrico para conclusão de IS ${formData.FINALIDADE_INSP} atinente a ${formData.NIP_MAT} ${formData.GRAU_HIERARQUICO} ${formData.NOME}.<br><br>Atenciosamente,<br><br><b>${peritoFullName.toUpperCase()}</b><br>JRS/HNRe`;
+    MailApp.sendEmail({ to: recipient, subject: subject, htmlBody: body, name: peritoFullName, replyTo: peritoEmail, attachments: [pdfFile.getAs(MimeType.PDF)] });
+    return { success: true, message: 'E-mail enviado para ' + recipient };
+  } catch (e) {
+    Logger.log('Erro em sendPdfByEmail: ' + e.toString());
+    return { success: false, message: 'Erro ao enviar e-mail: ' + e.toString() };
+  }
+}
+
+function getPeritoFullName(peritoSelection) { const nomes = { 'CT Mauriston': 'Mauriston Renan Martins Silva', 'CT Júlio César': 'Júlio César Xavier Filho', '1T Salyne': 'Salyne Regina Martins Roberto', '1T Luz': 'Lucas Luz Nunes', '2T Trindade': 'Marcelo Fulco Trindade' }; return nomes[peritoSelection] || ''; }
+function getPeritoPosto(peritoSelection) { const postos = { 'CT Mauriston': 'Capitão-Tenente (Md)', '1T Salyne': 'Primeiro-Tenente (Md)', '1T Luz': 'Primeiro-Tenente (Md)', 'CT Júlio César': 'Capitão-Tenente (RM2-Md)', '2T Trindade': 'Segundo-Tenente (RM2-Md)' }; return postos[peritoSelection] || ''; }
