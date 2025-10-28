@@ -147,14 +147,6 @@
         color: var(--danger-color-vivid);
         cursor: pointer;
       }
-      /* --- ESTILOS PARA O FILTRO DE STATUS MULTISSELEÇÃO (NOVO) --- */
-      #statusFilterMenu {
-        max-height: 300px;
-        overflow-y: auto;
-        padding: 0.5rem 0;
-      }
-      #statusFilterMenu li { padding: 0.25rem 1rem; }
-      #statusFilterMenu .form-check-label { cursor: pointer; }
     </style>
 </head>
 <body>
@@ -247,29 +239,25 @@
             <div class="row"><div class="col-12"><div class="table-container">
               <h2 class="section-title">
                   <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">patient_list</span>
-                  INSPEÇÕES DE SAÚDE
-            </h2>
-        </div>
-
-        <div id="loader" class="text-center">
-          <div class="spinner-border" style="width: 3rem; height: 3rem; color: var(--primary-color);" role="status"></div>
-          <p class="mt-2">A carregar dados...</p>
-        </div>
-
-        <div id="mainContent" class="d-none">
-            <div class="global-filter-bar"><div class="row g-3 align-items-end"><div class="col-md-3"><label for="yearFilter" class="form-label">Ano</label><select id="yearFilter" class="form-select"></select></div><div class="col-md-3"><label for="monthFilter" class="form-label">Mês</label><select id="monthFilter" class="form-select"></select></div></div></div>
-            <div class="row g-4 mb-4"><div class="col-lg-6"><div class="kpi-block"><div class="kpi-item level-1 text-center"><p class="kpi-value" id="kpiTotal">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">summarize</span>Total de Inspeções</h6></div><hr><div class="row text-center"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiTisSigned">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>TIS Assinados</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgEnviada" style="color:var(--success-color);">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>MSG Enviadas</h6></div></div><hr><div class="row text-center"><div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiAuditoria">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">policy</span>Auditoria CPMM</h6></div><div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiJsd">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">manage_search</span>Revisão JSD</h6></div></div></div></div><div class="col-lg-6"><div class="kpi-block kpi-block-alert"><div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pending_actions</span>MSG Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiExamesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lab_profile</span>Exames Pendentes</h6></div></div></div><hr class="my-0"><div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiConclusoesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">help</span>Conclusões Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiVotacaoPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">gavel</span>Votações Pendentes</h6></div></div></div></div></div></div>
-            <div class="row g-4 mb-4 justify-content-center"><div class="col-md-6 col-lg-5"><div class="kpi-block"><div class="row text-center"><div class="col-6 kpi-item level-3" id="kpi-item-cancelada"><p class="kpi-value" id="kpiCancelada">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cancel</span>Canceladas</h6></div><div class="col-6 kpi-item level-3" id="kpi-item-faltas"><p class="kpi-value" id="kpiFaltou">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person_off</span>Faltas</h6></div></div></div></div></div>
-            <div class="row mb-4"><div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;" id="finalidadeChartTitle"></h4><div id="purposeDonutChart"></div></div></div><div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Entrevistas por Mês</h4><div id="interviewsBarChart"></div></div></div><div class="col-lg-4 mb-3"><div class="chart-container"><h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Tipo de Inspeção</h4><div id="tipoInspecaoPieChart"></div></div></div></div>
-            <div class="row"><div class="col-12"><div class="table-container">
-              <h2 class="section-title"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">patient_list</span> DETALHES DAS INSPEÇÕES</h2>
+                  DETALHES DAS INSPEÇÕES
+              </h2>
+              
               <div class="row g-3 mb-3 align-items-end">
                 <div class="col-md-3"><input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome..."></div>
                 <div class="col-md-3"><select id="purposeFilter" class="form-select"></select></div>
-                <div class="col-md-3"><div class="dropdown"><button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="statusFilterBtn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">Status</button><ul class="dropdown-menu w-100" id="statusFilterMenu" aria-labelledby="statusFilterBtn"></ul></div></div>
-                <div class="col-md-3 d-flex align-items-center"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="pendingMsgFilter"><label class="form-check-label" for="pendingMsgFilter">MSG Pendente</label></div></div>
+                <div class="col-md-3"><select id="statusFilter" class="form-select"></select></div>
+                <div class="col-md-3 d-flex justify-content-start pb-1">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="pendingMsgFilter">
+                      <label class="form-check-label" for="pendingMsgFilter">Apenas MSG Pendente</label>
+                    </div>
+                </div>
               </div>
-              <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Data / IS</th><th>Finalidade</th><th>Status</th><th>Inspecionado / OM</th><th>MSG</th></tr></thead><tbody id="dataTableBody"></tbody></table></div>
+              
+              <div class="table-responsive"><table class="table table-hover">
+                <thead><tr><th>Data / IS</th><th>Finalidade</th><th>Status</th><th>Inspecionado / OM</th><th>MSG</th></tr></thead>
+                <tbody id="dataTableBody"></tbody>
+              </table></div>
             </div></div></div>
         </div>
       </div>
@@ -320,87 +308,80 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        let allDashboardData = []; let allTableData = []; let filteredData = []; let detailsModalInstance;
+        let allDashboardData = [];
+        let allTableData = [];
+        let filteredData = [];
+        let detailsModalInstance;
 
         document.addEventListener('DOMContentLoaded', () => {
             detailsModalInstance = new bootstrap.Modal(document.getElementById('detailsModal'));
-            google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onDataError).getDashboardData();
+            google.script.run
+              .withSuccessHandler(onDataLoaded)
+              .withFailureHandler(onDataError)
+              .getDashboardData();
         });
 
         function onDataLoaded(response) {
-            try {
-                allDashboardData = response.dashboardData.map(row => { const date = parseDate(row.EventDate); return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null}; });
-                allTableData = response.tableData;
-                
-                document.getElementById('loader').classList.add('d-none');
-                document.getElementById('mainContent').classList.remove('d-none');
-                
-                populateGlobalFilters(allDashboardData);
-                applyGlobalFilters();
-                populateFilters(allTableData); 
-                applyFilters();
+            allDashboardData = response.dashboardData.map(row => {
+                const date = parseDate(row.EventDate);
+                return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null};
+            });
+            allTableData = response.tableData;
+            
+            document.getElementById('loader').classList.add('d-none');
+            document.getElementById('mainContent').classList.remove('d-none');
+            
+            populateGlobalFilters(allDashboardData);
+            applyGlobalFilters();
+            
+            populateFilters(allTableData); 
+            applyFilters();
 
-                document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters);
-                document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters);
-                document.getElementById('searchInput').addEventListener('keyup', applyFilters);
-                document.getElementById('purposeFilter').addEventListener('change', applyFilters);
-                document.getElementById('pendingMsgFilter').addEventListener('change', applyFilters);
-                document.getElementById('statusFilterMenu').addEventListener('change', applyFilters);
-            } catch(e) {
-                console.error("Erro fatal em onDataLoaded: ", e);
-                document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Ocorreu um erro crítico ao processar os dados: ${e.message}</div>`;
-            }
+            document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters);
+            document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters);
+            document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+            document.getElementById('purposeFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            // EVENT LISTENER PARA O NOVO SWITCH (NOVO)
+            document.getElementById('pendingMsgFilter').addEventListener('change', applyFilters);
         }
 
         function onDataError(error) { 
-            console.error('Falha ao carregar os dados do backend:', error); 
+            console.error('Falha ao carregar os dados:', error); 
             document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro ao carregar dados: ${error.message}</div>`;
         }
       
-        function updateKPIs(data) { const countIn = (arr, column, value) => arr.filter(row => row[column] === value).length; const validData = data.filter(row => row.StatusIS !== 'Faltou'); document.getElementById('kpiTotal').textContent = validData.length; document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado'); document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames'); document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente'); document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída'); document.getElementById('kpiFaltou').textContent = data.length - validData.length; const rotinaData = data.filter(row => row.type === 'Rotina'); document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA'); document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria'); document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD'); document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE'); document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada'); document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0); document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0); }
+        function updateKPIs(data) {
+            const countIn = (arr, column, value) => arr.filter(row => row[column] === value).length;
+            const validData = data.filter(row => row.StatusIS !== 'Faltou');
+
+            document.getElementById('kpiTotal').textContent = validData.length;
+            document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado');
+            document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames');
+            document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente');
+            document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída');
+            document.getElementById('kpiFaltou').textContent = data.length - validData.length;
+            
+            const rotinaData = data.filter(row => row.type === 'Rotina');
+            document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA');
+            document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria');
+            document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD');
+            document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE');
+            document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada');
+
+            document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0);
+            document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0);
+        }
 
         function populateFilters(tableData) {
             const purposes = ['Todas as Finalidades', ...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())];
+            const statuses = ['Todos os Status', ...new Set(tableData.map(row => row.StatusIS).filter(Boolean).sort())];
             const purposeFilter = document.getElementById('purposeFilter');
+            const statusFilter = document.getElementById('statusFilter');
             purposeFilter.innerHTML = '';
+            statusFilter.innerHTML = '';
             purposes.forEach(p => purposeFilter.add(new Option(p, p)));
-
-            const statuses = [...new Set(tableData.map(row => row.StatusIS).filter(Boolean).sort())];
-            const statusMenu = document.getElementById('statusFilterMenu');
-            statusMenu.innerHTML = '';
-            statuses.forEach((s, index) => {
-                const li = document.createElement('li');
-                const id = `status-check-${index}`;
-                li.innerHTML = `<div class="form-check"><input class="form-check-input" type="checkbox" value="${s}" id="${id}"><label class="form-check-label" for="${id}">${s}</label></div>`;
-                statusMenu.appendChild(li);
-            });
-        }
-        
-        function applyFilters() {
-            try {
-                const search = document.getElementById('searchInput').value.toLowerCase();
-                const purpose = document.getElementById('purposeFilter').value;
-                const pendingOnly = document.getElementById('pendingMsgFilter').checked;
-                
-                const selectedStatusNodes = document.querySelectorAll('#statusFilterMenu input[type="checkbox"]:checked');
-                const selectedStatuses = Array.from(selectedStatusNodes).map(cb => cb.value);
-
-                const statusBtn = document.getElementById('statusFilterBtn');
-                if (selectedStatuses.length === 0) { statusBtn.textContent = 'Status (Todos)'; } 
-                else if (selectedStatuses.length === 1) { statusBtn.textContent = `Status (${selectedStatuses[0]})`; } 
-                else { statusBtn.textContent = `Status (${selectedStatuses.length} selecionados)`; }
-                
-                filteredData = allTableData.filter(r => 
-                    (!search || (r.Inspecionado||'').toLowerCase().includes(search)) &&
-                    (purpose === 'Todas as Finalidades' || r.Finalidade === purpose) &&
-                    (selectedStatuses.length === 0 || selectedStatuses.includes(r.StatusIS)) &&
-                    (!pendingOnly || r.MSG === 'PENDENTE')
-                );
-                renderTable(filteredData);
-            } catch(e) {
-                console.error("Erro ao aplicar filtros: ", e);
-                document.getElementById('dataTableBody').innerHTML = `<tr><td colspan="5" class="text-center text-danger">Erro ao filtrar dados: ${e.message}</td></tr>`;
-            }
+            statuses.forEach(s => statusFilter.add(new Option(s, s)));
         }
 
         function drawCharts(kpiAndPieData, barChartData) {
@@ -588,7 +569,21 @@
             return new Date(year, parts[1] - 1, parts[0]);
         }
         
-        
+        // FUNÇÃO applyFilters (ATUALIZADA)
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const purpose = document.getElementById('purposeFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const pendingOnly = document.getElementById('pendingMsgFilter').checked;
+            
+            filteredData = allTableData.filter(r => 
+                (!search || (r.Inspecionado||'').toLowerCase().includes(search)) &&
+                (purpose === 'Todas as Finalidades' || r.Finalidade === purpose) &&
+                (status === 'Todos os Status' || r.StatusIS === status) &&
+                (!pendingOnly || r.MSG === 'PENDENTE')
+            );
+            renderTable(filteredData);
+        }
     </script>
     
     <script>
