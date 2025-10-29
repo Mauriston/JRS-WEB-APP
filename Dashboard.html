@@ -255,7 +255,15 @@
               </div>
               
               <div class="table-responsive"><table class="table table-hover">
-                <thead><tr><th>Data / IS</th><th>Finalidade</th><th>Status</th><th>Inspecionado / OM</th><th>MSG</th></tr></thead>
+                <thead>
+                    <tr>
+                      <th>Data / IS</th>
+                      <th>Inspecionado / OM</th> <!-- Coluna movida para cá -->
+                      <th>Status</th>
+                      <th>Finalidade</th> <!-- Coluna movida para cá -->
+                      <th>MSG</th>
+                    </tr>
+                  </thead>
                 <tbody id="dataTableBody"></tbody>
               </table></div>
             </div></div></div>
@@ -455,42 +463,30 @@
             });
         }
 
-        function renderTable(dataToRender) {
-            const tBody = document.getElementById('dataTableBody');
-            tBody.innerHTML = '';
-            if (dataToRender.length === 0) { tBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum resultado encontrado.</td></tr>'; return; }
-            
-            const statusMap = {
-                'AGU exames': '<span class="status-pendente">Exames Pendentes</span>',
-                'Conclusão Pendente': '<span class="status-pendente">Conclusões Pendentes</span>',
-                'Concluída': '<span class="status-pendente">Votação Pendente</span>',
-                'Votada JRS': '<span class="status-pendente">Assinatura Pendente</span>'
-            };
+        function renderTable(dataToRender) { 
+            const tBody = document.getElementById('dataTableBody'); 
+            tBody.innerHTML = ''; 
+            if (dataToRender.length === 0) { tBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum resultado encontrado.</td></tr>'; return; } 
+            const statusMap = { 'AGU exames': '<span class="status-pendente">Exames Pendentes</span>', 'Conclusão Pendente': '<span class="status-pendente">Conclusões Pendentes</span>', 'Concluída': '<span class="status-pendente">Votação Pendente</span>', 'Votada JRS': '<span class="status-pendente">Assinatura Pendente</span>' }; 
+            dataToRender.forEach((row, index) => { 
+                const tr = tBody.insertRow(); 
+                const pendingStatuses = ['AGU exames', 'Conclusão Pendente', 'Concluída']; 
+                if (pendingStatuses.includes(row.StatusIS) || row.MSG === 'PENDENTE') { tr.classList.add('table-row-alert'); } 
+                let statusHtml = statusMap[row.StatusIS] || row.StatusIS || ''; 
+                let msgHtml = ''; 
+                if (row.MSG === 'ENVIADA') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--success-color)">check_circle</span>`; } 
+                else if (row.MSG === 'PENDENTE') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--danger-color-vivid)">schedule</span>`; } 
+                else { msgHtml = row.MSG || ''; } 
+                
+                // Células na nova ordem
+                const dateAndIsCell = `<td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>`; 
+                const inspecionadoAndOmCell = `<td><div class="actions-cell-content"><div><div class="table-cell-main">${row.Inspecionado || ''}</div><div class="table-cell-sub">${row.OM || ''}</div></div><span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(${index})">more_vert</span></div></td>`;
+                const statusCell = `<td>${statusHtml}</td>`;
+                const finalidadeCell = `<td>${row.Finalidade||''}</td>`;
+                const msgCell = `<td>${msgHtml}</td>`;
 
-            dataToRender.forEach((row, index) => {
-                const tr = tBody.insertRow();
-                const pendingStatuses = ['AGU exames', 'Conclusão Pendente', 'Concluída'];
-                if (pendingStatuses.includes(row.StatusIS) || row.MSG === 'PENDENTE') {
-                    tr.classList.add('table-row-alert');
-                }
-                let statusHtml = statusMap[row.StatusIS] || row.StatusIS || '';
-                let msgHtml = '';
-                if (row.MSG === 'ENVIADA') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--success-color)">check_circle</span>`;
-                } else if (row.MSG === 'PENDENTE') { msgHtml = `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color:var(--danger-color-vivid)">schedule</span>`;
-                } else { msgHtml = row.MSG || ''; }
-                const dateAndIsCell = `<td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>`;
-                const inspecionadoAndOmCell = `
-                    <td>
-                        <div class="actions-cell-content">
-                            <div>
-                                <div class="table-cell-main">${row.Inspecionado || ''}</div>
-                                <div class="table-cell-sub">${row.OM || ''}</div>
-                            </div>
-                            <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(${index})">more_vert</span>
-                        </div>
-                    </td>`;
-                tr.innerHTML = `${dateAndIsCell}<td>${row.Finalidade||''}</td><td>${statusHtml}</td>${inspecionadoAndOmCell}<td>${msgHtml}</td>`;
-            });
+                tr.innerHTML = dateAndIsCell + inspecionadoAndOmCell + statusCell + finalidadeCell + msgCell; 
+            }); 
         }
       
         function showDetailsModal(index) {
