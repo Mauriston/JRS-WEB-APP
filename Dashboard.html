@@ -481,11 +481,11 @@
                 // Células na nova ordem
                 const dateAndIsCell = `<td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>`; 
                 const inspecionadoAndOmCell = `<td><div class="actions-cell-content"><div><div class="table-cell-main">${row.Inspecionado || ''}</div><div class="table-cell-sub">${row.OM || ''}</div></div><span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(${index})">more_vert</span></div></td>`;
-                const statusCell = `<td>${statusHtml}</td>`;
                 const finalidadeCell = `<td>${row.Finalidade||''}</td>`;
+                const statusCell = `<td>${statusHtml}</td>`;
                 const msgCell = `<td>${msgHtml}</td>`;
 
-                tr.innerHTML = dateAndIsCell + inspecionadoAndOmCell + statusCell + finalidadeCell + msgCell; 
+                tr.innerHTML = dateAndIsCell + inspecionadoAndOmCell + finalidadeCell + statusCell + msgCell; 
             }); 
         }
       
