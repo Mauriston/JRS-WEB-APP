@@ -399,11 +399,11 @@
                               <thead>
                                 <tr>
                                   <!-- COLUNAS REORDENADAS -->
-                                  <th>Data / IS</th>
-                                  <th>Status</th> 
-                                  <th>Inspecionado / OM</th> 
-                                  <th>Finalidade</th> 
+                                  <th>Status</th>
                                   <th>MSG</th>
+                                  <th>Data / IS</th>
+                                  <th>Inspecionado / OM</th> 
+                                  <th>Finalidade</th>
                                 </tr>
                               </thead>
                               <tbody id="dataTableBody"></tbody>
@@ -600,7 +600,7 @@
                     const msgCell = `<td>${msgHtml}</td>`; 
                     
                     // COLUNAS REORDENADAS
-                    tr.innerHTML = dateAndIsCell + statusCell + inspecionadoAndOmCell + finalidadeCell + msgCell; 
+                    tr.innerHTML = statusCell + msgCell + dateAndIsCell +  inspecionadoAndOmCell + finalidadeCell; 
                 } catch(e) { 
                     console.error("Erro ao renderizar linha da tabela:", e, "Índice:", index, "Dados da linha:", row); 
                     try { const errorRow = tBody.insertRow(); errorRow.innerHTML = `<td colspan="5" class="text-center text-danger">Erro ao renderizar linha ${index + 1}.</td>`; } 
@@ -720,4 +720,3 @@
     </script>
 </body>
 </html>
-
