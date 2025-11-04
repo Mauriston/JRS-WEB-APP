@@ -1,203 +1,1231 @@
-
-
-// ================================================================= //
-//                      CONFIGURAÇÕES GLOBAIS                        //
-// ================================================================= //
-
-// --- Configs do Formulário de Inspeção e Dashboard (ORIGINAL) ---
-const ss = SpreadsheetApp.getActiveSpreadsheet();
-const listasRefSheet = ss.getSheetByName('ListasRef');
-const listaControleSheet = ss.getSheetByName('ListaControle');
-const militaresHnreSheet = ss.getSheetByName('MilitaresHNRe');
-const concursosSheet = ss.getSheetByName('ListaConcursos');
-
-// --- Configs do Gerador de Pareceres (NOVO) ---
-const TEMPLATE_IDS = {
-  'Psiquiatria': '1dBBPpAUigm9DFUWqyP0NkTEVGxeHWwKZF8dnoJ7xqP8',
-  'Psicologia': '1eQiRCtmF-V1Etn7fp6AbhTGZbYkqJlLrQYGjLRfePqQ',
-  'Hepatologia': '12-s0h077A6hwipVe4oARcor4cNMKeAGOl6elV-pk_HQ',
-  'Cardiologia': '1woGqRVEpe7hQkqZiPrPn2bUgIgcN7MtImn0plq8fbLE',
-  'Ortopedia': '1qmi93Y_kZpNZEeYcqhSA41KVsZ4gFE1MqkK6kbAsheI'
-};
-// ATENÇÃO: Verifique se o ID da planilha de militares do formulário de pareceres é o mesmo da de inspeções.
-// Se forem planilhas diferentes, mantenha as duas constantes com nomes diferentes.
-// Se for a mesma, pode usar uma só. Abaixo, considerei que podem ser diferentes.
-const SHEET_ID_PARECER_MILITARES = "1yqZYEh2apMezknd0_0sBBEbliV3jwoDEw43FipXwsUQ"; 
-const PDF_FOLDER_ID = "176YQTOOWXuE78Xul49XYpJsVNyu-eZFi";
-
-const PERITO_EMAILS = {
-  'CT Mauriston': 'mauriston.martins@marinha.mil.br',
-  'CT Júlio César': 'julio.xaiver@marinha.mil.br',
-  '1T Salyne': 'salyne.martins@marinha.mil.br',
-  '1T Luz': 'lucas.luz@marinha.mil.br',
-  '2T Trindade': 'marcelo.trindade@marinha.mil.br'
-};
-
-// ================================================================= //
-//          ROTEADOR PRINCIPAL E FUNÇÕES DE SERVIÇO WEB              //
-// ================================================================= //
-
-function doGet(e) {
-  let page = e.parameter.page;
-  if (page == 'dashboard') {
-    return HtmlService.createTemplateFromFile('Dashboard').evaluate().setTitle('Dashboard JRS').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-  } else if (page == 'parecer') {
-    return HtmlService.createTemplateFromFile('Parecer').evaluate().setTitle('Gerador de Pareceres').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-  }
-  // Página padrão é 'formulario'
-  return HtmlService.createTemplateFromFile('Formulario').evaluate().setTitle('Formulário JRS').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-}
-
-function getWebAppUrl() {
-  return ScriptApp.getService().getUrl();
-}
-
-// ================================================================= //
-//     FUNÇÕES DO FORMULÁRIO DE INSPEÇÃO E DASHBOARD (ORIGINAL)      //
-// ================================================================= //
-
-function getDropdownData() {
-  try {
-    const omOptions = listasRefSheet.getRange('B2:B' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const pgOptions = listasRefSheet.getRange('C2:C' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const finalidadeOptions = listasRefSheet.getRange('A2:A' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const statusOptions = listasRefSheet.getRange('F2:F' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const restricoesOptions = listasRefSheet.getRange('G2:G' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    return { omOptions, pgOptions, finalidadeOptions, statusOptions, restricoesOptions };
-  } catch (e) {
-    console.error("Erro em getDropdownData: " + e.message);
-    throw new Error("Não foi possível buscar os dados para os menus.");
-  }
-}
-
-// FUNÇÃO RENOMEADA
-function getHnreMilitaryDataForForm() {
-  try {
-    const data = militaresHnreSheet.getRange('A2:C' + militaresHnreSheet.getLastRow()).getValues();
-    return data.map(row => ({ inspecionado: row[2], pg: row[0], nip: row[1] })).filter(m => m.inspecionado);
-  } catch (e) {
-    console.error("Erro em getHnreMilitaryDataForForm: " + e.message);
-    throw new Error("Não foi possível buscar os dados dos militares.");
-  }
-}
-
-function addNewInspection(formData) {
-  try {
-    const headers = listaControleSheet.getRange(1, 1, 1, listaControleSheet.getLastColumn()).getValues()[0];
-    let restricoesString = formData.restricoes.join(', ');
-    if (formData.restricoes.includes('Outros') && formData.outrosRestricao) {
-      restricoesString = restricoesString.replace('Outros', `Outros: ${formData.outrosRestricao}`);
-    }
-
-    const rowData = {
-      'OM': formData.om,
-      'Inspecionado': formData.inspecionado,
-      'P/G/Q': formData.pg,
-      'NIP': formData.nip,
-      'IS': formData.is,
-      'Finalidade': formData.finalidade,
-      'DataEntrevista': formData.dataEntrevista,
-      'StatusIS': formData.statusIS,
-      'TIS': formData.tis,
-      'DS-1a': formData.ds1a,
-      'Laudo': formData.laudo,
-      'DataLaudo': formData.dataLaudo,
-      'Restrições': restricoesString
-    };
-
-    const newRow = headers.map(header => rowData[header] || null);
-    listaControleSheet.appendRow(newRow);
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Oswald:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    return { status: 'success', message: 'Inspeção adicionada com sucesso!' };
-  } catch(e) {
-    console.error("Erro em addNewInspection: " + e.message);
-    return { status: 'error', message: `Falha ao adicionar: ${e.message}` };
-  }
-}
+    <style>
+      :root {
+        --primary-color: #050f41;
+        --danger-color: #990000; /* Usado para Cancelada, Faltou */
+        --danger-color-vivid: #d9534f; /* Usado para pendências: Conclusão, Votação, Assinatura */
+        --danger-color-light: #fef5f5;
+        --success-color: #146c43; /* Usado para TIS Assinado */
+        --link-color: #0d6efd;
+        --warning-color: #FAB932; /* Cor amarela para Auditoria, JSD, Remarcada, Restituída */
+        --info-color: #6c757d; /* Cinza escuro médio para Agendada */
+        --secondary-color: #adb5bd; /* Cinza claro para AGU Exames (Se necessário) */
+        --font-oswald: 'Oswald', sans-serif;
+        --font-carlito: 'Carlito', sans-serif;
+        --light-gray-1: #fcfcfc;
+        --dark-gray-3: #6c757d; 
+        --card-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); /* Sombra para card elevado */
+        --card-shadow-hover: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); /* Sombra mais pronunciada no hover */
+      }
+      body {
+        font-family: var(--font-carlito);
+        background-color: #f4f4f9; /* Fundo cinza claro */
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+      .container-main { 
+        max-width: 1400px; 
+        margin: 20px auto; 
+        background-color: transparent; 
+        border-radius: 0; 
+        box-shadow: none; 
+        overflow: visible; 
+      }
+      .header-box { 
+        display: flex; 
+        align-items: center; 
+        background-color: var(--primary-color); 
+        color: #fff; 
+        padding: 20px 30px; 
+        border-radius: 8px; 
+        margin-bottom: 20px; 
+        box-shadow: var(--card-shadow); 
+      }
+      .header-logo { height: 65px; margin-right: 25px; }
+      .header-text h1 { font-family: var(--font-oswald); font-size: 32px; margin: 0; font-weight: 700; line-height: 1.1; }
+      .header-text p { font-family: var(--font-carlito); font-size: 18px; margin: 5px 0 0; opacity: .9; }
+      
+      .header-actions{display:flex;margin-left:auto;gap:15px}
+      .IconButton{display:flex;align-items:center;justify-content:center;width:55px;height:55px;border-radius:50%;background-color:rgba(255,255,255,0.1);color:#fff;cursor:pointer;transition:background-color .2s ease-in-out; text-decoration: none;}
+      .IconButton:hover{background-color:rgba(255,255,255,0.2)}
+      .IconButton .material-symbols-outlined { 
+        font-size: 30px; 
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; 
+        vertical-align: middle;
+      } 
 
-function getDashboardData() {
-  try {
-    const rotinaData = listaControleSheet.getRange('A2:N' + listaControleSheet.getLastRow()).getValues();
-    const concursoData = concursosSheet.getRange('A2:I' + concursosSheet.getLastRow()).getValues();
+      .dashboard-content { padding: 0; }
+      
+      .title-filter-card {
+        padding: 20px 20px 10px 20px;
+      }
+      .dashboard-title-wrapper { 
+        display: flex; 
+        justify-content: center; 
+        width: 100%; 
+        margin-bottom: 20px; 
+        padding: 0; 
+        background-color: transparent; 
+        box-shadow: none; 
+      } 
+      .dashboard-title, .section-title { 
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-oswald); font-size: 32px; font-weight: 700; 
+        text-transform: uppercase; gap: 15px; color: #333;
+      }
+      .dashboard-title { margin-bottom: 0; }
+      .section-title { margin-top: 40px; margin-bottom: 25px; }
+      .dashboard-title .material-symbols-outlined,
+      .section-title .material-symbols-outlined { 
+        font-size: 38px !important; 
+        font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48; 
+        vertical-align: middle;
+      }
 
-    const dashboardData = rotinaData.map(r => ({
-      EventDate: r[1] ? new Date(r[1]).toLocaleDateString('pt-BR') : '', StatusIS: r[7], Finalidade: r[2], MSG: r[13], type: 'Rotina'
-    }));
-    concursoData.forEach(r => {
-      dashboardData.push({
-        EventDate: r[0] ? new Date(r[0]).toLocaleDateString('pt-BR') : '', StatusIS: r[8], Finalidade: r[6], MSG: '', type: 'Concurso'
-      });
-    });
+      .kpi-value { margin-bottom: 0.5rem !important; }
+      #loader { text-align: center; padding: 50px; }
+      
+      .card-elevated {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid #e9e9e9; 
+        transition: box-shadow .3s cubic-bezier(.25,.8,.25,1); 
+        margin-bottom: 20px; 
+        overflow: hidden; 
+      }
 
-    const tableData = rotinaData.map(r => ({
-      DataEntrevista: r[1] ? new Date(r[1]).toLocaleDateString('pt-BR') : '', IS: r[0], Finalidade: r[2], StatusIS: r[7], Inspecionado: r[6], OM: r[3], 'P/G/Q': r[4], NIP: r[5], Laudo: r[9], DataLaudo: r[8] ? new Date(r[8]).toLocaleDateString('pt-BR') : '', Restrições: r[10], TIS: r[11], 'DS-1a': r[12], MSG: r[13],
-    }));
-    return { dashboardData, tableData };
-  } catch(e) {
-    console.error("Erro em getDashboardData: " + e.message);
-    throw new Error("Falha ao carregar dados do Dashboard.");
-  }
-}
+      /* Regras de altura e flex para os blocos de KPI */
+      .kpi-block { 
+        border: none; 
+        padding: 1.2rem; 
+        height: 100%; 
+        box-shadow: none; 
+        border-radius: 0; 
+        margin-bottom: 0; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: space-around; /* Distribui o conteúdo */
+      }
+      .kpi-block-alert { 
+        background-color: var(--danger-color-light); 
+        display: flex; 
+        flex-direction: column; 
+        height: 100%; 
+        justify-content: space-around; /* Distribui o conteúdo */
+      }
+      .kpi-item { margin-bottom: 0.5rem; }
+      .kpi-title { font-family: var(--font-oswald); text-transform: uppercase; font-weight: 800; color: #555; display: flex; align-items: center; gap: 8px; }
+      .kpi-value { font-family: var(--font-oswald); font-weight: 700; line-height: 1; margin: 0; }
+      .kpi-title .material-symbols-outlined {
+          font-size: 1.1em; 
+          vertical-align: middle;
+          font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; 
+      }
+      
+      .kpi-item.level-1 .kpi-title { font-size: 1.2rem; }
+      .kpi-item.level-1 .kpi-value { font-size: 5rem; }
+      .kpi-item.level-2 .kpi-title { font-size: 1.1rem; }
+      .kpi-item.level-2 .kpi-value { font-size: 3.5rem; }
+      .kpi-item.level-3 .kpi-title { font-size: 0.9rem; }
+      .kpi-item.level-3 .kpi-value { font-size: 2.2rem; }
 
-// ================================================================= //
-//           FUNÇÕES DO GERADOR DE PARECERES (NOVO MÓDULO)           //
-// ================================================================= //
+      .kpi-block-alert .kpi-title, .kpi-block-alert .kpi-value { color: var(--danger-color); }
+      .kpi-block-alert .kpi-title { color: var(--danger-color-vivid); }
+      .text-alert-vivid .kpi-title,
+      .text-alert-vivid .kpi-value,
+      .text-alert-vivid .material-symbols-outlined { color: var(--danger-color-vivid) !important; }
+      
+      /* Fontes aumentadas para o card de alerta */
+      .kpi-block-alert .kpi-item.level-2 .kpi-title { 
+        font-size: 1.3rem; /* Aumentado */
+      }
+      .kpi-block-alert .kpi-item.level-2 .kpi-value { 
+        font-size: 4.5rem; /* Aumentado */
+      }
 
-// FUNÇÃO RENOMEADA
-function getHnreMilitaryDataForParecer() {
-  try {
-    const sheet = SpreadsheetApp.openById(SHEET_ID_PARECER_MILITARES).getSheetByName("MILITAR"); // Usando a constante específica
-    const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
-    const militaryList = data.filter(row => row[2] === "HNRE" && row[1]).map(row => ({ nip: row[0], name: row[1], posto: row[3] })).sort((a, b) => a.name.localeCompare(b.name));
-    return militaryList;
-  } catch (e) {
-    Logger.log('Erro em getHnreMilitaryDataForParecer: ' + e.toString());
-    return { error: e.toString() };
-  }
-}
+      .chart-container { background-color: transparent; padding: 20px; height: 400px; border: none; box-shadow: none; border-radius: 0; margin-bottom: 0; } 
+      .table-container { background-color: transparent; padding: 20px; box-shadow: none; border-radius: 0; margin-bottom: 0; } 
+      
+      .table-cell-main { font-weight: bold; color: #333; }
+      .table-cell-sub { font-size: 0.8em; color: var(--dark-gray-3); }
+      
+      .table-row-alert td, 
+      .table-row-alert .table-cell-main,
+      .table-row-alert .table-cell-sub {
+        background-color: var(--danger-color-light) !important;
+        color: var(--danger-color) !important;
+        font-weight: bold !important;
+      }
+      .table-hover > tbody > tr.table-row-alert:hover > * {
+        --bs-table-hover-bg: #f5e3e3;
+        background-color: var(--bs-table-hover-bg) !important;
+        color: var(--danger-color) !important;
+      }
+      
+      /* Estilo para ícone de ação na tabela */
+      .actions-cell-content { display: flex; justify-content: space-between; align-items: center; }
+      td .actions-cell-content .actions-icon { flex-shrink: 0; } 
+      .actions-icon { cursor: pointer; color: #777; }
+      .actions-icon:hover { color: #000; }
+      
+      /* --- ÍCONE DE AÇÃO (AJUSTADO) --- */
+      .actions-icon.material-symbols-outlined {
+         font-size: 1.8em;  /* Ajustado de 1.3em para 1.8em */
+         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; 
+         vertical-align: middle;
+      }
+      
+      /* Estilo para ícones de status na tabela */
+      .status-icon {
+          font-size: 1.8em; /* Tamanho do ícone aumentado */
+          vertical-align: middle;
+          margin-right: 8px; /* Espaço entre ícone de status e ícone de ação */
+          font-variation-settings: 'FILL' 1, 'wght' 400; /* Preenchido, peso normal por padrão */
+      }
+      
+      .modal-header { background-color: var(--primary-color); color: white; }
+      .modal-header .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+      .modal-body span { font-family: var(--font-oswald); text-transform: uppercase; color: #050f41; font-size: 1.2rem;}
+      .modal-body p { margin-bottom: 1rem; background-color: #f8f9fa; padding: 8px; border-radius: 4px; }
+      #modalDetailsInspecionado { font-size: 1.5rem; font-weight: bold; font-family: var(--font-oswald); background-color: transparent; padding-left: 0; }
+      .modal-body .d-none { display: none !important; }
 
-function processForm(formData) {
-  try {
-    const pdfFolder = DriveApp.getFolderById(PDF_FOLDER_ID);
-    const templateId = TEMPLATE_IDS[formData.ESPECIALIDADE];
-    const templateDoc = DriveApp.getFileById(templateId);
-    const newDocName = `Parecer - ${formData.NOME} - ${new Date().toLocaleDateString('pt-BR')}`;
-    const newDocFile = templateDoc.makeCopy(newDocName, pdfFolder);
-    const doc = DocumentApp.openById(newDocFile.getId());
-    const body = doc.getBody();
-    let peritoFullName = getPeritoFullName(formData.PERITO_SELECAO);
-    let posto = getPeritoPosto(formData.PERITO_SELECAO);
-    let membroValue = '';
-    switch (formData.PERITO_SELECAO) { case 'CT Mauriston': membroValue = 'Presidente'; break; case 'CT Júlio César': membroValue = 'Médico Perito Isolado'; break; case '1T Salyne': case '1T Luz': membroValue = 'Membro da Junta Regular de Saúde'; break; case '2T Trindade': membroValue = 'Médico Perito Isolado'; break; }
-    const hoje = new Date(); const dia = hoje.getDate(); const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]; const nomeMes = meses[hoje.getMonth()]; const ano = hoje.getFullYear(); const dataAtual = `${dia} de ${nomeMes} de ${ano}`;
-    body.replaceText(`{{NOME}}`, formData.NOME || ''); body.replaceText(`{{GRAU_HIERARQUICO}}`, formData.GRAU_HIERARQUICO || ''); body.replaceText(`{{NIP_MAT}}`, formData.NIP_MAT || ''); body.replaceText(`{{FINALIDADE_INSP}}`, formData.FINALIDADE_INSP || ''); body.replaceText(`{{INFO_COMPLEMENTARES}}`, formData.INFO_COMPLEMENTARES || ''); body.replaceText(`{{PERITO}}`, peritoFullName.toUpperCase()); body.replaceText(`{{POSTO}}`, posto); body.replaceText(`{{DATA}}`, dataAtual); body.replaceText(`{{MEMBRO}}`, membroValue);
-    doc.saveAndClose();
-    const pdfFile = pdfFolder.createFile(newDocFile.getAs(MimeType.PDF)).setName(newDocName + ".pdf");
-    pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    newDocFile.setTrashed(true);
-    return { success: true, pdfUrl: pdfFile.getUrl(), pdfId: pdfFile.getId() };
-  } catch (error) {
-    Logger.log('Erro em processForm: ' + error.toString());
-    return { success: false, message: error.toString() };
-  }
-}
+      .global-filter-bar { 
+        background-color: transparent; 
+        padding: 0 1rem 1rem 1rem; 
+        border: none; 
+        box-shadow: none; 
+        border-radius: 0; 
+        margin-bottom: 0; 
+      } 
+      .global-filter-bar .form-label { font-family: var(--font-oswald); font-weight: 700; text-transform: uppercase; font-size: 0.9rem; color: #555; }
+      
+      /* --- ESTILO PARA CHIP FILTER (ATUALIZADO) --- */
+      .chip-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-family: var(--font-oswald);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--card-shadow);
+        user-select: none; /* Impede seleção de texto */
+        background-color: #e9ecef; /* Cor inativa CINZA */
+        color: #495057;
+        border: 1px solid #e9ecef;
+      }
+      .chip-filter .material-symbols-outlined {
+        font-size: 1.2em;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+        transition: all 0.3s ease;
+        color: #495057; /* Cor do ícone inativo */
+      }
+      .chip-filter.active {
+        background-color: var(--dark-gray-3); /* Cor ativa CINZA */
+        color: #fff;
+        box-shadow: var(--card-shadow-hover);
+      }
+      .chip-filter.active .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 700;
+        color: #fff; /* Cor do ícone ativo */
+      }
+      
+      /* Estilo para o chip de PERIGO (IS Pendentes) */
+      .chip-filter.chip-danger {
+        background-color: var(--danger-color-light);
+        color: var(--danger-color-vivid);
+        border: 1px solid var(--danger-color-vivid);
+      }
+      .chip-filter.chip-danger .material-symbols-outlined {
+        color: var(--danger-color-vivid);
+      }
+      .chip-filter.chip-danger.active {
+        background-color: var(--danger-color-vivid); /* Cor ativa VERMELHA */
+        color: #fff;
+      }
+      .chip-filter.chip-danger.active .material-symbols-outlined {
+        color: #fff;
+      }
 
-function sendPdfByEmail(pdfId, formData, emailTarget) {
-  try {
-    const pdfFile = DriveApp.getFileById(pdfId);
-    const peritoSelecionado = formData.PERITO_SELECAO;
-    const peritoEmail = PERITO_EMAILS[peritoSelecionado] || '';
-    const peritoFullName = getPeritoFullName(peritoSelecionado);
-    const recipient = emailTarget === 'zimbra' ? peritoEmail : 'hnre.jrs@marinha.mil.br';
-    const subject = `SOL PARECER PSIQ ${formData.GRAU_HIERARQUICO} ${formData.NOME}`;
-    const body = `TRM em anexo SOL de parecer psiquiátrico para conclusão de IS ${formData.FINALIDADE_INSP} atinente a ${formData.NIP_MAT} ${formData.GRAU_HIERARQUICO} ${formData.NOME}.<br><br>Atenciosamente,<br><br><b>${peritoFullName.toUpperCase()}</b><br>JRS/HNRe`;
-    MailApp.sendEmail({ to: recipient, subject: subject, htmlBody: body, name: peritoFullName, replyTo: peritoEmail, attachments: [pdfFile.getAs(MimeType.PDF)] });
-    return { success: true, message: 'E-mail enviado para ' + recipient };
-  } catch (e) {
-    Logger.log('Erro em sendPdfByEmail: ' + e.toString());
-    return { success: false, message: 'Erro ao enviar e-mail: ' + e.toString() };
-  }
-}
+      /* Estilo para o chip de AVISO (Em Revisão / Restituídas) */
+      .chip-filter.chip-warning {
+        background-color: #fff8e1;
+        color: #FAB932;
+        border: 1px solid #FAB932;
+      }
+      .chip-filter.chip-warning .material-symbols-outlined {
+        color: #FAB932;
+      }
+      .chip-filter.chip-warning.active {
+        background-color: #FAB932; /* Cor ativa Amarela */
+        color: #fff;
+      }
+      .chip-filter.chip-warning.active .material-symbols-outlined {
+        color: #fff;
+      }
 
-function getPeritoFullName(peritoSelection) { const nomes = { 'CT Mauriston': 'Mauriston Renan Martins Silva', 'CT Júlio César': 'Júlio César Xavier Filho', '1T Salyne': 'Salyne Regina Martins Roberto', '1T Luz': 'Lucas Luz Nunes', '2T Trindade': 'Marcelo Fulco Trindade' }; return nomes[peritoSelection] || ''; }
-function getPeritoPosto(peritoSelection) { const postos = { 'CT Mauriston': 'Capitão-Tenente (Md)', '1T Salyne': 'Primeiro-Tenente (Md)', '1T Luz': 'Primeiro-Tenente (Md)', 'CT Júlio César': 'Capitão-Tenente (RM2-Md)', '2T Trindade': 'Segundo-Tenente (RM2-Md)' }; return postos[peritoSelection] || ''; }
+      /* --- ESTILOS CORRIGIDOS PARA O FILTRO DE FINALIDADE --- */
+      .purpose-filter-menu {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .purpose-filter-menu .purpose-item-wrapper { /* Alvo: o novo div */
+        display: flex;
+        align-items: center;
+        padding: .25rem 1rem;
+        cursor: pointer;
+      }
+      .purpose-filter-menu .purpose-item-wrapper:hover {
+        background-color: #f8f9fa; /* Efeito hover */
+      }
+      .purpose-filter-menu .form-check-input {
+        margin-right: 10px;
+        cursor: pointer;
+      }
+      .purpose-filter-menu .form-check-label { /* Alvo: o label */
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 0; 
+      }
+      .purpose-filter-menu li:has(button.dropdown-item) {
+        padding: 0;
+      }
+      .purpose-filter-menu button.dropdown-item { /* Estilo do botão "Limpar" */
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        color: var(--link-color);
+      }
+
+      /* --- NOVO CSS PARA O MODAL DE EDIÇÃO --- */
+      #editModal .form-label {
+        font-family: var(--font-oswald);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        color: #555;
+      }
+      #editModal h5 {
+        font-family: var(--font-oswald);
+      }
+      /* Corpo do accordion de restrições */
+      .restricoes-accordion-body {
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 1rem;
+      }
+      .restricoes-accordion-body .form-check {
+        margin-bottom: 0.5rem;
+      }
+
+    </style>
+</head>
+<body>
+    <div class="container-main">
+      <div class="header-box"> 
+        <img src="https://i.imgur.com/KUbQz08.png" alt="Logo HNRe" class="header-logo">
+        <div class="header-text">
+          <h1>JUNTA REGULAR DE SAÚDE</h1>
+          <p>HOSPITAL NAVAL DE RECIFE</p>
+        </div>
+        <div class="header-actions">
+            <div class="IconButton" onclick="navigateTo('formulario')" title="Formulário de Inspeção"><span class="material-symbols-outlined">description</span></div>
+            <div class="IconButton" onclick="navigateTo('parecer')" title="Gerar Parecer"><span class="material-symbols-outlined">edit_note</span></div>
+        </div>
+      </div>
+      
+      <div class="dashboard-content">
+        <div class="card-elevated title-filter-card"> 
+            <div class="dashboard-title-wrapper"> 
+                <h2 class="dashboard-title">
+                  <span class="material-symbols-outlined">medical_information</span>
+                  INSPEÇÕES DE SAÚDE
+                </h2>
+            </div>
+            <div class="global-filter-bar">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="yearFilter" class="form-label">Ano</label>
+                        <select id="yearFilter" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="monthFilter" class="form-label">Mês</label>
+                        <select id="monthFilter" class="form-select"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loader" class="text-center card-elevated" style="padding: 50px;"> 
+            <div class="spinner-border" style="width: 3rem; height: 3rem; color: var(--primary-color);" role="status"></div>
+            <p class="mt-2">A carregar dados...</p>
+        </div>
+
+        <div id="mainContent" class="d-none">
+            
+            <div class="row g-4 mb-4"> 
+              <div class="col-lg-6">
+                <div class="card-elevated h-100"> 
+                  <div class="kpi-block">
+                    <div class="kpi-item level-1 text-center"><p class="kpi-value" id="kpiTotal">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">summarize</span>Total de Inspeções</h6></div><hr>
+                    <div class="row text-center"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiTisSigned">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">check_circle</span>TIS Assinados</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgEnviada" style="color:var(--success-color);">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">mark_email_read</span>MSG Enviadas</h6></div></div><hr>
+                    <div class="row text-center"><div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiAuditoria">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">policy</span>Auditoria CPMM</h6></div><div class="col-6 kpi-item level-3"><p class="kpi-value" id="kpiJsd">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">manage_search</span>Revisão JSD</h6></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card-elevated h-100"> 
+                  <div class="kpi-block kpi-block-alert">
+                    <div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">unsubscribe</span>MSG Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiExamesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">lab_profile</span>Exames Pendentes</h6></div></div></div><hr class="my-0"><div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiConclusoesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">help</span>Conclusões Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiVotacaoPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">gavel</span>Votações Pendentes</h6></div></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row g-4 mb-4 justify-content-center"> 
+                <div class="col-md-6 col-lg-5">
+                    <div class="card-elevated"> 
+                      <div class="kpi-block">
+                          <div class="row text-center">
+                             <div class="col-6 kpi-item level-3" id="kpi-item-cancelada"><p class="kpi-value" id="kpiCancelada">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">cancel</span>Canceladas</h6></div>
+                             <div class="col-6 kpi-item level-3" id="kpi-item-faltas"><p class="kpi-value" id="kpiFaltou">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">person_off</span>Faltas</h6></div>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4"> 
+              <div class="col-lg-4">
+                  <div class="card-elevated"> 
+                      <div class="chart-container">
+                          <h4 class="text-center" style="font-family: 'Oswald', sans-serif;" id="finalidadeChartTitle"></h4>
+                          <div id="purposeDonutChart"></div>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-lg-4">
+                  <div class="card-elevated"> 
+                      <div class="chart-container">
+                          <h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Entrevistas por Mês</h4>
+                          <div id="interviewsBarChart"></div>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-lg-4">
+                  <div class="card-elevated"> 
+                      <div class="chart-container">
+                          <h4 class="text-center" style="font-family: 'Oswald', sans-serif;">Tipo de Inspeção</h4>
+                          <div id="tipoInspecaoPieChart"></div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card-elevated"> 
+                        <div class="table-container">
+                          <h2 class="section-title"><span class="material-symbols-outlined">patient_list</span> DETALHES DAS INSPEÇÕES</h2>
+                          
+                          <div class="row g-3 mb-3 align-items-end">
+                            <div class="col-md-3"> 
+                                <input type="text" id="searchInput" class="form-control mb-2" placeholder="Buscar por nome...">
+                                <div class="dropdown">
+                                  <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="purposeFilterButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    Finalidades
+                                  </button>
+                                  <ul class="dropdown-menu w-100 purpose-filter-menu" id="purposeFilterMenu" aria-labelledby="purposeFilterButton">
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-9 d-flex align-items-center justify-content-start pb-1 gap-2 flex-wrap">
+                                <div class="chip-filter" id="agendadasFilter" title="Filtrar IS Agendadas">
+                                  <span class="material-symbols-outlined">event_available</span>
+                                  IS Agendadas
+                                </div>
+                                <div class="chip-filter chip-danger" id="isPendenteFilter" title="Filtrar IS com pendência de status">
+                                  <span class="material-symbols-outlined">pending_actions</span>
+                                  IS Pendentes
+                                </div>
+                                <div class="chip-filter" id="pendingMsgFilter" title="Filtrar mensagens pendentes">
+                                  <span class="material-symbols-outlined">unsubscribe</span>
+                                  MSG Pendente
+                                </div>
+                                <div class="chip-filter chip-warning" id="revisaoFilter" title="Filtrar inspeções Em Revisão">
+                                  <span class="material-symbols-outlined">manage_search</span>
+                                  Em Revisão
+                                </div>
+                                <div class="chip-filter chip-warning" id="restituidaFilter" title="Filtrar inspeções Restituídas">
+                                  <span class="material-symbols-outlined">arrow_circle_left</span>
+                                  Restituídas
+                                </div>
+                                <div class="chip-filter chip-danger" id="faltasFilter" title="Filtrar Faltas">
+                                  <span class="material-symbols-outlined">person_off</span>
+                                  Faltas
+                                </div>
+                                <div class="chip-filter chip-danger" id="canceladasFilter" title="Filtrar IS Canceladas">
+                                  <span class="material-symbols-outlined">event_busy</span>
+                                  IS Canceladas
+                                </div>
+                            </div>
+                          </div>
+
+                          <div class="table-responsive">
+                            <table class="table table-hover">
+                              <thead>
+                                <tr>
+                                  <th>Status</th>
+                                  <th>MSG</th>
+                                  <th>Data / IS</th>
+                                  <th>Inspecionado / OM</th> 
+                                  <th>Finalidade</th>
+                                </tr>
+                              </thead>
+                              <tbody id="dataTableBody"></tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="detailsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Detalhes da Inspeção</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="modalDetailsInspecionado"></p><p id="modalDetailsFinalidade"></p><hr><div id="laudo-section"><span>Laudo</span><p id="modalDetailsLaudo"></p></div><div id="restricoes-section"><span>Restrições</span><p id="modalDetailsRestricoes"></p></div><div class="row"><div class="col-md-4" id="dataLaudo-section"><span>Data do Laudo</span><p id="modalDetailsDataLaudo"></p></div><div class="col-md-4" id="tis-section"><span>TIS</span><p id="modalDetailsTis"></p></div><div class="col-md-4" id="ds1a-section"><span>DS-1a</span><p id="modalDetailsDs1a"></p></div></div><div id="minuta-msg-section" class="accordion mt-3 d-none"><div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinuta">MINUTA MSG</button></h2><div id="collapseMinuta" class="accordion-collapse collapse"><div class="accordion-body"><p id="modalMinutaMsgText" style="white-space: pre-wrap;"></p></div></div></div></div></div></div></div></div>
+    
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <form id="editForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editModalLabel">Editar Conclusão da Inspeção</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Inspecionado:</strong> <span id="editModalInspecionado"></span></p>
+              <p><strong>IS:</strong> <span id="editModalIS"></span></p>
+              <input type="hidden" id="editIsNumber">
+              
+              <hr>
+              
+              <div class="mb-3">
+                <label for="editLaudo" class="form-label">Laudo</label>
+                <textarea class="form-control" id="editLaudo" rows="3"></textarea>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="editDataLaudo" class="form-label">Data do Laudo</label>
+                  <input type="date" class="form-control" id="editDataLaudo">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="editTis" class="form-label">TIS</label>
+                  <input type="text" class="form-control" id="editTis">
+                </div>
+                <div class="col-md-6">
+                  <label for="editDs1a" class="form-label">DS-1a (Código)</label>
+                  <input type="text" class="form-control" id="editDs1a">
+                </div>
+              </div>
+
+              <div class="accordion" id="editRestricoesAccordion">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="edit-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edit-collapseOne" aria-expanded="false" aria-controls="edit-collapseOne">
+                      Restrições
+                    </button>
+                  </h2>
+                  <div id="edit-collapseOne" class="accordion-collapse collapse" aria-labelledby="edit-headingOne" data-bs-parent="#editRestricoesAccordion">
+                    <div class="accordion-body restricoes-accordion-body" id="editRestricoesBody">
+                      </div>
+                    <div class="input-group p-3 d-none" id="editOutrosRestricaoContainer">
+                      <span class="input-group-text">Outros:</span>
+                      <input type="text" class="form-control" id="editOutrosRestricaoText">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="saveEditButton">Salvar Alterações</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        // --- VARIÁVEIS GLOBAIS ---
+        let allDashboardData = []; let allTableData = []; let filteredData = []; 
+        let detailsModalInstance;
+        let editModalInstance; // Nova variável global
+        let allRestricoes = []; // Nova variável global
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => { 
+            console.log("DOM Carregado. Inicializando..."); 
+            detailsModalInstance = new bootstrap.Modal(document.getElementById('detailsModal')); 
+            editModalInstance = new bootstrap.Modal(document.getElementById('editModal')); // Inicializa o novo modal
+
+            document.getElementById('loader').classList.remove('d-none'); 
+            document.getElementById('mainContent').classList.add('d-none'); 
+            initializeTooltips(); 
+            
+            // Adiciona listener para o formulário do novo modal
+            document.getElementById('editForm').addEventListener('submit', handleEditFormSubmit);
+
+            google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onDataError).getDashboardData(); 
+            console.log("Chamada para getDashboardData enviada."); 
+        });
+
+        // --- FUNÇÃO PARA INICIALIZAR TOOLTIPS ---
+        function initializeTooltips() {
+            console.log("Inicializando tooltips...");
+            tooltipList.forEach(tooltip => tooltip.dispose());
+            tooltipList = [];
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {html: true}); 
+            });
+            console.log(`${tooltipList.length} tooltips inicializados.`);
+        }
+
+        // --- CALLBACKS DE CARREGAMENTO DE DADOS (ATUALIZADO) ---
+        function onDataLoaded(response) { 
+            console.log("Dados recebidos do backend:", response); 
+            try { 
+                if (!response || !Array.isArray(response.dashboardData) || !Array.isArray(response.tableData) || !Array.isArray(response.restricoesOptions)) { 
+                    throw new Error("Formato de dados recebido do backend é inválido (faltando dashboardData, tableData ou restricoesOptions)."); 
+                } 
+                allDashboardData = response.dashboardData.map(row => { const date = parseDate(row.EventDate); if (!date && row.EventDate) { console.warn("Data inválida encontrada em dashboardData:", row.EventDate, row); } return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null}; }); 
+                allTableData = response.tableData; 
+                allRestricoes = response.restricoesOptions; // Salva a lista de restrições
+                
+                console.log("Dados processados:", { allDashboardData, allTableData, allRestricoes }); 
+                document.getElementById('loader').classList.add('d-none'); 
+                document.getElementById('mainContent').classList.remove('d-none'); 
+                console.log("Loader escondido, conteúdo principal mostrado."); 
+                
+                populateGlobalFilters(allDashboardData); 
+                applyGlobalFilters(); 
+                populateFilters(allTableData);
+                populateEditModalOptions(allRestricoes); // Popula o novo modal
+                applyFilters(); 
+                addEventListeners(); 
+                console.log("Listeners de eventos adicionados."); 
+            } catch(e) { 
+                console.error("Erro fatal dentro de onDataLoaded: ", e); 
+                onDataError(e); 
+            } 
+        }
+        function onDataError(error) { console.error('Falha ao carregar ou processar os dados:', error); const loader = document.getElementById('loader'); loader.innerHTML = `<div class="alert alert-danger">Erro ao carregar dados: ${error.message || 'Erro desconhecido'}. Verifique o console para mais detalhes.</div>`; loader.classList.remove('d-none'); document.getElementById('mainContent').classList.add('d-none'); }
+        
+        // --- FUNÇÕES DE LÓGICA DO DASHBOARD ---
+        function updateKPIs(data) { try { const countIn = (arr, column, value) => arr.filter(row => row && row[column] === value).length; const validData = data.filter(row => row && row.StatusIS !== 'Faltou'); document.getElementById('kpiTotal').textContent = validData.length; document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado'); document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames'); document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente'); document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída'); document.getElementById('kpiFaltou').textContent = data.length - validData.length; const rotinaData = data.filter(row => row && row.type === 'Rotina'); document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA'); document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria'); document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD'); document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE'); document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada'); document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0); document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0); } catch (e) { console.error("Erro ao atualizar KPIs:", e); } }
+        
+        // --- FUNÇÃO populateFilters (CORRIGIDA) ---
+        function populateFilters(tableData) { 
+            try { 
+                const purposeMenu = document.getElementById('purposeFilterMenu');
+                purposeMenu.innerHTML = ''; // Limpa
+                const purposes = [...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())]; 
+                
+                purposeMenu.innerHTML += '<li><button class="dropdown-item" type="button" id="clearPurposeFilter">Limpar Seleção</button></li>';
+                purposeMenu.innerHTML += '<li><hr class="dropdown-divider"></li>';
+
+                purposes.forEach((p, index) => {
+                  const li = document.createElement('li');
+                  const uniqueId = 'check-purpose-' + index; 
+                  li.innerHTML = `
+                    <div class="purpose-item-wrapper form-check">
+                      <input type="checkbox" class="form-check-input purpose-filter-item" value="${p}" id="${uniqueId}">
+                      <label class="form-check-label" for="${uniqueId}">${p}</label>
+                    </div>
+                  `;
+                  purposeMenu.appendChild(li);
+                });
+                
+                console.log("Filtros da tabela populados (Finalidade com checkboxes corrigido)."); 
+            } catch (e) { 
+                console.error("Erro ao popular filtros da tabela:", e); 
+            } 
+        }
+
+        // --- NOVA FUNÇÃO PARA POPULAR O MODAL DE EDIÇÃO ---
+        function populateEditModalOptions(restricoes) {
+          try {
+            const container = document.getElementById('editRestricoesBody');
+            container.innerHTML = ''; // Limpa
+            
+            restricoes.forEach((item, index) => {
+              const uniqueId = 'edit-check-' + index;
+              const isOutros = item === 'Outros';
+              const checkHtml = `
+                <div class="form-check">
+                  <input class="form-check-input edit-restricao-item" type="checkbox" value="${item}" id="${uniqueId}" ${isOutros ? 'onclick="toggleEditOutros(this.checked)"' : ''}>
+                  <label class="form-check-label" for="${uniqueId}">${item}</label>
+                </div>
+              `;
+              container.innerHTML += checkHtml;
+            });
+            console.log("Modal de edição populado com restrições.");
+          } catch(e) {
+            console.error("Erro ao popular restrições do modal de edição:", e);
+          }
+        }
+        
+        // --- NOVA FUNÇÃO AUXILIAR PARA O MODAL DE EDIÇÃO ---
+        function toggleEditOutros(checked) {
+          document.getElementById('editOutrosRestricaoContainer').classList.toggle('d-none', !checked);
+        }
+
+        
+        // --- FUNÇÃO applyFilters ATUALIZADA ---
+        function applyFilters() { 
+            console.log("Aplicando filtros da tabela..."); 
+            try { 
+                const search = document.getElementById('searchInput').value.toLowerCase(); 
+                
+                const selectedPurposes = Array.from(document.querySelectorAll('.purpose-filter-item:checked'))
+                                               .map(cb => cb.value);
+                
+                const pendingMsgOnly = document.getElementById('pendingMsgFilter').classList.contains('active'); 
+                const isPendenteOnly = document.getElementById('isPendenteFilter').classList.contains('active');
+                const revisaoOnly = document.getElementById('revisaoFilter').classList.contains('active');
+                const restituidaOnly = document.getElementById('restituidaFilter').classList.contains('active');
+                const agendadasOnly = document.getElementById('agendadasFilter').classList.contains('active');
+                const faltasOnly = document.getElementById('faltasFilter').classList.contains('active');
+                const canceladasOnly = document.getElementById('canceladasFilter').classList.contains('active');
+
+                if (!Array.isArray(allTableData)) { throw new Error("allTableData não é um array válido."); } 
+                
+                const pendingStatusList = ['Conclusão Pendente', 'Concluída', 'Votada JRS']; 
+
+                filteredData = allTableData.filter(r => { 
+                    if (!r) return false;
+                    const inspecionadoLower = (r.Inspecionado || '').toLowerCase(); 
+                    const finalidadeMatch = (selectedPurposes.length === 0 || selectedPurposes.includes(r.Finalidade));
+                    const searchMatch = (!search || inspecionadoLower.includes(search)); 
+                    const pendingMsgMatch = (!pendingMsgOnly || r.MSG === 'PENDENTE'); 
+                    const isPendenteMatch = (!isPendenteOnly || pendingStatusList.includes(r.StatusIS));
+                    const emRevisaoMatch = (!revisaoOnly || (r.StatusIS === 'Auditoria' || r.StatusIS === 'JSD'));
+                    const restituidaMatch = (!restituidaOnly || (r.StatusIS === 'Restituída Auditoria' || r.StatusIS === 'Restituída JSD'));
+                    const agendadasMatch = (!agendadasOnly || r.StatusIS === 'Agendada');
+                    const faltasMatch = (!faltasOnly || r.StatusIS === 'Faltou');
+                    const canceladasMatch = (!canceladasOnly || r.StatusIS === 'Cancelada');
+                    return searchMatch && finalidadeMatch && pendingMsgMatch && isPendenteMatch && emRevisaoMatch && restituidaMatch && agendadasMatch && faltasMatch && canceladasMatch; 
+                }); 
+                
+                renderTable(filteredData); 
+                initializeTooltips(); 
+
+            } catch(e) { 
+                console.error("Erro ao aplicar filtros: ", e); 
+                document.getElementById('dataTableBody').innerHTML = `<tr><td colspan="5" class="text-center text-danger">Erro ao filtrar dados: ${e.message}</td></tr>`; 
+            } 
+        }
+
+        // --- NOVA FUNÇÃO AUXILIAR ---
+        function updatePurposeButtonText() {
+          try {
+            const button = document.getElementById('purposeFilterButton');
+            const selectedCount = document.querySelectorAll('.purpose-filter-item:checked').length;
+            if (selectedCount === 0) {
+              button.textContent = 'Finalidades';
+            } else {
+              button.textContent = `Finalidades (${selectedCount})`;
+            }
+          } catch(e) {
+            console.error("Erro ao atualizar texto do botão de finalidade:", e);
+          }
+        }
+
+        function drawCharts(kpiAndPieData, barChartData) { console.log("Tentando desenhar gráficos..."); google.charts.load('current', {'packages':['corechart']}); google.charts.setOnLoadCallback(() => { console.log("Google Charts carregado."); try { const chartOptions = { backgroundColor: 'transparent', chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' }, animation: { startup: true, duration: 1000, easing: 'out' } }; document.getElementById('finalidadeChartTitle').textContent = 'Finalidades das IS de Rotina'; const rotinaData = kpiAndPieData.filter(r => r && r.type === 'Rotina'); const purposeCounts = rotinaData.reduce((acc, row) => { if(row && row.Finalidade) { acc[row.Finalidade] = (acc[row.Finalidade] || 0) + 1; } return acc; }, {}); const sortedPurposes = Object.entries(purposeCounts).sort(([,a],[,b]) => b - a); let purposeDataArray; if (sortedPurposes.length > 4) { const top3 = sortedPurposes.slice(0, 3); const othersCount = sortedPurposes.slice(3).reduce((sum, [, count]) => sum + count, 0); purposeDataArray = [['Finalidade', 'Quantidade'], ...top3, ['OUTROS', othersCount]]; } else { purposeDataArray = [['Finalidade', 'Quantidade'], ...sortedPurposes]; } const purposeData = google.visualization.arrayToDataTable(purposeDataArray.length > 1 ? purposeDataArray : [['Finalidade', 'Quantidade']]); new google.visualization.PieChart(document.getElementById('purposeDonutChart')).draw(purposeData, { ...chartOptions, pieHole: 0.4 }); console.log("Gráfico de Finalidades desenhado."); const validDataForBarChart = barChartData.filter(row => row && row.StatusIS !== 'Faltou'); const interviewCountsByMonth = validDataForBarChart.reduce((acc, row) => { if (row && row.EventDate) { const monthYear = row.EventDate.substring(3); acc[monthYear] = (acc[monthYear] || 0) + 1; } return acc; }, {}); const sortedMonths = Object.keys(interviewCountsByMonth).sort((a,b) => { const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/'); return new Date(y1, m1 - 1) - new Date(y2, m2 - 1); }); const palette = ['#050f41', '#3e4a85', '#6b74a1', '#98a0bd', '#c5c8da']; const interviewDataArray = [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]]; sortedMonths.forEach((month, index) => { const count = interviewCountsByMonth[month]; const color = palette[index % palette.length]; const shortMonth = new Date(month.split('/')[1], month.split('/')[0]-1).toLocaleString('pt-BR', { month: 'short' }).toUpperCase(); const year = month.split('/')[1]; const axisLabel = `${shortMonth}${year}`; interviewDataArray.push([axisLabel, count, `color: ${color};`, count.toString()]); }); const interviewData = google.visualization.arrayToDataTable(interviewDataArray.length > 1 ? interviewDataArray : [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]]); new google.visualization.ColumnChart(document.getElementById('interviewsBarChart')).draw(interviewData, { ...chartOptions, fontName: 'Carlito', legend: { position: 'none' }, bar: { groupWidth: '60%' }, annotations: { alwaysOutside: true, textStyle: { fontName: 'Oswald', fontSize: 16, bold: true, color: '#212529' }}, hAxis: { textStyle: { fontSize: 14, fontName: 'Oswald', bold: true }}, vAxis: { minValue: 0, gridlines: { color: 'transparent' }, baselineColor: '#ccc', textPosition: 'none'}, chartArea: { width: '90%', height: '70%', top: 40, bottom: 50 }}); console.log("Gráfico de Entrevistas desenhado."); const validDataForPie = kpiAndPieData.filter(row => row && row.StatusIS !== 'Faltou'); const typeCounts = validDataForPie.reduce((acc, row) => { if (row) { const typeName = row.type === 'Rotina' ? 'IS de Rotina' : 'Concursos'; acc[typeName] = (acc[typeName] || 0) + 1; } return acc; }, {}); const tipoInspecaoDataArray = [['Tipo', 'Quantidade'], ...Object.entries(typeCounts)]; const tipoInspecaoData = google.visualization.arrayToDataTable(tipoInspecaoDataArray.length > 1 ? tipoInspecaoDataArray : [['Tipo', 'Quantidade']]); new google.visualization.PieChart(document.getElementById('tipoInspecaoPieChart')).draw(tipoInspecaoData, chartOptions); console.log("Gráfico de Tipo de Inspeção desenhado."); } catch (e) { console.error("Erro ao desenhar os gráficos:", e); document.getElementById('purposeDonutChart').innerHTML = `<div class="alert alert-danger">Erro ao renderizar gráfico.</div>`; document.getElementById('interviewsBarChart').innerHTML = `<div class="alert alert-danger">Erro ao renderizar gráfico.</div>`; document.getElementById('tipoInspecaoPieChart').innerHTML = `<div class="alert alert-danger">Erro ao renderizar gráfico.</div>`; } }); }
+        
+        // --- FUNÇÃO renderTable (ATUALIZADA) ---
+        function renderTable(dataToRender) { 
+            console.log("Iniciando renderTable com ícones de status...");
+            const tBody = document.getElementById('dataTableBody'); 
+            tBody.innerHTML = ''; 
+            if (!Array.isArray(dataToRender)) { console.error("renderTable foi chamada com dados inválidos:", dataToRender); tBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Erro interno ao processar dados da tabela.</td></tr>'; return; }
+            if (dataToRender.length === 0) { console.log("Nenhum dado para renderizar."); tBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum resultado encontrado para os filtros aplicados.</td></tr>'; return; } 
+            
+            const statusConfig = {
+                'Agendada':             { icon: 'event_available',      color: 'info-color',        tooltipText: 'Agendada'},
+                'Auditoria':            { icon: 'quick_reference_all', color: 'warning-color',     tooltipText: 'Em Auditoria'},
+                'Cancelada':            { icon: 'event_busy',          color: 'danger-color',      tooltipText: 'Cancelada'},
+                'Conclusão Pendente':   { icon: 'help',                color: 'danger-color',      tooltipText: 'Conclusão Pendente'},
+                'Concluída':            { icon: 'gavel',               color: 'danger-color',      tooltipText: 'Votação Pendente'}, 
+                'Faltou':               { icon: 'disabled_by_default', color: 'danger-color',      tooltipText: 'Faltou'},
+                'JSD':                  { icon: 'quick_reference_all', color: 'warning-color',     tooltipText: 'Revisão JSD'},
+                'Remarcada':            { icon: 'event_repeat',        color: 'warning-color',     tooltipText: 'Remarcada'},
+                'Restituída Auditoria': { icon: 'arrow_circle_left',   color: 'warning-color',     tooltipText: 'Restituída (Auditoria)'},
+                'Restituída JSD':       { icon: 'arrow_circle_left',   color: 'warning-color',     tooltipText: 'Restituída (JSD)'},
+                'TIS assinado':         { icon: 'assignment_turned_in',color: 'success-color',     tooltipText: 'TIS Assinado'}, 
+                'Votada JRS':           { icon: 'unknown_document',    color: 'danger-color',      tooltipText: 'Assinatura Pendente'} 
+            };
+            
+            dataToRender.forEach((row, index) => { 
+                try {
+                    if (!row) { console.warn(`Item inválido encontrado no índice ${index} dos dados para renderizar.`); return; }
+                    
+                    const tr = tBody.insertRow(); 
+                    
+                    const pendingStatuses = ['AGU exames', 'Conclusão Pendente', 'Concluída', 'Votada JRS']; 
+                    if (pendingStatuses.includes(row.StatusIS) || row.MSG === 'PENDENTE') { tr.classList.add('table-row-alert'); } 
+                    
+                    const rawStatus = row.StatusIS || ''; 
+                    const config = statusConfig[rawStatus]; 
+                    let statusHtml = '';
+
+                    if (config) {
+                        statusHtml = `<span class="material-symbols-outlined status-icon" 
+                                           style="color: var(--${config.color});" 
+                                           data-bs-toggle="tooltip" data-bs-placement="top" title="${config.tooltipText}">
+                                           ${config.icon}
+                                      </span>`;
+                    } else {
+                        statusHtml = `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${rawStatus}">${rawStatus}</span>`;
+                    }
+                    
+                    let msgHtml = '';
+                    const iconMsgStyle = "font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 48; font-size: 1.8em; vertical-align: middle;"; // Ajustado
+                    
+                    if (row.MSG === 'ENVIADA') { 
+                        msgHtml = `<span class="material-symbols-outlined" 
+                                        style="${iconMsgStyle} color:var(--success-color);" 
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Mensagem Enviada">mark_email_read</span>`; 
+                    } else if (row.MSG === 'PENDENTE') { 
+                        msgHtml = `<span class="material-symbols-outlined" 
+                                        style="${iconMsgStyle} color:var(--danger-color-vivid);"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Mensagem Pendente">unsubscribe</span>`; 
+                    } else { 
+                        msgHtml = row.MSG || ''; 
+                    } 
+                    
+                    const dateAndIsCell = `<td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>`; 
+                    
+                    let inspecionadoNome = row.Inspecionado || '';
+                    const pgq = row['P/G/Q'] || '';
+                    const excecoes = ['CANDIDATO', 'DEPEND / PENS'];
+                    if (pgq && !excecoes.includes(pgq)) {
+                        inspecionadoNome = `${pgq} ${inspecionadoNome}`;
+                    }
+                    const inspecionadoAndOmCell = `<td><div><div class="table-cell-main">${inspecionadoNome}</div><div class="table-cell-sub">${row.OM || ''}</div></div></td>`; 
+                    
+                    // --- ALTERAÇÃO APLICADA AQUI ---
+                    
+                    // 1. Ícone 'sync' (marcar como enviada)
+                    let syncIconHtml = ''; 
+                    if (row.MSG === 'PENDENTE') {
+                      syncIconHtml = `<span class="material-symbols-outlined actions-icon" 
+                                            title="Marcar MSG como Enviada" 
+                                            onclick="updateMsgStatus(event, '${row.IS}', ${index})">
+                                            sync
+                                      </span>`; 
+                    }
+
+                    // 2. Ícone 'person_edit' (editar conclusão)
+                    let editIconHtml = '';
+                    // A condição é: Laudo, TIS ou DS-1a estão em branco
+                    const needsEdit = !row.Laudo || !row.TIS || !row['DS-1a'];
+                    if (needsEdit) {
+                      editIconHtml = `<span class="material-symbols-outlined actions-icon" 
+                                            title="Preencher Conclusão" 
+                                            onclick="openEditModal(event, ${index})">
+                                            person_edit
+                                      </span>`;
+                    }
+                    
+                    // 3. Monta a célula de Finalidade com os ícones
+                    const finalidadeCell = `<td><div class="actions-cell-content">
+                                              <span>${row.Finalidade||''}</span>
+                                              <span style="display: flex; align-items: center; gap: 8px;">
+                                                ${syncIconHtml}
+                                                ${editIconHtml}
+                                                <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(event, ${index})">more_vert</span>
+                                              </span>
+                                            </div></td>`; 
+
+                    const statusCell = `<td>${statusHtml}</td>`; 
+                    const msgCell = `<td>${msgHtml}</td>`; 
+                    
+                    tr.innerHTML = statusCell + msgCell + dateAndIsCell +  inspecionadoAndOmCell + finalidadeCell; 
+                } catch(e) { 
+                    console.error("Erro ao renderizar linha da tabela:", e, "Índice:", index, "Dados da linha:", row); 
+                    try { const errorRow = tBody.insertRow(); errorRow.innerHTML = `<td colspan="5" class="text-center text-danger">Erro ao renderizar linha ${index + 1}.</td>`; } 
+                    catch (innerError) { console.error("Erro ao inserir linha de erro na tabela:", innerError); }
+                }
+            }); 
+            console.log("renderTable concluída.");
+        }
+
+        // --- FUNÇÃO showDetailsModal (ATUALIZADA) ---
+        function showDetailsModal(event, index) { 
+            try { 
+                if (event) event.stopPropagation(); 
+                
+                const data = filteredData[index]; 
+                if (!data) { throw new Error("Dados não encontrados para o índice: " + index); } 
+                
+                let inspecionadoNome = data.Inspecionado || '';
+                const pgq = data['P/G/Q'] || '';
+                const excecoes = ['CANDIDATO', 'DEPEND / PENS'];
+                if (pgq && !excecoes.includes(pgq)) {
+                    inspecionadoNome = `${pgq} ${inspecionadoNome}`;
+                }
+                const subtitulo = [inspecionadoNome, data.NIP, data.OM ? `(${data.OM})` : ''].filter(String).join(' - '); 
+
+                document.getElementById('modalDetailsInspecionado').textContent = subtitulo; 
+                const finalidadeStatus = [data.Finalidade, data.StatusIS].filter(String).join(' - '); 
+                const finalidadeElement = document.getElementById('modalDetailsFinalidade'); 
+                finalidadeElement.textContent = finalidadeStatus; 
+                if (data.MSG === 'ENVIADA') { finalidadeElement.style.color = 'var(--success-color)'; } 
+                else { finalidadeElement.style.color = 'var(--danger-color-vivid)'; } 
+                const fields = [ { id: 'modalDetailsLaudo', value: data.Laudo, sectionId: 'laudo-section' }, { id: 'modalDetailsRestricoes', value: data.Restrições, sectionId: 'restricoes-section' }, { id: 'modalDetailsDataLaudo', value: data.DataLaudo, sectionId: 'dataLaudo-section' }, { id: 'modalDetailsTis', value: data.TIS, sectionId: 'tis-section' }, { id: 'modalDetailsDs1a', value: data['DS-1a'], sectionId: 'ds1a-section' } ]; 
+                fields.forEach(field => { const element = document.getElementById(field.id); const section = document.getElementById(field.sectionId); if (field.value) { element.textContent = field.value; section.classList.remove('d-none'); } else { element.textContent = ''; section.classList.add('d-none'); } }); 
+                
+                const minutaSection = document.getElementById('minuta-msg-section');
+                
+                if (data['DS-1a']) { // Condição ATUALIZADA
+                    const subtituloMinuta = [data['P/G/Q'], data.NIP, data.Inspecionado, data.OM ? `(${data.OM})` : ''].filter(String).join(' '); 
+                    let minutaText = `INSPEÇÃO DE SAÚDE FIM ${data.Finalidade || 'não informada'} - ${subtituloMinuta} \n\nALFA - PTC que a JRS/HNRe concluiu em ${data.DataLaudo || 'data não informada'} a IS FIM ${data.Finalidade || 'não informada'} atinente ao ${subtituloMinuta} e exarou o seguinte laudo: "${data.Laudo || 'não informado'}"`; 
+                    if (data.Restrições && data.Restrições.toUpperCase() !== 'LTS') { minutaText += ` Deverá ser afastado de: ${data.Restrições}. `; } 
+                    minutaText += ` ACD TIS nº ${data.TIS || 'não informado'}; e \n\nBRAVO - O REF TIS (modelo DS-1A) pode ser verificado digitalmente por meio do acesso ao sítio "https://sinais.dsm.mb/tisonline", informando o código de validação "${data['DS-1a'] || 'não informado'}" e selecionando a opção “Download do TIS” BT`; 
+                    document.getElementById('modalMinutaMsgText').textContent = minutaText; 
+                    minutaSection.classList.remove('d-none'); 
+                } else { 
+                    minutaSection.classList.add('d-none'); 
+                } 
+                detailsModalInstance.show(); 
+            } catch (e) { 
+                console.error("Erro ao mostrar detalhes no modal:", e); 
+                alert("Não foi possível carregar os detalhes desta inspeção."); 
+            } 
+        }
+
+        // --- NOVA FUNÇÃO PARA ATUALIZAR STATUS DA MSG ---
+        function updateMsgStatus(event, isNumber, rowIndex) {
+          try {
+            if (event) event.stopPropagation();
+            
+            const icon = event.target;
+            icon.textContent = 'hourglass_top'; 
+            icon.style.pointerEvents = 'none'; 
+            icon.style.color = 'var(--info-color)'; 
+
+            console.log(`Atualizando status da MSG para IS: ${isNumber}`);
+
+            google.script.run
+              .withSuccessHandler(response => {
+                if (response.success) {
+                  console.log("Status da MSG atualizado com sucesso.");
+                  
+                  const originalDataIndex = allTableData.findIndex(item => item.IS == isNumber);
+                  if (originalDataIndex > -1) {
+                    allTableData[originalDataIndex].MSG = 'ENVIADA';
+                  }
+                  
+                  const filteredIndex = filteredData.findIndex(item => item.IS == isNumber);
+                  if(filteredIndex > -1) filteredData[filteredIndex].MSG = 'ENVIADA';
+
+                  renderTable(filteredData);
+                  initializeTooltips();
+
+                } else {
+                  console.error("Falha ao atualizar no backend:", response.message);
+                  alert("Erro ao atualizar status: " + response.message);
+                  icon.textContent = 'sync'; 
+                  icon.style.pointerEvents = 'auto';
+                  icon.style.color = ''; 
+                }
+              })
+              .withFailureHandler(error => {
+                console.error("Erro fatal ao chamar updateMsgStatus:", error);
+                alert("Erro de comunicação: " + error.message);
+                icon.textContent = 'sync'; 
+                icon.style.pointerEvents = 'auto';
+                icon.style.color = ''; 
+              })
+              .updateMsgStatus(isNumber); 
+          } catch(e) {
+             console.error("Erro no lado do cliente em updateMsgStatus:", e);
+             alert("Um erro inesperado ocorreu: " + e.message);
+             if(event.target) {
+               event.target.textContent = 'sync';
+               event.target.style.pointerEvents = 'auto';
+               event.target.style.color = '';
+             }
+          }
+        }
+
+        // --- NOVA FUNÇÃO PARA ABRIR O MODAL DE EDIÇÃO ---
+        function openEditModal(event, filteredIndex) {
+          try {
+            if (event) event.stopPropagation();
+
+            const data = filteredData[filteredIndex];
+            if (!data) { throw new Error("Dados da linha não encontrados."); }
+
+            // 1. Popula informações básicas
+            document.getElementById('editModalInspecionado').textContent = data.Inspecionado || 'N/A';
+            document.getElementById('editModalIS').textContent = data.IS || 'N/A';
+            document.getElementById('editIsNumber').value = data.IS;
+
+            // 2. Popula o formulário
+            document.getElementById('editLaudo').value = data.Laudo || '';
+            document.getElementById('editTis').value = data.TIS || '';
+            document.getElementById('editDs1a').value = data['DS-1a'] || '';
+
+            // 3. Converte data pt-BR (dd/mm/yyyy) para formato date input (yyyy-mm-dd)
+            let isoDate = '';
+            if (data.DataLaudo) {
+              const parts = data.DataLaudo.split('/');
+              if (parts.length === 3) {
+                isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+              }
+            }
+            document.getElementById('editDataLaudo').value = isoDate;
+
+            // 4. Popula as Restrições
+            const allCheckboxes = document.querySelectorAll('.edit-restricao-item');
+            allCheckboxes.forEach(cb => cb.checked = false); // Limpa todos
+            document.getElementById('editOutrosRestricaoText').value = '';
+            toggleEditOutros(false);
+
+            const restricoesArray = data.Restrições ? data.Restrições.split(', ') : [];
+            restricoesArray.forEach(restricao => {
+              let match = false;
+              allCheckboxes.forEach(cb => {
+                if (cb.value === restricao) {
+                  cb.checked = true;
+                  match = true;
+                }
+              });
+              
+              // Verifica se é "Outros"
+              if (!match && restricao.startsWith('Outros: ')) {
+                const outrosCheckbox = Array.from(allCheckboxes).find(cb => cb.value === 'Outros');
+                if (outrosCheckbox) {
+                  outrosCheckbox.checked = true;
+                  toggleEditOutros(true);
+                  document.getElementById('editOutrosRestricaoText').value = restricao.substring('Outros: '.length);
+                }
+              }
+            });
+
+            // 5. Mostra o modal
+            editModalInstance.show();
+
+          } catch(e) {
+            console.error("Erro ao abrir o modal de edição:", e);
+            alert("Não foi possível abrir o modal: " + e.message);
+          }
+        }
+
+        // --- NOVA FUNÇÃO PARA SALVAR O MODAL DE EDIÇÃO ---
+        function handleEditFormSubmit(event) {
+          try {
+            event.preventDefault(); // Impede o recarregamento da página
+            const saveButton = document.getElementById('saveEditButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Salvando...';
+
+            // 1. Coleta os dados do formulário
+            const formData = {
+              isNumber: document.getElementById('editIsNumber').value,
+              laudo: document.getElementById('editLaudo').value,
+              dataLaudo: document.getElementById('editDataLaudo').value, // Vem como yyyy-mm-dd
+              tis: document.getElementById('editTis').value,
+              ds1a: document.getElementById('editDs1a').value,
+              restricoes: [],
+              outrosRestricao: ''
+            };
+
+            // 2. Coleta as restrições (lógica do Formulário.html)
+            const checkboxes = document.querySelectorAll('.edit-restricao-item:checked');
+            checkboxes.forEach(cb => {
+              formData.restricoes.push(cb.value);
+            });
+            if (formData.restricoes.includes('Outros')) {
+              formData.outrosRestricao = document.getElementById('editOutrosRestricaoText').value;
+            }
+
+            console.log("Enviando dados para atualização:", formData);
+
+            // 3. Envia para o Google Apps Script
+            google.script.run
+              .withSuccessHandler(response => {
+                if (response.success) {
+                  console.log("Sucesso ao salvar:", response);
+                  
+                  // Atualiza os dados locais (allTableData e filteredData)
+                  const updatedData = response.updatedData;
+                  const isNumber = formData.isNumber;
+
+                  const originalDataIndex = allTableData.findIndex(item => item.IS == isNumber);
+                  if (originalDataIndex > -1) {
+                    Object.assign(allTableData[originalDataIndex], updatedData);
+                  }
+                  
+                  const filteredIndex = filteredData.findIndex(item => item.IS == isNumber);
+                  if(filteredIndex > -1) {
+                    Object.assign(filteredData[filteredIndex], updatedData);
+                  }
+
+                  // Fecha o modal e re-renderiza a tabela
+                  editModalInstance.hide();
+                  renderTable(filteredData);
+                  initializeTooltips();
+
+                } else {
+                  console.error("Falha ao salvar no backend:", response.message);
+                  alert("Erro ao salvar: " + response.message);
+                }
+                // Restaura o botão
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Salvar Alterações';
+              })
+              .withFailureHandler(error => {
+                console.error("Erro fatal ao chamar updateInspectionConclusion:", error);
+                alert("Erro de comunicação: " + error.message);
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Salvar Alterações';
+              })
+              .updateInspectionConclusion(formData); // Nome da nova função no Code.gs
+
+          } catch(e) {
+            console.error("Erro no lado do cliente em handleEditFormSubmit:", e);
+            alert("Um erro inesperado ocorreu: " + e.message);
+            const saveButton = document.getElementById('saveEditButton');
+            saveButton.disabled = false;
+            saveButton.innerHTML = 'Salvar Alterações';
+          }
+        }
+        
+        function populateGlobalFilters(data) { 
+            try { 
+                const yearFilter = document.getElementById('yearFilter'); 
+                const monthFilter = document.getElementById('monthFilter'); 
+                const years = [...new Set(data.map(r => r && r.year).filter(Boolean))].sort((a,b) => b - a); 
+                yearFilter.innerHTML = '<option value="todos">Todos os Anos</option>'; 
+                years.forEach(y => yearFilter.add(new Option(y, y))); 
+                const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]; 
+                monthFilter.innerHTML = '<option value="todos">Todos os Meses</option>'; 
+                monthNames.forEach((name, index) => monthFilter.add(new Option(name, index))); 
+                
+                const currentDate = new Date(); 
+                const currentYear = currentDate.getFullYear();
+                const currentMonth = currentDate.getMonth(); 
+                
+                if (years.length > 0) { 
+                    if (years.includes(currentYear)) {
+                        yearFilter.value = currentYear;
+                    } else {
+                        yearFilter.value = years[0]; 
+                    }
+                } 
+                
+                monthFilter.value = currentMonth; 
+                console.log("Filtros globais populados."); 
+            } catch (e) { 
+                console.error("Erro ao popular filtros globais:", e); 
+            } 
+        }
+
+        function applyGlobalFilters() { console.log("Aplicando filtros globais..."); try { const year = document.getElementById('yearFilter').value; const month = document.getElementById('monthFilter').value; const yearFilteredData = allDashboardData.filter(row => row && (year === 'todos' || row.year == year)); const fullyFilteredData = yearFilteredData.filter(row => row && (month === 'todos' || row.month == month)); console.log("Dados filtrados globalmente:", fullyFilteredData); updateKPIs(fullyFilteredData); drawCharts(fullyFilteredData, yearFilteredData); } catch (e) { console.error("Erro ao aplicar filtros globais:", e); } }
+        function parseDate(dateString) { try { if (!dateString || typeof dateString !== 'string' || !dateString.includes('/')) return null; const parts = dateString.split('/'); if (parts.length !== 3) return null; const year = parseInt(parts[2], 10) < 100 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10); const day = parseInt(parts[0], 10); const month = parseInt(parts[1], 10) - 1; if (isNaN(day) || isNaN(month) || isNaN(year)) return null; const date = new Date(year, month, day); if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return null; return date; } catch (e) { console.error("Erro ao parsear data:", dateString, e); return null; } }
+        
+        // --- FUNÇÃO addEventListeners (CORRIGIDA) ---
+        function addEventListeners() { 
+            try { 
+                document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters); 
+                document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters); 
+                document.getElementById('searchInput').addEventListener('keyup', applyFilters); 
+                
+                // Listener para o menu de Finalidades (CORRIGIDO)
+                const purposeMenu = document.getElementById('purposeFilterMenu');
+                if (purposeMenu) {
+                  
+                  // Listener para o botão "Limpar"
+                  purposeMenu.addEventListener('click', (e) => {
+                    if (e.target.id === 'clearPurposeFilter') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      document.querySelectorAll('.purpose-filter-item:checked').forEach(cb => cb.checked = false);
+                      applyFilters();
+                      updatePurposeButtonText();
+                    }
+                  });
+
+                  // Listener para as caixas de seleção
+                  purposeMenu.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('purpose-filter-item')) {
+                      // O evento 'change' dispara *depois* que o estado mudou
+                      applyFilters();
+                      updatePurposeButtonText();
+                    }
+                  });
+                }
+                
+                // Função auxiliar para criar listeners dos chips
+                const setupChipListener = (id) => {
+                    const chip = document.getElementById(id);
+                    if (chip) {
+                        chip.addEventListener('click', () => {
+                            chip.classList.toggle('active'); 
+                            applyFilters(); 
+                        });
+                    }
+                };
+                
+                // Configura os listeners para todos os chips
+                setupChipListener('isPendenteFilter');
+                setupChipListener('pendingMsgFilter');
+                setupChipListener('revisaoFilter');
+                setupChipListener('restituidaFilter');
+                setupChipListener('agendadasFilter');
+                setupChipListener('faltasFilter');
+                setupChipListener('canceladasFilter');
+
+            } catch (e) { 
+                console.error("Erro ao adicionar event listeners:", e); 
+                onDataError(new Error("Não foi possível configurar os filtros interativos.")); 
+            } 
+        }
+    </script>
+    <script>
+      let BASE_URL = '';
+      function navigateTo(page) { if (BASE_URL) { console.log(`Navegando para: ${BASE_URL}?page=${page}`); window.top.location.href = BASE_URL + '?page=' + page; } else { console.warn("BASE_URL ainda não carregada, não foi possível navegar."); alert("Aguarde o carregamento completo da página e tente novamente."); } }
+      document.addEventListener('DOMContentLoaded', () => { google.script.run.withSuccessHandler((url) => { console.log("URL base do Web App recebida:", url); BASE_URL = url; }).withFailureHandler((error) => { console.error("Falha ao obter URL base do Web App:", error); alert("Erro crítico: Não foi possível configurar a navegação entre páginas."); }).getWebAppUrl(); });
+    </script>
+</body>
+</html>
