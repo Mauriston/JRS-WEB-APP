@@ -5,7 +5,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Oswald:wght@400;700;800&display=swap" rel="stylesheet">
-    <!-- Link Google Fonts como Fonte Variável -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -158,8 +157,6 @@
       .chart-container { background-color: transparent; padding: 20px; height: 400px; border: none; box-shadow: none; border-radius: 0; margin-bottom: 0; } 
       .table-container { background-color: transparent; padding: 20px; box-shadow: none; border-radius: 0; margin-bottom: 0; } 
       
-      /* .status-pendente { font-weight: bold; } */ /* Não mais necessário */
-      
       .table-cell-main { font-weight: bold; color: #333; }
       .table-cell-sub { font-size: 0.8em; color: var(--dark-gray-3); }
       
@@ -181,8 +178,10 @@
       td .actions-cell-content .actions-icon { flex-shrink: 0; } 
       .actions-icon { cursor: pointer; color: #777; }
       .actions-icon:hover { color: #000; }
+      
+      /* --- ALTERAÇÃO APLICADA AQUI --- */
       .actions-icon.material-symbols-outlined {
-         font-size: 1.3em; 
+         font-size: 1.8em;  /* Ajustado de 1.3em para 1.8em */
          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; 
          vertical-align: middle;
       }
@@ -263,6 +262,56 @@
       }
       .chip-filter.chip-danger.active .material-symbols-outlined {
         color: #fff;
+      }
+
+      /* Estilo para o chip de AVISO (Em Revisão / Restituídas) */
+      .chip-filter.chip-warning {
+        background-color: #fff8e1;
+        color: #FAB932;
+        border: 1px solid #FAB932;
+      }
+      .chip-filter.chip-warning .material-symbols-outlined {
+        color: #FAB932;
+      }
+      .chip-filter.chip-warning.active {
+        background-color: #FAB932; /* Cor ativa Amarela */
+        color: #fff;
+      }
+      .chip-filter.chip-warning.active .material-symbols-outlined {
+        color: #fff;
+      }
+
+      /* --- ESTILOS CORRIGIDOS PARA O FILTRO DE FINALIDADE --- */
+      .purpose-filter-menu {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .purpose-filter-menu .purpose-item-wrapper { /* Alvo: o novo div */
+        display: flex;
+        align-items: center;
+        padding: .25rem 1rem;
+        cursor: pointer;
+      }
+      .purpose-filter-menu .purpose-item-wrapper:hover {
+        background-color: #f8f9fa; /* Efeito hover */
+      }
+      .purpose-filter-menu .form-check-input {
+        margin-right: 10px;
+        cursor: pointer;
+      }
+      .purpose-filter-menu .form-check-label { /* Alvo: o label */
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 0; 
+      }
+      .purpose-filter-menu li:has(button.dropdown-item) {
+        padding: 0;
+      }
+      .purpose-filter-menu button.dropdown-item { /* Estilo do botão "Limpar" */
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        color: var(--link-color);
       }
 
     </style>
@@ -375,21 +424,46 @@
                         <div class="table-container">
                           <h2 class="section-title"><span class="material-symbols-outlined">patient_list</span> DETALHES DAS INSPEÇÕES</h2>
                           
-                          <!-- BARRA DE FILTROS ATUALIZADA -->
                           <div class="row g-3 mb-3 align-items-end">
-                            <div class="col-md-3"><input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome..."></div>
-                            <div class="col-md-3"><select id="purposeFilter" class="form-select"></select></div>
-                            <div class="col-md-3"><select id="statusFilter" class="form-select"></select></div> 
-                            <div class="col-md-3 d-flex align-items-center justify-content-start pb-1 gap-2">
-                                <!-- NOVO CHIP FILTER (IS PENDENTES) - Vermelho -->
+                            <div class="col-md-3"> 
+                                <input type="text" id="searchInput" class="form-control mb-2" placeholder="Buscar por nome...">
+                                <div class="dropdown">
+                                  <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="purposeFilterButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    Finalidades
+                                  </button>
+                                  <ul class="dropdown-menu w-100 purpose-filter-menu" id="purposeFilterMenu" aria-labelledby="purposeFilterButton">
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-9 d-flex align-items-center justify-content-start pb-1 gap-2 flex-wrap">
+                                <div class="chip-filter" id="agendadasFilter" title="Filtrar IS Agendadas">
+                                  <span class="material-symbols-outlined">event_available</span>
+                                  IS Agendadas
+                                </div>
                                 <div class="chip-filter chip-danger" id="isPendenteFilter" title="Filtrar IS com pendência de status">
                                   <span class="material-symbols-outlined">pending_actions</span>
                                   IS Pendentes
                                 </div>
-                                <!-- CHIP FILTER (MSG PENDENTE) - Cinza/Padrão -->
                                 <div class="chip-filter" id="pendingMsgFilter" title="Filtrar mensagens pendentes">
                                   <span class="material-symbols-outlined">unsubscribe</span>
                                   MSG Pendente
+                                </div>
+                                <div class="chip-filter chip-warning" id="revisaoFilter" title="Filtrar inspeções Em Revisão">
+                                  <span class="material-symbols-outlined">manage_search</span>
+                                  Em Revisão
+                                </div>
+                                <div class="chip-filter chip-warning" id="restituidaFilter" title="Filtrar inspeções Restituídas">
+                                  <span class="material-symbols-outlined">arrow_circle_left</span>
+                                  Restituídas
+                                </div>
+                                <div class="chip-filter chip-danger" id="faltasFilter" title="Filtrar Faltas">
+                                  <span class="material-symbols-outlined">person_off</span>
+                                  Faltas
+                                </div>
+                                <div class="chip-filter chip-danger" id="canceladasFilter" title="Filtrar IS Canceladas">
+                                  <span class="material-symbols-outlined">event_busy</span>
+                                  IS Canceladas
                                 </div>
                             </div>
                           </div>
@@ -398,7 +472,6 @@
                             <table class="table table-hover">
                               <thead>
                                 <tr>
-                                  <!-- COLUNAS REORDENADAS -->
                                   <th>Status</th>
                                   <th>MSG</th>
                                   <th>Data / IS</th>
@@ -443,7 +516,6 @@
             tooltipList = [];
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                // Adiciona configuração para permitir HTML no tooltip
                 return new bootstrap.Tooltip(tooltipTriggerEl, {html: true}); 
             });
             console.log(`${tooltipList.length} tooltips inicializados.`);
@@ -452,30 +524,37 @@
         // --- CALLBACKS DE CARREGAMENTO DE DADOS ---
         function onDataLoaded(response) { console.log("Dados recebidos do backend:", response); try { if (!response || !Array.isArray(response.dashboardData) || !Array.isArray(response.tableData)) { throw new Error("Formato de dados recebido do backend é inválido."); } allDashboardData = response.dashboardData.map(row => { const date = parseDate(row.EventDate); if (!date && row.EventDate) { console.warn("Data inválida encontrada em dashboardData:", row.EventDate, row); } return {...row, year: date ? date.getFullYear() : null, month: date ? date.getMonth() : null}; }); allTableData = response.tableData; console.log("Dados processados:", { allDashboardData, allTableData }); document.getElementById('loader').classList.add('d-none'); document.getElementById('mainContent').classList.remove('d-none'); console.log("Loader escondido, conteúdo principal mostrado."); populateGlobalFilters(allDashboardData); applyGlobalFilters(); populateFilters(allTableData); applyFilters(); addEventListeners(); console.log("Listeners de eventos adicionados."); } catch(e) { console.error("Erro fatal dentro de onDataLoaded: ", e); onDataError(e); } }
         function onDataError(error) { console.error('Falha ao carregar ou processar os dados:', error); const loader = document.getElementById('loader'); loader.innerHTML = `<div class="alert alert-danger">Erro ao carregar dados: ${error.message || 'Erro desconhecido'}. Verifique o console para mais detalhes.</div>`; loader.classList.remove('d-none'); document.getElementById('mainContent').classList.add('d-none'); }
+        
         // --- FUNÇÕES DE LÓGICA DO DASHBOARD ---
         function updateKPIs(data) { try { const countIn = (arr, column, value) => arr.filter(row => row && row[column] === value).length; const validData = data.filter(row => row && row.StatusIS !== 'Faltou'); document.getElementById('kpiTotal').textContent = validData.length; document.getElementById('kpiTisSigned').textContent = countIn(validData, 'StatusIS', 'TIS assinado'); document.getElementById('kpiExamesPendentes').textContent = countIn(validData, 'StatusIS', 'AGU exames'); document.getElementById('kpiConclusoesPendentes').textContent = countIn(validData, 'StatusIS', 'Conclusão Pendente'); document.getElementById('kpiVotacaoPendente').textContent = countIn(validData, 'StatusIS', 'Concluída'); document.getElementById('kpiFaltou').textContent = data.length - validData.length; const rotinaData = data.filter(row => row && row.type === 'Rotina'); document.getElementById('kpiMsgEnviada').textContent = countIn(rotinaData, 'MSG', 'ENVIADA'); document.getElementById('kpiAuditoria').textContent = countIn(rotinaData, 'StatusIS', 'Auditoria'); document.getElementById('kpiJsd').textContent = countIn(rotinaData, 'StatusIS', 'JSD'); document.getElementById('kpiMsgPendente').textContent = countIn(rotinaData, 'MSG', 'PENDENTE'); document.getElementById('kpiCancelada').textContent = countIn(rotinaData, 'StatusIS', 'Cancelada'); document.getElementById('kpi-item-cancelada').classList.toggle('text-alert-vivid', countIn(rotinaData, 'StatusIS', 'Cancelada') > 0); document.getElementById('kpi-item-faltas').classList.toggle('text-alert-vivid', (data.length - validData.length) > 0); } catch (e) { console.error("Erro ao atualizar KPIs:", e); } }
         
+        // --- FUNÇÃO populateFilters (CORRIGIDA) ---
         function populateFilters(tableData) { 
             try { 
-                const purposes = ['Todas as Finalidades', ...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())]; 
-                const purposeFilter = document.getElementById('purposeFilter'); 
-                purposeFilter.innerHTML = ''; 
-                purposes.forEach(p => purposeFilter.add(new Option(p, p))); 
+                const purposeMenu = document.getElementById('purposeFilterMenu');
+                purposeMenu.innerHTML = ''; // Limpa
+                const purposes = [...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())]; 
                 
-                const statusMapDisplay = { 'Concluída': 'Votação Pendente' }; 
-                const rawStatuses = [...new Set(tableData.map(row => row.StatusIS).filter(Boolean).sort())];
+                // Adiciona um botão "Limpar Seleção"
+                purposeMenu.innerHTML += '<li><button class="dropdown-item" type="button" id="clearPurposeFilter">Limpar Seleção</button></li>';
+                purposeMenu.innerHTML += '<li><hr class="dropdown-divider"></li>';
+
+                purposes.forEach((p, index) => {
+                  const li = document.createElement('li');
+                  // Criar um ID único para o label poder ativar o input
+                  const uniqueId = 'check-purpose-' + index; 
+                  
+                  // Nova estrutura sem .dropdown-item, usando <div>
+                  li.innerHTML = `
+                    <div class="purpose-item-wrapper form-check">
+                      <input type="checkbox" class="form-check-input purpose-filter-item" value="${p}" id="${uniqueId}">
+                      <label class="form-check-label" for="${uniqueId}">${p}</label>
+                    </div>
+                  `;
+                  purposeMenu.appendChild(li);
+                });
                 
-                const statusFilter = document.getElementById('statusFilter'); 
-                statusFilter.innerHTML = ''; 
-                statusFilter.add(new Option('Todos os Status', 'Todos os Status')); 
-                
-                rawStatuses.forEach(s => {
-                    const displayText = statusMapDisplay[s] || s; 
-                    const value = s; 
-                    statusFilter.add(new Option(displayText, value));
-                }); 
-                
-                console.log("Filtros da tabela populados."); 
+                console.log("Filtros da tabela populados (Finalidade com checkboxes corrigido)."); 
             } catch (e) { 
                 console.error("Erro ao popular filtros da tabela:", e); 
             } 
@@ -486,27 +565,44 @@
             console.log("Aplicando filtros da tabela..."); 
             try { 
                 const search = document.getElementById('searchInput').value.toLowerCase(); 
-                const purpose = document.getElementById('purposeFilter').value; 
-                // Lê o estado dos dois chip filters
-                const pendingOnly = document.getElementById('pendingMsgFilter').classList.contains('active'); 
-                const isPendenteOnly = document.getElementById('isPendenteFilter').classList.contains('active');
-                const status = document.getElementById('statusFilter').value; 
                 
-                console.log("Valores dos filtros:", { search, purpose, status, pendingOnly, isPendenteOnly }); 
+                // Nova lógica para pegar múltiplas finalidades
+                const selectedPurposes = Array.from(document.querySelectorAll('.purpose-filter-item:checked'))
+                                               .map(cb => cb.value);
+                
+                // Lê o estado dos chip filters
+                const pendingMsgOnly = document.getElementById('pendingMsgFilter').classList.contains('active'); 
+                const isPendenteOnly = document.getElementById('isPendenteFilter').classList.contains('active');
+                const revisaoOnly = document.getElementById('revisaoFilter').classList.contains('active');
+                const restituidaOnly = document.getElementById('restituidaFilter').classList.contains('active');
+                const agendadasOnly = document.getElementById('agendadasFilter').classList.contains('active');
+                const faltasOnly = document.getElementById('faltasFilter').classList.contains('active');
+                const canceladasOnly = document.getElementById('canceladasFilter').classList.contains('active');
+
+                console.log("Valores dos filtros:", { search, selectedPurposes, pendingMsgOnly, isPendenteOnly, revisaoOnly, restituidaOnly, agendadasOnly, faltasOnly, canceladasOnly }); 
                 if (!Array.isArray(allTableData)) { throw new Error("allTableData não é um array válido."); } 
                 
-                const pendingStatusList = ['Conclusão Pendente', 'Concluída', 'Votada JRS']; // 'Concluída' = Votação Pendente, 'Votada JRS' = Assinatura Pendente
+                const pendingStatusList = ['Conclusão Pendente', 'Concluída', 'Votada JRS']; 
 
                 filteredData = allTableData.filter(r => { 
-                    const inspecionadoLower = (r && r.Inspecionado) ? r.Inspecionado.toLowerCase() : ''; 
-                    const finalidadeMatch = (purpose === 'Todas as Finalidades' || (r && r.Finalidade === purpose)); 
-                    const statusMatch = (status === 'Todos os Status' || (r && r.StatusIS === status)); 
-                    const pendingMatch = (!pendingOnly || (r && r.MSG === 'PENDENTE')); 
-                    // Novo filtro de IS Pendente
-                    const isPendenteMatch = (!isPendenteOnly || (r && pendingStatusList.includes(r.StatusIS))); 
-                    const searchMatch = (!search || inspecionadoLower.includes(search)); 
+                    if (!r) return false;
 
-                    return searchMatch && finalidadeMatch && statusMatch && pendingMatch && isPendenteMatch; 
+                    const inspecionadoLower = (r.Inspecionado || '').toLowerCase(); 
+                    
+                    // Nova lógica de match para finalidade (array)
+                    const finalidadeMatch = (selectedPurposes.length === 0 || selectedPurposes.includes(r.Finalidade));
+                    const searchMatch = (!search || inspecionadoLower.includes(search)); 
+                    
+                    // Lógica dos Chip Filters
+                    const pendingMsgMatch = (!pendingMsgOnly || r.MSG === 'PENDENTE'); 
+                    const isPendenteMatch = (!isPendenteOnly || pendingStatusList.includes(r.StatusIS));
+                    const emRevisaoMatch = (!revisaoOnly || (r.StatusIS === 'Auditoria' || r.StatusIS === 'JSD'));
+                    const restituidaMatch = (!restituidaOnly || (r.StatusIS === 'Restituída Auditoria' || r.StatusIS === 'Restituída JSD'));
+                    const agendadasMatch = (!agendadasOnly || r.StatusIS === 'Agendada');
+                    const faltasMatch = (!faltasOnly || r.StatusIS === 'Faltou');
+                    const canceladasMatch = (!canceladasOnly || r.StatusIS === 'Cancelada');
+
+                    return searchMatch && finalidadeMatch && pendingMsgMatch && isPendenteMatch && emRevisaoMatch && restituidaMatch && agendadasMatch && faltasMatch && canceladasMatch; 
                 }); 
                 
                 console.log("Dados filtrados:", filteredData); 
@@ -519,9 +615,24 @@
             } 
         }
 
+        // --- NOVA FUNÇÃO AUXILIAR ---
+        function updatePurposeButtonText() {
+          try {
+            const button = document.getElementById('purposeFilterButton');
+            const selectedCount = document.querySelectorAll('.purpose-filter-item:checked').length;
+            if (selectedCount === 0) {
+              button.textContent = 'Finalidades';
+            } else {
+              button.textContent = `Finalidades (${selectedCount})`;
+            }
+          } catch(e) {
+            console.error("Erro ao atualizar texto do botão de finalidade:", e);
+          }
+        }
+
         function drawCharts(kpiAndPieData, barChartData) { console.log("Tentando desenhar gráficos..."); google.charts.load('current', {'packages':['corechart']}); google.charts.setOnLoadCallback(() => { console.log("Google Charts carregado."); try { const chartOptions = { backgroundColor: 'transparent', chartArea: { left: '5%', top: '5%', width: '90%', height: '90%' }, animation: { startup: true, duration: 1000, easing: 'out' } }; document.getElementById('finalidadeChartTitle').textContent = 'Finalidades das IS de Rotina'; const rotinaData = kpiAndPieData.filter(r => r && r.type === 'Rotina'); const purposeCounts = rotinaData.reduce((acc, row) => { if(row && row.Finalidade) { acc[row.Finalidade] = (acc[row.Finalidade] || 0) + 1; } return acc; }, {}); const sortedPurposes = Object.entries(purposeCounts).sort(([,a],[,b]) => b - a); let purposeDataArray; if (sortedPurposes.length > 4) { const top3 = sortedPurposes.slice(0, 3); const othersCount = sortedPurposes.slice(3).reduce((sum, [, count]) => sum + count, 0); purposeDataArray = [['Finalidade', 'Quantidade'], ...top3, ['OUTROS', othersCount]]; } else { purposeDataArray = [['Finalidade', 'Quantidade'], ...sortedPurposes]; } const purposeData = google.visualization.arrayToDataTable(purposeDataArray.length > 1 ? purposeDataArray : [['Finalidade', 'Quantidade']]); new google.visualization.PieChart(document.getElementById('purposeDonutChart')).draw(purposeData, { ...chartOptions, pieHole: 0.4 }); console.log("Gráfico de Finalidades desenhado."); const validDataForBarChart = barChartData.filter(row => row && row.StatusIS !== 'Faltou'); const interviewCountsByMonth = validDataForBarChart.reduce((acc, row) => { if (row && row.EventDate) { const monthYear = row.EventDate.substring(3); acc[monthYear] = (acc[monthYear] || 0) + 1; } return acc; }, {}); const sortedMonths = Object.keys(interviewCountsByMonth).sort((a,b) => { const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/'); return new Date(y1, m1 - 1) - new Date(y2, m2 - 1); }); const palette = ['#050f41', '#3e4a85', '#6b74a1', '#98a0bd', '#c5c8da']; const interviewDataArray = [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]]; sortedMonths.forEach((month, index) => { const count = interviewCountsByMonth[month]; const color = palette[index % palette.length]; const shortMonth = new Date(month.split('/')[1], month.split('/')[0]-1).toLocaleString('pt-BR', { month: 'short' }).toUpperCase(); const year = month.split('/')[1]; const axisLabel = `${shortMonth}${year}`; interviewDataArray.push([axisLabel, count, `color: ${color};`, count.toString()]); }); const interviewData = google.visualization.arrayToDataTable(interviewDataArray.length > 1 ? interviewDataArray : [['Mês/Ano', 'Nº de Inspeções', { role: 'style' }, { role: 'annotation' }]]); new google.visualization.ColumnChart(document.getElementById('interviewsBarChart')).draw(interviewData, { ...chartOptions, fontName: 'Carlito', legend: { position: 'none' }, bar: { groupWidth: '60%' }, annotations: { alwaysOutside: true, textStyle: { fontName: 'Oswald', fontSize: 16, bold: true, color: '#212529' }}, hAxis: { textStyle: { fontSize: 14, fontName: 'Oswald', bold: true }}, vAxis: { minValue: 0, gridlines: { color: 'transparent' }, baselineColor: '#ccc', textPosition: 'none'}, chartArea: { width: '90%', height: '70%', top: 40, bottom: 50 }}); console.log("Gráfico de Entrevistas desenhado."); const validDataForPie = kpiAndPieData.filter(row => row && row.StatusIS !== 'Faltou'); const typeCounts = validDataForPie.reduce((acc, row) => { if (row) { const typeName = row.type === 'Rotina' ? 'IS de Rotina' : 'Concursos'; acc[typeName] = (acc[typeName] || 0) + 1; } return acc; }, {}); const tipoInspecaoDataArray = [['Tipo', 'Quantidade'], ...Object.entries(typeCounts)]; const tipoInspecaoData = google.visualization.arrayToDataTable(tipoInspecaoDataArray.length > 1 ? tipoInspecaoDataArray : [['Tipo', 'Quantidade']]); new google.visualization.PieChart(document.getElementById('tipoInspecaoPieChart')).draw(tipoInspecaoData, chartOptions); console.log("Gráfico de Tipo de Inspeção desenhado."); } catch (e) { console.error("Erro ao desenhar os gráficos:", e); document.getElementById('purposeDonutChart').innerHTML = `<div class="alert alert-danger">Erro ao renderizar gráfico.</div>`; document.getElementById('interviewsBarChart').innerHTML = `<div class="alert alert-danger">Erro ao renderizar gráfico.</div>`; document.getElementById('tipoInspecaoPieChart').innerHTML = `<div class="alert alert-danger">Erro ao renderizar gráfico.</div>`; } }); }
         
-        // --- FUNÇÃO renderTable ATUALIZADA ---
+        // --- FUNÇÃO renderTable (ATUALIZADA) ---
         function renderTable(dataToRender) { 
             console.log("Iniciando renderTable com ícones de status...");
             const tBody = document.getElementById('dataTableBody'); 
@@ -529,7 +640,6 @@
             if (!Array.isArray(dataToRender)) { console.error("renderTable foi chamada com dados inválidos:", dataToRender); tBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Erro interno ao processar dados da tabela.</td></tr>'; return; }
             if (dataToRender.length === 0) { console.log("Nenhum dado para renderizar."); tBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum resultado encontrado para os filtros aplicados.</td></tr>'; return; } 
             
-            // Mapeamento de Status para Ícone, Cor e Tooltip (ATUALIZADO)
             const statusConfig = {
                 'Agendada':             { icon: 'event_available',      color: 'info-color',        tooltipText: 'Agendada'},
                 'Auditoria':            { icon: 'quick_reference_all', color: 'warning-color',     tooltipText: 'Em Auditoria'},
@@ -568,8 +678,9 @@
                         statusHtml = `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${rawStatus}">${rawStatus}</span>`;
                     }
                     
-                    let msgHtml = ''; 
-                    const iconMsgStyle = "font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 48; font-size: 1.5em; vertical-align: middle;"; 
+                    let msgHtml = '';
+                    // --- ALTERAÇÃO APLICADA AQUI --- 
+                    const iconMsgStyle = "font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 48; font-size: 1.8em; vertical-align: middle;"; // Ajustado de 1.5em para 1.8em
                     
                     if (row.MSG === 'ENVIADA') { 
                         msgHtml = `<span class="material-symbols-outlined" 
@@ -593,13 +704,29 @@
                     }
                     const inspecionadoAndOmCell = `<td><div><div class="table-cell-main">${inspecionadoNome}</div><div class="table-cell-sub">${row.OM || ''}</div></div></td>`; 
                     
-                    // Célula de Finalidade agora contém o ícone de ação
-                    const finalidadeCell = `<td><div class="actions-cell-content"><span>${row.Finalidade||''}</span><span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(event, ${index})">more_vert</span></div></td>`; 
-                    // Célula de Status agora contém apenas o ícone de status
+                    // --- ALTERAÇÃO APLICADA AQUI ---
+                    // 1. Cria o ícone sync se MSG for PENDENTE
+                    let syncIconHtml = ''; 
+                    if (row.MSG === 'PENDENTE') {
+                      syncIconHtml = `<span class="material-symbols-outlined actions-icon" 
+                                            title="Marcar MSG como Enviada" 
+                                            onclick="updateMsgStatus(event, '${row.IS}', ${index})">
+                                            sync
+                                      </span>`; 
+                    }
+                    
+                    // 2. Adiciona o ícone sync e o 'more_vert' juntos
+                    const finalidadeCell = `<td><div class="actions-cell-content">
+                                              <span>${row.Finalidade||''}</span>
+                                              <span style="display: flex; align-items: center; gap: 8px;">
+                                                ${syncIconHtml}
+                                                <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(event, ${index})">more_vert</span>
+                                              </span>
+                                            </div></td>`; 
+
                     const statusCell = `<td>${statusHtml}</td>`; 
                     const msgCell = `<td>${msgHtml}</td>`; 
                     
-                    // COLUNAS REORDENADAS
                     tr.innerHTML = statusCell + msgCell + dateAndIsCell +  inspecionadoAndOmCell + finalidadeCell; 
                 } catch(e) { 
                     console.error("Erro ao renderizar linha da tabela:", e, "Índice:", index, "Dados da linha:", row); 
@@ -610,6 +737,7 @@
             console.log("renderTable concluída.");
         }
 
+        // --- FUNÇÃO showDetailsModal (ATUALIZADA) ---
         function showDetailsModal(event, index) { 
             try { 
                 if (event) event.stopPropagation(); 
@@ -633,8 +761,12 @@
                 else { finalidadeElement.style.color = 'var(--danger-color-vivid)'; } 
                 const fields = [ { id: 'modalDetailsLaudo', value: data.Laudo, sectionId: 'laudo-section' }, { id: 'modalDetailsRestricoes', value: data.Restrições, sectionId: 'restricoes-section' }, { id: 'modalDetailsDataLaudo', value: data.DataLaudo, sectionId: 'dataLaudo-section' }, { id: 'modalDetailsTis', value: data.TIS, sectionId: 'tis-section' }, { id: 'modalDetailsDs1a', value: data['DS-1a'], sectionId: 'ds1a-section' } ]; 
                 fields.forEach(field => { const element = document.getElementById(field.id); const section = document.getElementById(field.sectionId); if (field.value) { element.textContent = field.value; section.classList.remove('d-none'); } else { element.textContent = ''; section.classList.add('d-none'); } }); 
-                const minutaSection = document.getElementById('minuta-msg-section'); 
-                if (data.MSG === 'ENVIADA' || data.MSG === 'Enviada') { 
+                
+                const minutaSection = document.getElementById('minuta-msg-section');
+                
+                // --- ALTERAÇÃO APLICADA AQUI ---
+                // A condição de exibição agora verifica se 'DS-1a' está preenchido
+                if (data['DS-1a']) { 
                     const subtituloMinuta = [data['P/G/Q'], data.NIP, data.Inspecionado, data.OM ? `(${data.OM})` : ''].filter(String).join(' '); 
                     let minutaText = `INSPEÇÃO DE SAÚDE FIM ${data.Finalidade || 'não informada'} - ${subtituloMinuta} \n\nALFA - PTC que a JRS/HNRe concluiu em ${data.DataLaudo || 'data não informada'} a IS FIM ${data.Finalidade || 'não informada'} atinente ao ${subtituloMinuta} e exarou o seguinte laudo: "${data.Laudo || 'não informado'}"`; 
                     if (data.Restrições && data.Restrições.toUpperCase() !== 'LTS') { minutaText += ` Deverá ser afastado de: ${data.Restrições}. `; } 
@@ -649,6 +781,66 @@
                 console.error("Erro ao mostrar detalhes no modal:", e); 
                 alert("Não foi possível carregar os detalhes desta inspeção."); 
             } 
+        }
+
+        // --- NOVA FUNÇÃO PARA ATUALIZAR STATUS DA MSG ---
+        function updateMsgStatus(event, isNumber, rowIndex) {
+          try {
+            if (event) event.stopPropagation();
+            
+            const icon = event.target;
+            icon.textContent = 'hourglass_top'; // Altera ícone para 'carregando'
+            icon.style.pointerEvents = 'none'; // Desabilita cliques
+            icon.style.color = 'var(--info-color)'; // Muda a cor para feedback
+
+            console.log(`Atualizando status da MSG para IS: ${isNumber}`);
+
+            google.script.run
+              .withSuccessHandler(response => {
+                if (response.success) {
+                  console.log("Status da MSG atualizado com sucesso.");
+                  
+                  // Atualiza a fonte de dados local (allTableData)
+                  const originalDataIndex = allTableData.findIndex(item => item.IS == isNumber);
+                  if (originalDataIndex > -1) {
+                    allTableData[originalDataIndex].MSG = 'ENVIADA';
+                  }
+                  
+                  // Atualiza a fonte de dados filtrada (filteredData)
+                  const filteredIndex = filteredData.findIndex(item => item.IS == isNumber);
+                  if(filteredIndex > -1) filteredData[filteredIndex].MSG = 'ENVIADA';
+
+                  // Re-renderiza a tabela para refletir a mudança
+                  renderTable(filteredData);
+                  
+                  // Re-inicializa os tooltips
+                  initializeTooltips();
+
+                } else {
+                  console.error("Falha ao atualizar no backend:", response.message);
+                  alert("Erro ao atualizar status: " + response.message);
+                  icon.textContent = 'sync'; // Restaura ícone
+                  icon.style.pointerEvents = 'auto';
+                  icon.style.color = ''; // Restaura cor
+                }
+              })
+              .withFailureHandler(error => {
+                console.error("Erro fatal ao chamar updateMsgStatus:", error);
+                alert("Erro de comunicação: " + error.message);
+                icon.textContent = 'sync'; // Restaura ícone
+                icon.style.pointerEvents = 'auto';
+                icon.style.color = ''; // Restaura cor
+              })
+              .updateMsgStatus(isNumber); // Nome da nova função no Code.gs
+          } catch(e) {
+             console.error("Erro no lado do cliente em updateMsgStatus:", e);
+             alert("Um erro inesperado ocorreu: " + e.message);
+             if(event.target) {
+               event.target.textContent = 'sync';
+               event.target.style.pointerEvents = 'auto';
+               event.target.style.color = '';
+             }
+          }
         }
 
         
@@ -685,28 +877,58 @@
         function applyGlobalFilters() { console.log("Aplicando filtros globais..."); try { const year = document.getElementById('yearFilter').value; const month = document.getElementById('monthFilter').value; const yearFilteredData = allDashboardData.filter(row => row && (year === 'todos' || row.year == year)); const fullyFilteredData = yearFilteredData.filter(row => row && (month === 'todos' || row.month == month)); console.log("Dados filtrados globalmente:", fullyFilteredData); updateKPIs(fullyFilteredData); drawCharts(fullyFilteredData, yearFilteredData); } catch (e) { console.error("Erro ao aplicar filtros globais:", e); } }
         function parseDate(dateString) { try { if (!dateString || typeof dateString !== 'string' || !dateString.includes('/')) return null; const parts = dateString.split('/'); if (parts.length !== 3) return null; const year = parseInt(parts[2], 10) < 100 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10); const day = parseInt(parts[0], 10); const month = parseInt(parts[1], 10) - 1; if (isNaN(day) || isNaN(month) || isNaN(year)) return null; const date = new Date(year, month, day); if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return null; return date; } catch (e) { console.error("Erro ao parsear data:", dateString, e); return null; } }
         
-        // --- FUNÇÃO addEventListeners ATUALIZADA ---
+        // --- FUNÇÃO addEventListeners (CORRIGIDA) ---
         function addEventListeners() { 
             try { 
                 document.getElementById('yearFilter').addEventListener('change', applyGlobalFilters); 
                 document.getElementById('monthFilter').addEventListener('change', applyGlobalFilters); 
                 document.getElementById('searchInput').addEventListener('keyup', applyFilters); 
-                document.getElementById('purposeFilter').addEventListener('change', applyFilters); 
-                document.getElementById('statusFilter').addEventListener('change', applyFilters); 
                 
-                // Listener para o chip IS PENDENTES (NOVO)
-                const isPendenteChip = document.getElementById('isPendenteFilter');
-                isPendenteChip.addEventListener('click', () => {
-                    isPendenteChip.classList.toggle('active'); 
-                    applyFilters(); 
-                });
+                // Listener para o menu de Finalidades (CORRIGIDO)
+                const purposeMenu = document.getElementById('purposeFilterMenu');
+                if (purposeMenu) {
+                  
+                  // Listener para o botão "Limpar"
+                  purposeMenu.addEventListener('click', (e) => {
+                    if (e.target.id === 'clearPurposeFilter') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      document.querySelectorAll('.purpose-filter-item:checked').forEach(cb => cb.checked = false);
+                      applyFilters();
+                      updatePurposeButtonText();
+                    }
+                  });
+
+                  // Listener para as caixas de seleção
+                  purposeMenu.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('purpose-filter-item')) {
+                      // O evento 'change' dispara *depois* que o estado mudou
+                      applyFilters();
+                      updatePurposeButtonText();
+                    }
+                  });
+                }
                 
-                // Listener para o chip MSG PENDENTE (Atualizado)
-                const pendingFilterChip = document.getElementById('pendingMsgFilter');
-                pendingFilterChip.addEventListener('click', () => {
-                    pendingFilterChip.classList.toggle('active'); 
-                    applyFilters(); 
-                });
+                // Função auxiliar para criar listeners dos chips
+                const setupChipListener = (id) => {
+                    const chip = document.getElementById(id);
+                    if (chip) {
+                        chip.addEventListener('click', () => {
+                            chip.classList.toggle('active'); 
+                            applyFilters(); 
+                        });
+                    }
+                };
+                
+                // Configura os listeners para todos os chips
+                setupChipListener('isPendenteFilter');
+                setupChipListener('pendingMsgFilter');
+                setupChipListener('revisaoFilter');
+                setupChipListener('restituidaFilter');
+                setupChipListener('agendadasFilter');
+                setupChipListener('faltasFilter');
+                setupChipListener('canceladasFilter');
+
             } catch (e) { 
                 console.error("Erro ao adicionar event listeners:", e); 
                 onDataError(new Error("Não foi possível configurar os filtros interativos.")); 
