@@ -1,309 +1,526 @@
-// ================================================================= //
-//                      CONFIGURAÇÕES GLOBAIS                        //
-// ================================================================= //
+/**
+ * @OnlyCurrentDoc
+ */
 
-// --- Configs do Formulário de Inspeção e Dashboard (ORIGINAL) ---
-const ss = SpreadsheetApp.getActiveSpreadsheet();
-const listasRefSheet = ss.getSheetByName('ListasRef');
-const listaControleSheet = ss.getSheetByName('ListaControle');
-const militaresHnreSheet = ss.getSheetByName('MilitaresHNRe');
-const concursosSheet = ss.getSheetByName('ListaConcursos');
-// --- Configs do Gerador de Pareceres (NOVO) ---
-const TEMPLATE_IDS = {
-  'Psiquiatria': '1dBBPpAUigm9DFUWqyP0NkTEVGxeHWwKZF8dnoJ7xqP8',
-  'Psicologia': '1eQiRCtmF-V1Etn7fp6AbhTGZbYkqJlLrQYGjLRfePqQ',
-  'Hepatologia': '12-s0h077A6hwipVe4oARcor4cNMKeAGOl6elV-pk_HQ',
-  'Cardiologia': '1woGqRVEpe7hQkqZiPrPn2bUgIgcN7MtImn0plq8fbLE',
-  'Ortopedia': '1qmi93Y_kZpNZEeYcqhSA41KVsZ4gFE1MqkK6kbAsheI'
-};
-const SHEET_ID_PARECER_MILITARES = "1yqZYEh2apMezknd0_0sBBEbliV3jwoDEw43FipXwsUQ";
-const PDF_FOLDER_ID = "176YQTOOWXuE78Xul49XYpJsVNyu-eZFi";
+// --- CONFIGURAções GLOBAIS ---
+// ID da Planilha (você mencionou que já corrigiu este)
+const SS_ID = '12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw'; 
 
-const PERITO_EMAILS = {
-  'CT Mauriston': 'mauriston.martins@marinha.mil.br',
-  'CT Júlio César': 'julio.xaiver@marinha.mil.br',
-  '1T Salyne': 'salyne.martins@marinha.mil.br',
-  '1T Luz': 'lucas.luz@marinha.mil.br',
-  '2T Trindade': 'marcelo.trindade@marinha.mil.br'
-};
-// ================================================================= //
-//          ROTEADOR PRINCIPAL E FUNÇÕES DE SERVIÇO WEB              //
-// ================================================================= //
+// Nomes das Abas (VERIFIQUE SE ESTÃO IDÊNTICOS AOS DA SUA PLANILHA)
+const DATA_SHEET_NAME = 'ListaControle';       
+const LISTS_SHEET_NAME = 'ListasRef';          
+const CONCURSOS_SHEET_NAME = 'ListaConcursos';   
+const RESTRICOES_SHEET_NAME = 'ListasRef';     
+const RESTRICOES_RANGE = 'G2:G50'; // Coluna G, com base na sua lista "Restrições"
 
+// Cache do Script
+const cache = CacheService.getScriptCache();
+
+// --- FUNÇÕES DE NAVEGAÇÃO E INICIALIZAÇÃO ---
+
+/**
+ * Ponto de entrada principal para o Web App.
+ * @param {object} e - Parâmetros do evento (ex: e.parameter.page).
+ * @returns {HtmlOutput} O HTML da página solicitada.
+ */
 function doGet(e) {
-  let page = e.parameter.page;
-  if (page == 'dashboard') {
-    return HtmlService.createTemplateFromFile('Dashboard').evaluate().setTitle('Dashboard JRS').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-  } else if (page == 'parecer') {
-    return HtmlService.createTemplateFromFile('Parecer').evaluate().setTitle('Gerador de Pareceres').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  let page = e.parameter.page || 'Dashboard'; // Página padrão é o Dashboard
+  let htmlOutput;
+
+  switch (page) {
+    case 'Dashboard':
+      htmlOutput = HtmlService.createTemplateFromFile('Dashboard').evaluate()
+        .setTitle('JRS - Dashboard de Inspeções')
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+      break;
+    case 'formulario':
+      htmlOutput = HtmlService.createTemplateFromFile('Formulario').evaluate()
+        .setTitle('JRS - Formulário de Inspeção')
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+      break;
+    case 'parecer':
+      htmlOutput = HtmlService.createTemplateFromFile('Parecer').evaluate()
+        .setTitle('JRS - Gerador de Parecer')
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+      break;
+    default:
+      htmlOutput = HtmlService.createTemplateFromFile('Dashboard').evaluate()
+        .setTitle('JRS - Dashboard de Inspeções')
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1');
   }
-  // Página padrão é 'formulario'
-  return HtmlService.createTemplateFromFile('Formulario').evaluate().setTitle('Formulário JRS').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+
+  return htmlOutput;
 }
 
+/**
+ * Retorna a URL base do Web App.
+ * @returns {string} A URL do script.
+ */
 function getWebAppUrl() {
   return ScriptApp.getService().getUrl();
 }
 
-// ================================================================= //
-//     FUNÇÕES DO FORMULÁRIO DE INSPEÇÃO E DASHBOARD (ORIGINAL)      //
-// ================================================================= //
-
-function getDropdownData() {
-  try {
-    const omOptions = listasRefSheet.getRange('B2:B' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const pgOptions = listasRefSheet.getRange('C2:C' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const finalidadeOptions = listasRefSheet.getRange('A2:A' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const statusOptions = listasRefSheet.getRange('F2:F' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    const restricoesOptions = listasRefSheet.getRange('G2:G' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
-    return { omOptions, pgOptions, finalidadeOptions, statusOptions, restricoesOptions };
-  } catch (e) {
-    console.error("Erro em getDropdownData: " + e.message);
-    throw new Error("Não foi possível buscar os dados para os menus.");
-  }
-}
-
-// FUNÇÃO RENOMEADA
-function getHnreMilitaryDataForForm() {
-  try {
-    const data = militaresHnreSheet.getRange('A2:C' + militaresHnreSheet.getLastRow()).getValues();
-    return data.map(row => ({ inspecionado: row[2], pg: row[0], nip: row[1] })).filter(m => m.inspecionado);
-  } catch (e) {
-    console.error("Erro em getHnreMilitaryDataForForm: " + e.message);
-    throw new Error("Não foi possível buscar os dados dos militares.");
-  }
-}
-
-function addNewInspection(formData) {
-  try {
-    const headers = listaControleSheet.getRange(1, 1, 1, listaControleSheet.getLastColumn()).getValues()[0];
-    let restricoesString = formData.restricoes.join(', ');
-    if (formData.restricoes.includes('Outros') && formData.outrosRestricao) {
-      restricoesString = restricoesString.replace('Outros', `Outros: ${formData.outrosRestricao}`);
-    }
-
-    const rowData = {
-      'OM': formData.om,
-      'Inspecionado': formData.inspecionado,
-      'P/G/Q': formData.pg,
-      'NIP': formData.nip,
-      'IS': formData.is,
-      'Finalidade': formData.finalidade,
-      'DataEntrevista': formData.dataEntrevista,
-      'StatusIS': formData.statusIS,
-      'TIS': formData.tis,
-      'DS-1a': formData.ds1a,
-      'Laudo': formData.laudo,
-      'DataLaudo': formData.dataLaudo,
-      'Restrições': restricoesString
-  
-    };
-
-    const newRow = headers.map(header => rowData[header] || null);
-    listaControleSheet.appendRow(newRow);
-    return { status: 'success', message: 'Inspeção adicionada com sucesso!' };
-  } catch(e) {
-    console.error("Erro em addNewInspection: " + e.message);
-    return { status: 'error', message: `Falha ao adicionar: ${e.message}` };
-  }
-}
-
-// --- FUNÇÃO ATUALIZADA ---
+/**
+ * Busca e processa os dados para o Dashboard.
+ * Esta é a função principal que o Dashboard.html chama ao carregar.
+ * @returns {object} Um objeto contendo dados para KPIs/Gráficos e para a Tabela.
+ */
 function getDashboardData() {
   try {
-    const rotinaData = listaControleSheet.getRange('A2:N' + listaControleSheet.getLastRow()).getValues();
-    const concursoData = concursosSheet.getRange('A2:I' + concursosSheet.getLastRow()).getValues();
-
-    const dashboardData = rotinaData.map(r => ({
-      EventDate: r[1] ? new Date(r[1]).toLocaleDateString('pt-BR') : '', StatusIS: r[7], Finalidade: r[2], MSG: r[13], type: 'Rotina'
-    }));
-    concursoData.forEach(r => {
-      dashboardData.push({
-        EventDate: r[0] ? new Date(r[0]).toLocaleDateString('pt-BR') : '', StatusIS: r[8], Finalidade: r[6], MSG: '', type: 'Concurso'
-      });
-    });
-    const tableData = rotinaData.map(r => ({
-      DataEntrevista: r[1] ? new Date(r[1]).toLocaleDateString('pt-BR') : '', IS: r[0], Finalidade: r[2], StatusIS: r[7], Inspecionado: r[6], OM: r[3], 'P/G/Q': r[4], NIP: r[5], Laudo: r[9], DataLaudo: r[8] ? new Date(r[8]).toLocaleDateString('pt-BR') : '', Restrições: r[10], TIS: r[11], 'DS-1a': r[12], MSG: r[13],
-    }));
-
-    // --- ADICIONADO ---
-    // Busca a lista de restrições para o novo modal de edição
-    const restricoesOptions = listasRefSheet.getRange('G2:G' + listasRefSheet.getLastRow()).getValues().flat().filter(String);
+    const ss = SpreadsheetApp.openById(SS_ID);
     
-    return { dashboardData, tableData, restricoesOptions }; // Retorna os dados E a lista de restrições
-  } catch(e) {
-    console.error("Erro em getDashboardData: " + e.message);
-    throw new Error("Falha ao carregar dados do Dashboard.");
+    // 1. Obter dados da "ListaControle" (Rotina)
+    const dataSheet = ss.getSheetByName(DATA_SHEET_NAME);
+    const dataRange = dataSheet.getDataRange();
+    const allData = dataRange.getValues(); 
+    const dataHeaders = allData.shift(); // Remove a linha de cabeçalho
+    const dataColIndices = getHeaderIndices(dataHeaders);
+
+    // Confere se as colunas essenciais existem
+    if (dataColIndices.DataEntrevista === undefined || dataColIndices.StatusIS === undefined) {
+      throw new Error(`Não foi possível encontrar colunas essenciais (ex: 'DataEntrevista', 'StatusIS') na aba '${DATA_SHEET_NAME}'. Verifique os cabeçalhos.`);
+    }
+
+    const dashboardDataRotina = allData.map(row => ({
+      EventDate: row[dataColIndices.DataEntrevista], 
+      StatusIS: row[dataColIndices.StatusIS],       
+      Finalidade: row[dataColIndices.Finalidade],    
+      MSG: row[dataColIndices.MSG],                
+      type: 'Rotina'
+    }));
+
+    // 2. Obter dados da "ListaConcursos"
+    const concursosSheet = ss.getSheetByName(CONCURSOS_SHEET_NAME);
+    const concursosRange = concursosSheet.getDataRange();
+    const allConcursosData = concursosRange.getValues(); 
+    const concursosHeaders = allConcursosData.shift(); 
+    const concursosColIndices = getHeaderIndices(concursosHeaders);
+
+    // Confere se as colunas essenciais existem
+    if (concursosColIndices.Data === undefined || concursosColIndices.StatusIS === undefined) {
+      throw new Error(`Não foi possível encontrar colunas essenciais (ex: 'Data', 'StatusIS') na aba '${CONCURSOS_SHEET_NAME}'. Verifique os cabeçalhos.`);
+    }
+    
+    const dashboardDataConcursos = allConcursosData.map(row => ({
+      EventDate: row[concursosColIndices.Data],        
+      StatusIS: row[concursosColIndices.StatusIS],       
+      Finalidade: row[concursosColIndices.Finalidade],    
+      MSG: '', 
+      type: 'Concurso'
+    }));
+
+    // 3. Combinar dados para KPIs e Gráficos
+    const combinedDashboardData = dashboardDataRotina.concat(dashboardDataConcursos);
+
+    // 4. Preparar dados da Tabela (Apenas Rotina - 'allData' já é da ListaControle)
+    const tableData = allData.map(row => { 
+      let rowObject = {};
+      dataHeaders.forEach((header, index) => {
+        // CORREÇÃO: Usa header.trim() para criar a chave do objeto
+        if (header) { // Ignora colunas sem cabeçalho
+          if (row[index] instanceof Date) {
+            rowObject[header.trim()] = Utilities.formatDate(row[index], Session.getScriptTimeZone(), 'dd/MM/yyyy');
+          } else {
+            rowObject[header.trim()] = row[index];
+          }
+        }
+      });
+      return rowObject;
+    });
+
+    // 5. Obter lista de Restrições
+    const restricoesSheet = ss.getSheetByName(RESTRICOES_SHEET_NAME);
+    const restricoesOptions = restricoesSheet.getRange(RESTRICOES_RANGE)
+      .getValues()
+      .flat() 
+      .filter(item => item.trim() !== ''); 
+
+    console.log(`Dados carregados: ${combinedDashboardData.length} para KPIs, ${tableData.length} para tabela, ${restricoesOptions.length} restrições.`);
+    
+    // 6. Retornar o objeto formatado que o 'onDataLoaded' no HTML espera
+    return {
+      dashboardData: combinedDashboardData,
+      tableData: tableData,
+      restricoesOptions: restricoesOptions
+    };
+  } catch (e) {
+    console.error('Erro em getDashboardData:', e);
+    throw new Error(`Falha ao buscar dados: ${e.message}. Verifique os NOMES DAS ABAS e NOMES DAS COLUNAS no seu Code.gs e na Planilha.`);
   }
 }
 
-// --- FUNÇÃO DE UPDATE DE MSG ---
+// --- FUNÇÕES DE ATUALIZAÇÃO (MODAL) ---
+
+/**
+ * Atualiza o status da MSG de PENDENTE para ENVIADA.
+ * @param {string} isNumber - O número da IS a ser atualizada.
+ * @returns {object} Objeto de sucesso ou falha.
+ */
 function updateMsgStatus(isNumber) {
+  if (!isNumber) {
+    return { success: false, message: 'Número da IS não fornecido.' };
+  }
+
   try {
-    if (!listaControleSheet) { throw new Error("Planilha 'ListaControle' não encontrada."); }
-    const headers = listaControleSheet.getRange(1, 1, 1, listaControleSheet.getLastColumn()).getValues()[0];
-    const isColIndex = headers.indexOf('IS');
-    const msgColIndex = headers.indexOf('MSG');
-    if (isColIndex === -1 || msgColIndex === -1) { throw new Error("Colunas 'IS' ou 'MSG' não encontradas."); }
-    const dataRange = listaControleSheet.getRange(2, 1, listaControleSheet.getLastRow() - 1, listaControleSheet.getLastColumn());
-    const values = dataRange.getValues();
-    let rowFound = false;
-    for (let i = 0; i < values.length; i++) {
-      if (String(values[i][isColIndex]) == String(isNumber)) {
-        listaControleSheet.getRange(i + 2, msgColIndex + 1).setValue('ENVIADA');
-        rowFound = true;
-        Logger.log(`IS ${isNumber} encontrada na linha ${i+2}. MSG atualizada para ENVIADA.`);
-        break; 
+    const ss = SpreadsheetApp.openById(SS_ID);
+    const sheet = ss.getSheetByName(DATA_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const colIndices = getHeaderIndices(headers);
+
+    const isColIndex = colIndices.IS;
+    const msgColIndex = colIndices.MSG;
+
+    if (isColIndex === undefined || msgColIndex === undefined) {
+      throw new Error('Não foi possível encontrar as colunas "IS" ou "MSG".');
+    }
+
+    // Encontra a linha correspondente (começa do fim para pegar a mais recente)
+    for (let i = data.length - 1; i > 0; i--) {
+      if (data[i][isColIndex] == isNumber) {
+        // Encontrou a linha, atualiza a coluna MSG (índice baseado em 1)
+        sheet.getRange(i + 1, msgColIndex + 1).setValue('ENVIADA');
+        console.log(`Status da MSG atualizado para ENVIADA para IS: ${isNumber} (Linha ${i + 1})`);
+        return { success: true };
       }
     }
-    if (rowFound) { return { success: true, message: 'Status atualizado para ENVIADA.' }; } 
-    else { Logger.log(`IS ${isNumber} não encontrada.`); return { success: false, message: 'Número da IS não encontrado.' }; }
+
+    return { success: false, message: 'Número da IS não encontrado.' };
   } catch (e) {
-    Logger.log('Erro em updateMsgStatus: ' + e.toString());
-    return { success: false, message: e.toString() };
+    console.error('Erro em updateMsgStatus:', e);
+    return { success: false, message: `Erro do servidor: ${e.message}` };
   }
 }
 
-// --- NOVA FUNÇÃO DE UPDATE DE CONCLUSÃO ---
-function updateInspectionConclusion(formData) {
-  try {
-    if (!listaControleSheet) { throw new Error("Planilha 'ListaControle' não encontrada."); }
 
-    // 1. Encontrar os índices das colunas
-    const headers = listaControleSheet.getRange(1, 1, 1, listaControleSheet.getLastColumn()).getValues()[0];
-    const colIndices = {
-      is: headers.indexOf('IS'),
-      laudo: headers.indexOf('Laudo'),
-      dataLaudo: headers.indexOf('DataLaudo'),
-      tis: headers.indexOf('TIS'),
-      ds1a: headers.indexOf('DS-1a'),
-      restricoes: headers.indexOf('Restrições')
-    };
-    if (colIndices.is === -1 || colIndices.laudo === -1 || colIndices.dataLaudo === -1 || colIndices.tis === -1 || colIndices.ds1a === -1 || colIndices.restricoes === -1) {
-      throw new Error("Colunas essenciais (IS, Laudo, DataLaudo, etc.) não encontradas. Verifique a 1ª linha da planilha.");
+/**
+ * Atualiza os detalhes da conclusão da inspeção (Data Entrevista, Laudo, Data, TIS, DS-1a, Restrições).
+ * @param {object} formData - Os dados vindos do formulário do modal.
+ * @returns {object} Objeto de sucesso (com dados atualizados) ou falha.
+ */
+function updateInspectionConclusion(formData) {
+  if (!formData || !formData.isNumber) {
+    return { success: false, message: 'Dados do formulário ou IS inválidos.' };
+  }
+
+  console.log("Recebendo dados para atualização:", formData);
+
+  try {
+    const ss = SpreadsheetApp.openById(SS_ID);
+    const sheet = ss.getSheetByName(DATA_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const colIndices = getHeaderIndices(headers); // Nomes de coluna vêm da Planilha
+
+    const isColIndex = colIndices.IS;
+    if (isColIndex === undefined) {
+      throw new Error('Coluna "IS" não encontrada.');
     }
 
-    // 2. Encontrar a linha da inspeção
-    const dataRange = listaControleSheet.getRange(2, colIndices.is + 1, listaControleSheet.getLastRow() - 1, 1);
-    const isValues = dataRange.getValues();
-    let targetRowIndex = -1; // Esta será a linha no array (0-based)
-    
-    for (let i = 0; i < isValues.length; i++) {
-      if (String(isValues[i][0]) == String(formData.isNumber)) {
-        targetRowIndex = i;
+    // 1. Encontrar a linha
+    let rowIndex = -1;
+    for (let i = data.length - 1; i > 0; i--) {
+      if (data[i][isColIndex] == formData.isNumber) {
+        rowIndex = i;
         break;
       }
     }
-    
-    if (targetRowIndex === -1) {
-      throw new Error(`IS ${formData.isNumber} não encontrada.`);
+
+    if (rowIndex === -1) {
+      return { success: false, message: 'IS não encontrada na planilha.' };
     }
 
-    // 3. Formatar Restrições (lógica copiada de addNewInspection)
-    let restricoesString = formData.restricoes.join(', ');
-    if (formData.restricoes.includes('Outros') && formData.outrosRestricao) {
-      restricoesString = restricoesString.replace('Outros', `Outros: ${formData.outrosRestricao}`);
+    // 2. Pegar a range da linha (linha + 1 para índice de planilha)
+    const range = sheet.getRange(rowIndex + 1, 1, 1, headers.length);
+    const rowValues = range.getValues(); // Array 2D: [[val1, val2, ...]]
+
+    // 3. Helper para converter data 'yyyy-mm-dd' para 'dd/mm/yyyy' (definido no final do arquivo)
+    const ptBrDataEntrevista = convertToPtBrDate(formData.dataEntrevista);
+    const ptBrDataLaudo = convertToPtBrDate(formData.dataLaudo);
+
+    // 4. Montar string de Restrições
+    let restricoesString = '';
+    if (Array.isArray(formData.restricoes) && formData.restricoes.length > 0) {
+      restricoesString = formData.restricoes
+        .map(r => {
+          if (r === 'Outros' && formData.outrosRestricao) {
+            return `Outros: ${formData.outrosRestricao}`;
+          }
+          return r;
+        })
+        .filter(r => r !== 'Outros') // Filtra "Outros" se o campo de texto estiver vazio
+        .join(', ');
     }
 
-    // 4. Preparar dados e atualizar a planilha
-    const targetRowOnSheet = targetRowIndex + 2; // +2 porque o array é 0-based e a planilha é 1-based + cabeçalho
+    // 5. Atualizar valores na planilha
+    rowValues[0][colIndices.DataEntrevista] = ptBrDataEntrevista; 
+    rowValues[0][colIndices.Laudo] = formData.laudo;
+    rowValues[0][colIndices.DataLaudo] = ptBrDataLaudo;
+    rowValues[0][colIndices.TIS] = formData.tis;
+    rowValues[0][colIndices['DS-1a']] = formData.ds1a; // Nome da coluna 'DS-1a'
+    rowValues[0][colIndices.Restrições] = restricoesString;
     
-    // Atualiza os valores individualmente
-    listaControleSheet.getRange(targetRowOnSheet, colIndices.laudo + 1).setValue(formData.laudo || null);
-    listaControleSheet.getRange(targetRowOnSheet, colIndices.dataLaudo + 1).setValue(formData.dataLaudo || null);
-    listaControleSheet.getRange(targetRowOnSheet, colIndices.tis + 1).setValue(formData.tis || null);
-    listaControleSheet.getRange(targetRowOnSheet, colIndices.ds1a + 1).setValue(formData.ds1a || null);
-    listaControleSheet.getRange(targetRowOnSheet, colIndices.restricoes + 1).setValue(restricoesString || null);
+    // Atualiza o StatusIS para 'Votada JRS' se estava pendente
+    if (rowValues[0][colIndices.StatusIS] === 'Concluída') {
+      rowValues[0][colIndices.StatusIS] = 'Votada JRS';
+    }
 
-    Logger.log(`IS ${formData.isNumber} (Linha ${targetRowOnSheet}) atualizada com sucesso.`);
-    
-    // 5. Retornar os dados formatados para o frontend
-    return { 
-      success: true, 
-      message: 'Conclusão salva com sucesso!',
-      updatedData: {
-        Laudo: formData.laudo || '',
-        DataLaudo: formData.dataLaudo ? new Date(formData.dataLaudo).toLocaleDateString('pt-BR') : '', // Re-formata para pt-BR
-        TIS: formData.tis || '',
-        'DS-1a': formData.ds1a || '',
-        Restrições: restricoesString || ''
-      } 
+    range.setValues(rowValues);
+    console.log(`Linha ${rowIndex + 1} (IS ${formData.isNumber}) atualizada com sucesso.`);
+
+    // 6. Preparar resposta de sucesso para atualizar a UI
+    const updatedData = {
+      'DataEntrevista': ptBrDataEntrevista, 
+      'Laudo': formData.laudo,
+      'DataLaudo': ptBrDataLaudo,
+      'TIS': formData.tis,
+      'DS-1a': formData.ds1a,
+      'Restrições': restricoesString,
+      'StatusIS': rowValues[0][colIndices.StatusIS] // Retorna o status atualizado
     };
 
+    return { success: true, updatedData: updatedData };
+
   } catch (e) {
-    Logger.log('Erro em updateInspectionConclusion: ' + e.toString());
-    return { success: false, message: e.toString() };
+    console.error('Erro em updateInspectionConclusion:', e);
+    return { success: false, message: `Erro do servidor: ${e.message}` };
   }
 }
 
 
-// ================================================================= //
-//           FUNÇÕES DO GERADOR DE PARECERES (NOVO MÓDULO)           //
-// ================================================================= //
+// --- FUNÇÕES DO FORMULÁRIO (Formulario.html) ---
 
-// FUNÇÃO RENOMEADA
-function getHnreMilitaryDataForParecer() {
+/**
+ * Busca dados de listas (Finalidade, OM, P/G, etc.) e restrições para o Formulario.html.
+ * @returns {object} Objeto contendo as listas para os dropdowns e checkboxes.
+ */
+function getFormularioData() {
   try {
-    const sheet = SpreadsheetApp.openById(SHEET_ID_PARECER_MILITARES).getSheetByName("MILITAR");
-    const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
-    const militaryList = data.filter(row => row[2] === "HNRE" && row[1]).map(row => ({ nip: row[0], name: row[1], posto: row[3] })).sort((a, b) => a.name.localeCompare(b.name));
-    return militaryList;
+    const ss = SpreadsheetApp.openById(SS_ID);
+    const sheet = ss.getSheetByName(LISTS_SHEET_NAME);
+    
+    // Mapeamento de colunas para intervalos (A=1, B=2, etc.)
+    // Com base na sua lista de colunas: A=FINALIDADES, B=OM, C=P/G, G=Restrições
+    const listColumns = {
+      finalidades: 'A2:A50', // Coluna FINALIDADES
+      om: 'B2:B50',          // Coluna OM
+      pgq: 'C2:C50',         // Coluna P/G
+      restricoes: RESTRICOES_RANGE // Coluna Restrições (G2:G50)
+    };
+
+    let formData = {};
+
+    for (const key in listColumns) {
+      const range = listColumns[key];
+      const values = sheet.getRange(range)
+        .getValues()
+        .flat() // Transforma array 2D em 1D
+        .filter(item => item.trim() !== ''); // Remove células vazias
+      formData[key] = [...new Set(values)].sort(); // Remove duplicatas e ordena
+    }
+
+    return formData;
   } catch (e) {
-    Logger.log('Erro em getHnreMilitaryDataForParecer: ' + e.toString());
-    return { error: e.toString() };
+    console.error('Erro em getFormularioData:', e);
+    throw new Error(`Falha ao buscar dados das listas: ${e.message}`);
   }
 }
 
-function processForm(formData) {
+/**
+ * Salva uma nova inspeção na planilha "ListaControle".
+ * @param {object} formData - Dados do formulário.
+ * @returns {object} Objeto de sucesso ou falha.
+ */
+function saveInspection(formData) {
   try {
-    const pdfFolder = DriveApp.getFolderById(PDF_FOLDER_ID);
-    const templateId = TEMPLATE_IDS[formData.ESPECIALIDADE];
-    const templateDoc = DriveApp.getFileById(templateId);
-    const newDocName = `Parecer - ${formData.NOME} - ${new Date().toLocaleDateString('pt-BR')}`;
-    const newDocFile = templateDoc.makeCopy(newDocName, pdfFolder);
-    const doc = DocumentApp.openById(newDocFile.getId());
-    const body = doc.getBody();
-    let peritoFullName = getPeritoFullName(formData.PERITO_SELECAO);
-    let posto = getPeritoPosto(formData.PERITO_SELECAO);
-    let membroValue = '';
-    switch (formData.PERITO_SELECAO) { case 'CT Mauriston': membroValue = 'Presidente'; break; case 'CT Júlio César': membroValue = 'Médico Perito Isolado'; break;
-    case '1T Salyne': case '1T Luz': membroValue = 'Membro da Junta Regular de Saúde'; break;
-    case '2T Trindade': membroValue = 'Médico Perito Isolado'; break; }
-    const hoje = new Date();
-    const dia = hoje.getDate(); const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
-    const nomeMes = meses[hoje.getMonth()]; const ano = hoje.getFullYear(); const dataAtual = `${dia} de ${nomeMes} de ${ano}`;
-    body.replaceText(`{{NOME}}`, formData.NOME || '');
-    body.replaceText(`{{GRAU_HIERARQUICO}}`, formData.GRAU_HIERARQUICO || ''); body.replaceText(`{{NIP_MAT}}`, formData.NIP_MAT || ''); body.replaceText(`{{FINALIDADE_INSP}}`, formData.FINALIDADE_INSP || ''); body.replaceText(`{{INFO_COMPLEMENTARES}}`, formData.INFO_COMPLEMENTARES || ''); body.replaceText(`{{PERITO}}`, peritoFullName.toUpperCase()); body.replaceText(`{{POSTO}}`, posto);
-    body.replaceText(`{{DATA}}`, dataAtual); body.replaceText(`{{MEMBRO}}`, membroValue);
-    doc.saveAndClose();
-    const pdfFile = pdfFolder.createFile(newDocFile.getAs(MimeType.PDF)).setName(newDocName + ".pdf");
-    pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    newDocFile.setTrashed(true);
-    return { success: true, pdfUrl: pdfFile.getUrl(), pdfId: pdfFile.getId() };
-  } catch (error) {
-    Logger.log('Erro em processForm: ' + error.toString());
-    return { success: false, message: error.toString() };
-  }
-}
+    const ss = SpreadsheetApp.openById(SS_ID);
+    const sheet = ss.getSheetByName(DATA_SHEET_NAME);
+    
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const colIndices = getHeaderIndices(headers);
 
-function sendPdfByEmail(pdfId, formData, emailTarget) {
-  try {
-    const pdfFile = DriveApp.getFileById(pdfId);
-    const peritoSelecionado = formData.PERITO_SELECAO;
-    const peritoEmail = PERITO_EMAILS[peritoSelecionado] || '';
-    const peritoFullName = getPeritoFullName(peritoSelecionado);
-    const recipient = emailTarget === 'zimbra' ? peritoEmail : 'hnre.jrs@marinha.mil.br';
-    const subject = `SOL PARECER PSIQ ${formData.GRAU_HIERARQUICO} ${formData.NOME}`;
-    const body = `TRM em anexo SOL de parecer psiquiátrico para conclusão de IS ${formData.FINALIDADE_INSP} atinente a ${formData.NIP_MAT} ${formData.GRAU_HIERARQUICO} ${formData.NOME}.<br><br>Atenciosamente,<br><br><b>${peritoFullName.toUpperCase()}</b><br>JRS/HNRe`;
-    MailApp.sendEmail({ to: recipient, subject: subject, htmlBody: body, name: peritoFullName, replyTo: peritoEmail, attachments: [pdfFile.getAs(MimeType.PDF)] });
-    return { success: true, message: 'E-mail enviado para ' + recipient };
+    // 1. Gerar número da IS (Ano + Sequencial)
+    const year = new Date().getFullYear().toString();
+    // Encontra a última IS na coluna, mesmo que não seja a última linha da planilha
+    const isColumnValues = sheet.getRange(2, colIndices.IS + 1, sheet.getLastRow() - 1, 1).getValues().flat();
+    const lastIS = isColumnValues.filter(String).pop() || (year + "000"); // Pega a última IS ou 'ANO000'
+    
+    let nextSeq = '001';
+    if (lastIS.startsWith(year)) {
+      const lastSeq = parseInt(lastIS.substring(year.length), 10);
+      nextSeq = (lastSeq + 1).toString().padStart(3, '0');
+    }
+    const newIS = year + nextSeq;
+
+    // 2. Converter datas (yyyy-mm-dd -> dd/mm/yyyy)
+    const dataEntrevista = convertToPtBrDate(formData.dataEntrevista);
+    const dataLaudo = convertToPtBrDate(formData.dataLaudo);
+
+    // 3. Montar string de Restrições
+    let restricoesString = '';
+    if (Array.isArray(formData.restricoes) && formData.restricoes.length > 0) {
+      restricoesString = formData.restricoes
+        .map(r => {
+          if (r === 'Outros' && formData.outrosRestricao) {
+            return `Outros: ${formData.outrosRestricao}`;
+          }
+          return r;
+        })
+        .filter(r => r !== 'Outros') // Filtra "Outros" se o campo de texto estiver vazio
+        .join(', ');
+    }
+
+    // 4. Montar a nova linha
+    let newRow = new Array(headers.length).fill(''); // Cria array vazio com o tamanho dos headers
+    
+    newRow[colIndices.IS] = newIS;
+    newRow[colIndices.DataEntrevista] = dataEntrevista;
+    newRow[colIndices.Finalidade] = formData.finalidade;
+    newRow[colIndices.OM] = formData.om;
+    newRow[colIndices['P/G/Q']] = formData.pgq; // Nome da coluna 'P/G/Q'
+    newRow[colIndices.NIP] = formData.nip;
+    newRow[colIndices.Inspecionado] = formData.inspecionado;
+    newRow[colIndices.StatusIS] = formData.statusIS;
+    newRow[colIndices.DataLaudo] = dataLaudo;
+    newRow[colIndices.Laudo] = formData.laudo;
+    newRow[colIndices.Restrições] = restricoesString;
+    newRow[colIndices.TIS] = formData.tis;
+    newRow[colIndices['DS-1a']] = formData.ds1a; // Nome da coluna 'DS-1a'
+    newRow[colIndices.MSG] = 'PENDENTE'; // Valor padrão
+
+    // 5. Adicionar a linha na planilha
+    sheet.appendRow(newRow);
+
+    return { success: true, newIS: newIS, message: `Inspeção ${newIS} salva com sucesso.` };
+
   } catch (e) {
-    Logger.log('Erro em sendPdfByEmail: ' + e.toString());
-    return { success: false, message: 'Erro ao enviar e-mail: ' + e.toString() };
+    console.error('Erro em saveInspection:', e);
+    return { success: false, message: `Erro do servidor: ${e.message}` };
   }
 }
 
-function getPeritoFullName(peritoSelection) { const nomes = { 'CT Mauriston': 'Mauriston Renan Martins Silva', 'CT Júlio César': 'Júlio César Xavier Filho', '1T Salyne': 'Salyne Regina Martins Roberto', '1T Luz': 'Lucas Luz Nunes', '2T Trindade': 'Marcelo Fulco Trindade' };
-return nomes[peritoSelection] || ''; }
-function getPeritoPosto(peritoSelection) { const postos = { 'CT Mauriston': 'Capitão-Tenente (Md)', '1T Salyne': 'Primeiro-Tenente (Md)', '1T Luz': 'Primeiro-Tenente (Md)', 'CT Júlio César': 'Capitão-Tenente (RM2-Md)', '2T Trindade': 'Segundo-Tenente (RM2-Md)' };
-return postos[peritoSelection] || ''; }
+/**
+ * Busca dados de um militar pelo NIP na aba "MilitaresHNRe" (função de autocompletar).
+ * @param {string} nip - NIP a ser buscado.
+ * @returns {object|null} Objeto com dados do militar ou null se não encontrado.
+ */
+function getMilitarData(nip) {
+  if (!nip || nip.length < 8) { // NIPs têm 8 dígitos
+    return null;
+  }
+  
+  try {
+    const ss = SpreadsheetApp.openById(SS_ID);
+    const sheet = ss.getSheetByName('MilitaresHNRe'); // Nome da aba
+    if (!sheet) {
+      console.warn('Aba "MilitaresHNRe" não encontrada.');
+      return null;
+    }
+    
+    const data = sheet.getDataRange().getValues();
+    const headers = data.shift();
+    const colIndices = getHeaderIndices(headers);
+
+    const nipCol = colIndices.NIP;
+    
+    if (nipCol === undefined) {
+      console.warn('Coluna "NIP" não encontrada em "MilitaresHNRe".');
+      return null;
+    }
+
+    // Procura o NIP na coluna
+    for (const row of data) {
+      const rowNip = row[nipCol].toString().replace(/\D/g, ''); // Limpa formatação
+      if (rowNip === nip) {
+        let militarData = {};
+        headers.forEach((header, index) => {
+          if(header) { // Ignora colunas sem cabeçalho
+            militarData[header.trim()] = row[index]; // CORREÇÃO: Usa .trim()
+          }
+        });
+        return militarData;
+      }
+    }
+    
+    return null; // Não encontrado
+  } catch (e) {
+    console.error('Erro em getMilitarData:', e);
+    return null;
+  }
+}
+
+
+// --- FUNÇÕES DO GERADOR DE PARECER (Parecer.html) ---
+
+/**
+ * Busca dados de uma inspeção específica pelo número da IS para o Parecer.
+ * @param {string} isNumber - O número da IS.
+ * @returns {object|null} Objeto com os dados da IS ou null se não encontrada.
+ */
+function getInspectionDataByIS(isNumber) {
+  if (!isNumber) return null;
+  
+  try {
+    const ss = SpreadsheetApp.openById(SS_ID);
+    const sheet = ss.getSheetByName(DATA_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    const headers = data.shift();
+    const colIndices = getHeaderIndices(headers);
+    
+    const isCol = colIndices.IS;
+    
+    // Procura do fim para o começo para achar a IS mais recente
+    for (let i = data.length - 1; i >= 0; i--) {
+      if (data[i][isCol] == isNumber) {
+        let inspectionData = {};
+        headers.forEach((header, index) => {
+          if (header) { // Ignora colunas sem cabeçalho
+            // Formata datas
+            if (data[i][index] instanceof Date) {
+              inspectionData[header.trim()] = Utilities.formatDate(data[i][index], Session.getScriptTimeZone(), 'dd/MM/yyyy'); // CORREÇÃO: Usa .trim()
+            } else {
+              inspectionData[header.trim()] = data[i][index]; // CORREÇÃO: Usa .trim()
+            }
+          }
+        });
+        return inspectionData;
+      }
+    }
+    return null; // Não encontrado
+  } catch (e) {
+    console.error('Erro em getInspectionDataByIS:', e);
+    return null;
+  }
+}
+
+// --- FUNÇÕES AUXILIARES ---
+
+/**
+ * Cria um mapa de índices de cabeçalho (Nome da Coluna -> Índice).
+ * Esta função agora usa .trim() para ser resistente a espaços extras.
+ * @param {Array<string>} headers - Array de nomes de coluna.
+ * @returns {object} Objeto mapeando nome da coluna ao seu índice.
+ */
+function getHeaderIndices(headers) {
+  let indices = {};
+  headers.forEach((header, index) => {
+    if (header) {
+      indices[header.trim()] = index; // .trim() ignora espaços em branco antes/depois
+    }
+  });
+  return indices;
+}
+
+/**
+ * Converte data do formato 'yyyy-mm-dd' (input) para 'dd/mm/yyyy' (planilha).
+ * @param {string} isoDate - Data no formato 'yyyy-mm-dd'.
+ * @returns {string} Data no formato 'dd/mm/yyyy' ou string vazia.
+ */
+function convertToPtBrDate(isoDate) {
+  if (!isoDate || typeof isoDate !== 'string' || !isoDate.includes('-')) {
+    return '';
+  }
+  const parts = isoDate.split('-'); // [yyyy, mm, dd]
+  if (parts.length !== 3) return '';
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
