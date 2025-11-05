@@ -157,7 +157,7 @@
       .chart-container { background-color: transparent; padding: 20px; height: 400px; border: none; box-shadow: none; border-radius: 0; margin-bottom: 0; } 
       .table-container { background-color: transparent; padding: 20px; box-shadow: none; border-radius: 0; margin-bottom: 0; } 
       
-      .table-cell-main { font-weight: bold; color: #333; }
+      .table-cell-main { font-weight: bold; color: #333; font-size: 1.15em; }
       .table-cell-sub { font-size: 0.8em; color: var(--dark-gray-3); }
       
       .table-row-alert td, 
@@ -180,16 +180,15 @@
       .actions-icon:hover { color: #000; }
       
       .actions-icon.material-symbols-outlined {
-         font-size: 1.8em; 
+         font-size: 1.4em; 
          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; 
          vertical-align: middle;
       }
       
-      /* Estilo para ícones de status na tabela */
       .status-icon {
-          font-size: 1.8em; 
+          font-size: 1.4em; 
           vertical-align: middle;
-          margin-right: 8px; 
+          margin-right: 0px; 
           font-variation-settings: 'FILL' 1, 'wght' 400; 
       }
       
@@ -402,7 +401,7 @@
               <div class="col-lg-6">
                 <div class="card-elevated h-100"> 
                   <div class="kpi-block kpi-block-alert">
-                    <div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">unsubscribe</span>MSG Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiExamesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">lab_profile</span>Exames Pendentes</h6></div></div></div><hr class="my-0"><div class="flex-fill d-flex align-items-center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiConclusoesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">help</span>Conclusões Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiVotacaoPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">gavel</span>Votações Pendentes</h6></div></div></div>
+                    <div class="flex-fill d-flex align-items: center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiMsgPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">unsubscribe</span>MSG Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiExamesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">lab_profile</span>Exames Pendentes</h6></div></div></div><hr class="my-0"><div class="flex-fill d-flex align-items: center"><div class="row text-center w-100"><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiConclusoesPendentes">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">help</span>Conclusões Pendentes</h6></div><div class="col-6 kpi-item level-2"><p class="kpi-value" id="kpiVotacaoPendente">0</p><h6 class="kpi-title justify-content-center"><span class="material-symbols-outlined">gavel</span>Votações Pendentes</h6></div></div></div>
                   </div>
                 </div>
               </div>
@@ -475,10 +474,12 @@
                                   <span class="material-symbols-outlined">pending_actions</span>
                                   IS Pendentes
                                 </div>
-                                <div class="chip-filter" id="pendingMsgFilter" title="Filtrar mensagens pendentes">
+                                
+                                <div class="chip-filter chip-danger" id="pendingMsgFilter" title="Filtrar mensagens pendentes">
                                   <span class="material-symbols-outlined">unsubscribe</span>
-                                  MSG Pendente
+                                  MSG PENDENTES
                                 </div>
+                                
                                 <div class="chip-filter chip-warning" id="revisaoFilter" title="Filtrar inspeções Em Revisão">
                                   <span class="material-symbols-outlined">manage_search</span>
                                   Em Revisão
@@ -502,11 +503,10 @@
                             <table class="table table-hover">
                               <thead>
                                 <tr>
-                                  <th>Status</th>
-                                  <th>MSG</th>
-                                  <th>Data / IS</th>
-                                  <th>Inspecionado / OM</th> 
-                                  <th>Finalidade</th>
+                                  <th>STATUS</th>
+                                  <th>DATA</th>
+                                  <th>INSPECIONADO</th> 
+                                  <th>FINALIDADE</th>
                                 </tr>
                               </thead>
                               <tbody id="dataTableBody"></tbody>
@@ -532,20 +532,27 @@
             </div>
             <div class="modal-body">
               
-              <p class="h5 mb-3" style="color: var(--primary-color);">
-                <span id="editModalInspecionado"></span>
-              </p>
+              <div class="card-elevated" style="padding: 1.0rem; background-color: var(--light-gray-1, #fcfcfc); margin-bottom: 1.5rem;">
+                <p class="h5" style="color: var(--primary-color); margin-bottom: 0; text-align: center; font-size: 1.5rem; font-weight: 700;">
+                  <span id="editModalInspecionado"></span>
+                </p>
+              </div>
               
               <input type="hidden" id="editIsNumber">
               
-              <hr>
-              
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="editDataEntrevista" class="form-label">Data Entrevista</label>
+                  <input type="date" class="form-control" id="editDataEntrevista">
+                </div>
+              </div>
+
               <div class="mb-3">
                 <label for="editLaudo" class="form-label">Laudo</label>
                 <textarea class="form-control" id="editLaudo" rows="3"></textarea>
               </div>
 
-              <div class="mb-3">
+              <div class="mb-3" id="editRestricoesContainer">
                 <label class="form-label">Restrições</label>
                 <div class="accordion" id="editRestricoesAccordion">
                   <div class="accordion-item">
@@ -786,7 +793,7 @@
 
             } catch(e) { 
                 console.error("Erro ao aplicar filtros: ", e); 
-                document.getElementById('dataTableBody').innerHTML = `<tr><td colspan="5" class="text-center text-danger">Erro ao filtrar dados: ${e.message}</td></tr>`; 
+                document.getElementById('dataTableBody').innerHTML = `<tr><td colspan="4" class="text-center text-danger">Erro ao filtrar dados: ${e.message}</td></tr>`; 
             } 
         }
 
@@ -812,8 +819,8 @@
             console.log("Iniciando renderTable com ícones de status...");
             const tBody = document.getElementById('dataTableBody'); 
             tBody.innerHTML = ''; 
-            if (!Array.isArray(dataToRender)) { console.error("renderTable foi chamada com dados inválidos:", dataToRender); tBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Erro interno ao processar dados da tabela.</td></tr>'; return; }
-            if (dataToRender.length === 0) { console.log("Nenhum dado para renderizar."); tBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum resultado encontrado para os filtros aplicados.</td></tr>'; return; } 
+            if (!Array.isArray(dataToRender)) { console.error("renderTable foi chamada com dados inválidos:", dataToRender); tBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Erro interno ao processar dados da tabela.</td></tr>`; return; } 
+            if (dataToRender.length === 0) { console.log("Nenhum dado para renderizar."); tBody.innerHTML = `<tr><td colspan="4" class="text-center">Nenhum resultado encontrado para os filtros aplicados.</td></tr>`; return; } 
             
             const statusConfig = {
                 'Agendada':             { icon: 'event_available',      color: 'info-color',        tooltipText: 'Agendada'},
@@ -854,7 +861,7 @@
                     }
                     
                     let msgHtml = '';
-                    const iconMsgStyle = "font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 48; font-size: 1.8em; vertical-align: middle;"; // Ajustado
+                    const iconMsgStyle = "font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 48; font-size: 1.4em; vertical-align: middle;"; 
                     
                     if (row.MSG === 'ENVIADA') { 
                         msgHtml = `<span class="material-symbols-outlined" 
@@ -878,9 +885,6 @@
                     }
                     const inspecionadoAndOmCell = `<td><div><div class="table-cell-main">${inspecionadoNome}</div><div class="table-cell-sub">${row.OM || ''}</div></div></td>`; 
                     
-                    // --- ALTERAÇÃO APLICADA AQUI ---
-                    
-                    // 1. Ícone 'sync' (marcar como enviada)
                     let syncIconHtml = ''; 
                     if (row.MSG === 'PENDENTE') {
                       syncIconHtml = `<span class="material-symbols-outlined actions-icon" 
@@ -890,9 +894,7 @@
                                       </span>`; 
                     }
 
-                    // 2. Ícone 'edit' (editar conclusão)
                     let editIconHtml = '';
-                    // NOVA CONDIÇÃO: Mostrar se MSG != 'ENVIADA'
                     if (row.MSG !== 'ENVIADA') {
                       editIconHtml = `<span class="material-symbols-outlined actions-icon" 
                                             title="Editar Conclusão" 
@@ -901,7 +903,6 @@
                                       </span>`;
                     }
                     
-                    // 3. Monta a célula de Finalidade com os ícones
                     const finalidadeCell = `<td><div class="actions-cell-content">
                                               <span>${row.Finalidade||''}</span>
                                               <span style="display: flex; align-items: center; gap: 8px;">
@@ -911,13 +912,18 @@
                                               </span>
                                             </div></td>`; 
 
-                    const statusCell = `<td>${statusHtml}</td>`; 
-                    const msgCell = `<td>${msgHtml}</td>`; 
+                    const statusMsgCell = `<td>
+                                             <div style="display: flex; align-items: center; gap: 10px;">
+                                               ${statusHtml}
+                                               ${msgHtml}
+                                             </div>
+                                           </td>`; 
                     
-                    tr.innerHTML = statusCell + msgCell + dateAndIsCell +  inspecionadoAndOmCell + finalidadeCell; 
+                    tr.innerHTML = statusMsgCell + dateAndIsCell +  inspecionadoAndOmCell + finalidadeCell; 
+
                 } catch(e) { 
                     console.error("Erro ao renderizar linha da tabela:", e, "Índice:", index, "Dados da linha:", row); 
-                    try { const errorRow = tBody.insertRow(); errorRow.innerHTML = `<td colspan="5" class="text-center text-danger">Erro ao renderizar linha ${index + 1}.</td>`; } 
+                    try { const errorRow = tBody.insertRow(); errorRow.innerHTML = `<td colspan="4" class="text-center text-danger">Erro ao renderizar linha ${index + 1}.</td>`; } 
                     catch (innerError) { console.error("Erro ao inserir linha de erro na tabela:", innerError); }
                 }
             }); 
@@ -1032,7 +1038,11 @@
             if (!data) { throw new Error("Dados da linha não encontrados."); }
 
             // 1. Popula informações básicas
-            document.getElementById('editModalIsTitle').textContent = data.IS || '';
+            
+            const isNumber = data.IS || '';
+            const finalidade = data.Finalidade || '';
+            document.getElementById('editModalIsTitle').textContent = `${isNumber} - ${finalidade.toUpperCase()}`;
+            
             document.getElementById('editIsNumber').value = data.IS;
             
             // Monta o nome formatado
@@ -1045,6 +1055,19 @@
             const om = data.OM ? ` (${data.OM})` : '';
             document.getElementById('editModalInspecionado').textContent = `${inspecionadoNome}${om}`;
 
+            
+            // Lógica para exibir/ocultar o bloco de Restrições
+            const finalidadeUpper = (data.Finalidade || '').toUpperCase();
+            const showRestricoesList = [
+              'VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL',
+              'TÉRMINO DE INCAPACIDADE',
+              'TÉRMINO DE RESTRIÇÕES'
+            ];
+            const shouldShowRestricoes = showRestricoesList.includes(finalidadeUpper);
+            
+            const restricoesBlock = document.getElementById('editRestricoesContainer');
+            restricoesBlock.style.display = shouldShowRestricoes ? 'block' : 'none';
+
 
             // 2. Popula o formulário com dados existentes
             document.getElementById('editLaudo').value = data.Laudo || '';
@@ -1053,17 +1076,27 @@
             document.getElementById('editDs1a').value = data['DS-1a'] || '';
 
             // 3. Converte data pt-BR (dd/mm/yyyy) para formato date input (yyyy-mm-dd)
-            let isoDate = '';
+            let isoDateLaudo = '';
             if (data.DataLaudo) {
               const parts = data.DataLaudo.split('/');
               if (parts.length === 3) {
-                isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                isoDateLaudo = `${parts[2]}-${parts[1]}-${parts[0]}`;
               }
             }
-            document.getElementById('editDataLaudo').value = isoDate;
+            document.getElementById('editDataLaudo').value = isoDateLaudo;
             
-            // Se a data estiver vazia, pré-preenche com hoje
-            if (!isoDate) {
+            // 3b. Popula a nova Data Entrevista
+            let isoDateEntrevista = '';
+            if (data.DataEntrevista) { // Usa a coluna DataEntrevista
+              const parts = data.DataEntrevista.split('/');
+              if (parts.length === 3) {
+                isoDateEntrevista = `${parts[2]}-${parts[1]}-${parts[0]}`;
+              }
+            }
+            document.getElementById('editDataEntrevista').value = isoDateEntrevista;
+            
+            // Se a dataLaudo estiver vazia, pré-preenche com hoje
+            if (!isoDateLaudo) {
               const today = new Date();
               const yyyy = today.getFullYear();
               const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
@@ -1118,6 +1151,7 @@
             // 1. Coleta os dados do formulário
             const formData = {
               isNumber: document.getElementById('editIsNumber').value,
+              dataEntrevista: document.getElementById('editDataEntrevista').value, // Vem como yyyy-mm-dd
               laudo: document.getElementById('editLaudo').value,
               dataLaudo: document.getElementById('editDataLaudo').value, // Vem como yyyy-mm-dd
               tis: document.getElementById('editTis').value,
