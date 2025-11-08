@@ -313,14 +313,14 @@
       }
 
       /* --- NOVO CSS PARA O MODAL DE EDIÇÃO --- */
-      #editModal .form-label {
+      #editModal .form-label, #remarcarModal .form-label {
         font-family: var(--font-oswald);
         font-weight: 700;
         text-transform: uppercase;
         font-size: 0.9rem;
         color: #555;
       }
-      #editModal h5 {
+      #editModal h5, #remarcarModal h5 {
         font-family: var(--font-oswald);
       }
       /* Corpo do accordion de restrições */
@@ -590,14 +590,41 @@
       </div>
     </div>
 
-
+    <div class="modal fade" id="remarcarModal" tabindex="-1" aria-labelledby="remarcarModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form id="remarcarForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="remarcarModalLabel">Remarcar Inspeção</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Inspecionado:</strong> <span id="remarcarModalInspecionado"></span></p>
+              <p><strong>IS:</strong> <span id="remarcarModalIs"></span></p>
+              
+              <input type="hidden" id="remarcarIsNumber">
+              
+              <div class="mb-3">
+                <label for="remarcarNovaData" class="form-label">Nova Data da Entrevista</label>
+                <input type="date" class="form-control" id="remarcarNovaData" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="saveRemarcarButton">Salvar Nova Data</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         // --- VARIÁVEIS GLOBAIS ---
         let allDashboardData = []; let allTableData = []; let filteredData = []; 
         let detailsModalInstance;
-        let editModalInstance; // Nova variável global
+        let editModalInstance; // Variável global existente
+        let remarcarModalInstance; // <-- NOVA VARIÁVEL GLOBAL
         let allRestricoes = []; // Nova variável global
         let tooltipList = []; 
 
@@ -605,14 +632,17 @@
         document.addEventListener('DOMContentLoaded', () => { 
             console.log("DOM Carregado. Inicializando..."); 
             detailsModalInstance = new bootstrap.Modal(document.getElementById('detailsModal')); 
-            editModalInstance = new bootstrap.Modal(document.getElementById('editModal')); // Inicializa o novo modal
+            editModalInstance = new bootstrap.Modal(document.getElementById('editModal')); // Inicializa o modal de edição
+            remarcarModalInstance = new bootstrap.Modal(document.getElementById('remarcarModal')); // <-- INICIALIZA O NOVO MODAL
 
             document.getElementById('loader').classList.remove('d-none'); 
             document.getElementById('mainContent').classList.add('d-none'); 
             initializeTooltips(); 
             
-            // Adiciona listener para o formulário do novo modal
+            // Adiciona listener para o formulário do modal de edição
             document.getElementById('editForm').addEventListener('submit', handleEditFormSubmit);
+            // Adiciona listener para o formulário do novo modal de remarcação
+            document.getElementById('remarcarForm').addEventListener('submit', handleRemarcarFormSubmit); // <-- ADICIONA LISTENER
 
             google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onDataError).getDashboardData(); 
             console.log("Chamada para getDashboardData enviada."); 
@@ -822,7 +852,7 @@
                 'Concluída':            { icon: 'gavel',               color: 'danger-color',      tooltipText: 'Votação Pendente'}, 
                 'Faltou':               { icon: 'disabled_by_default', color: 'danger-color',      tooltipText: 'Faltou'},
                 'JSD':                  { icon: 'quick_reference_all', color: 'warning-color',     tooltipText: 'Revisão JSD'},
-                'Remarcada':            { icon: 'event_repeat',        color: 'warning-color',     tooltipText: 'Remarcada'},
+                'Remarcada':            { icon: 'event_repeat',        color: 'warning-color',     tooltipText: 'Remarcada'}, // <-- COR ATUALIZADA PARA WARNING
                 'Restituída Auditoria': { icon: 'arrow_circle_left',   color: 'warning-color',     tooltipText: 'Restituída (Auditoria)'},
                 'Restituída JSD':       { icon: 'arrow_circle_left',   color: 'warning-color',     tooltipText: 'Restituída (JSD)'},
                 'TIS assinado':         { icon: 'assignment_turned_in',color: 'success-color',     tooltipText: 'TIS Assinado'}, 
@@ -895,12 +925,22 @@
                                       </span>`;
                     }
                     
+                    // --- NOVO ÍCONE DE REMARCAR ---
+                    let remarcarIconHtml = '';
+                    if (row.StatusIS === 'Agendada' || row.StatusIS === 'Remarcada') {
+                      remarcarIconHtml = `<span class="material-symbols-outlined actions-icon" 
+                                                title="Remarcar Inspeção" 
+                                                onclick="openRemarcarModal(event, ${index})">
+                                                event_repeat
+                                          </span>`;
+                    }
+                    
                     const finalidadeCell = `<td><div class="actions-cell-content">
                                               <span>${row.Finalidade||''}</span>
                                               <span style="display: flex; align-items: center; gap: 8px;">
                                                 ${syncIconHtml}
                                                 ${editIconHtml}
-                                                <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(event, ${index})">more_vert</span>
+                                                ${remarcarIconHtml} <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(event, ${index})">more_vert</span>
                                               </span>
                                             </div></td>`; 
 
@@ -1201,6 +1241,114 @@
             const saveButton = document.getElementById('saveEditButton');
             saveButton.disabled = false;
             saveButton.innerHTML = 'Salvar Alterações';
+          }
+        }
+        
+        // --- NOVAS FUNÇÕES PARA REMARCAÇÃO ---
+        function openRemarcarModal(event, filteredIndex) {
+          try {
+            if (event) event.stopPropagation();
+
+            const data = filteredData[filteredIndex];
+            if (!data) { throw new Error("Dados da linha não encontrados."); }
+
+            // Popula o modal
+            document.getElementById('remarcarModalInspecionado').textContent = data.Inspecionado || 'N/A';
+            document.getElementById('remarcarModalIs').textContent = data.IS || 'N/A';
+            document.getElementById('remarcarIsNumber').value = data.IS;
+            
+            // Limpa o campo de data
+            document.getElementById('remarcarNovaData').value = ''; 
+            
+            // Pré-preenche com a data de amanhã como sugestão
+            const today = new Date();
+            today.setDate(today.getDate() + 1); // Sugere amanhã
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('remarcarNovaData').value = `${yyyy}-${mm}-${dd}`;
+
+            remarcarModalInstance.show();
+
+          } catch(e) {
+            console.error("Erro ao abrir o modal de remarcação:", e);
+            alert("Não foi possível abrir o modal: " + e.message);
+          }
+        }
+
+        function handleRemarcarFormSubmit(event) {
+          try {
+            event.preventDefault(); 
+            const saveButton = document.getElementById('saveRemarcarButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Salvando...';
+
+            // 1. Coleta os dados
+            const isNumber = document.getElementById('remarcarIsNumber').value;
+            const novaData = document.getElementById('remarcarNovaData').value; // Formato yyyy-mm-dd
+
+            if (!isNumber || !novaData) {
+              throw new Error("IS ou Nova Data não preenchidos.");
+            }
+
+            const formData = {
+              isNumber: isNumber,
+              novaData: novaData
+            };
+            
+            console.log("Enviando dados para remarcação:", formData);
+
+            // 2. Envia para o Google Apps Script
+            google.script.run
+              .withSuccessHandler(response => {
+                if (response.success) {
+                  console.log("Sucesso ao remarcar:", response);
+                  
+                  // Atualiza os dados locais (allTableData e filteredData)
+                  const updatedData = response.updatedData; // { DataEntrevista, StatusIS }
+
+                  const originalDataIndex = allTableData.findIndex(item => item.IS == isNumber);
+                  if (originalDataIndex > -1) {
+                    allTableData[originalDataIndex].DataEntrevista = updatedData.DataEntrevista;
+                    allTableData[originalDataIndex].StatusIS = updatedData.StatusIS;
+                  }
+                  
+                  const filteredIndex = filteredData.findIndex(item => item.IS == isNumber);
+                  if(filteredIndex > -1) {
+                    filteredData[filteredIndex].DataEntrevista = updatedData.DataEntrevista;
+                    filteredData[filteredIndex].StatusIS = updatedData.StatusIS;
+                  }
+
+                  // Fecha o modal e re-renderiza a tabela
+                  remarcarModalInstance.hide();
+                  renderTable(filteredData);
+                  initializeTooltips();
+                  
+                  // Opcional: Atualizar KPIs se a data/status impactar
+                  applyGlobalFilters(); 
+
+                } else {
+                  console.error("Falha ao remarcar no backend:", response.message);
+                  alert("Erro ao salvar: " + response.message);
+                }
+                // Restaura o botão
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Salvar Nova Data';
+              })
+              .withFailureHandler(error => {
+                console.error("Erro fatal ao chamar remarcarInspecao:", error);
+                alert("Erro de comunicação: " + error.message);
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Salvar Nova Data';
+              })
+              .remarcarInspecao(formData); // Nova função no Code.gs
+
+          } catch(e) {
+            console.error("Erro no lado do cliente em handleRemarcarFormSubmit:", e);
+            alert("Um erro inesperado ocorreu: " + e.message);
+            const saveButton = document.getElementById('saveRemarcarButton');
+            saveButton.disabled = false;
+            saveButton.innerHTML = 'Salvar Nova Data';
           }
         }
         
