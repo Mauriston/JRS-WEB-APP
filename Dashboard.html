@@ -540,13 +540,6 @@
               
               <input type="hidden" id="editIsNumber">
               
-              <div class="row mb-3">
-                <div class="col-md-4">
-                  <label for="editDataEntrevista" class="form-label">Data Entrevista</label>
-                  <input type="date" class="form-control" id="editDataEntrevista">
-                </div>
-              </div>
-
               <div class="mb-3">
                 <label for="editLaudo" class="form-label">Laudo</label>
                 <textarea class="form-control" id="editLaudo" rows="3"></textarea>
@@ -572,7 +565,6 @@
                   </div>
                 </div>
               </div>
-
               <div class="row mb-3">
                 <div class="col-md-4">
                   <label for="editDataLaudo" class="form-label">Data do Laudo</label>
@@ -1056,6 +1048,7 @@
             document.getElementById('editModalInspecionado').textContent = `${inspecionadoNome}${om}`;
 
             
+            // --- ALTERAÇÃO APLICADA AQUI ---
             // Lógica para exibir/ocultar o bloco de Restrições
             const finalidadeUpper = (data.Finalidade || '').toUpperCase();
             const showRestricoesList = [
@@ -1067,6 +1060,7 @@
             
             const restricoesBlock = document.getElementById('editRestricoesContainer');
             restricoesBlock.style.display = shouldShowRestricoes ? 'block' : 'none';
+            // --- FIM DA ALTERAÇÃO ---
 
 
             // 2. Popula o formulário com dados existentes
@@ -1076,27 +1070,17 @@
             document.getElementById('editDs1a').value = data['DS-1a'] || '';
 
             // 3. Converte data pt-BR (dd/mm/yyyy) para formato date input (yyyy-mm-dd)
-            let isoDateLaudo = '';
+            let isoDate = '';
             if (data.DataLaudo) {
               const parts = data.DataLaudo.split('/');
               if (parts.length === 3) {
-                isoDateLaudo = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
               }
             }
-            document.getElementById('editDataLaudo').value = isoDateLaudo;
+            document.getElementById('editDataLaudo').value = isoDate;
             
-            // 3b. Popula a nova Data Entrevista
-            let isoDateEntrevista = '';
-            if (data.DataEntrevista) { // Usa a coluna DataEntrevista
-              const parts = data.DataEntrevista.split('/');
-              if (parts.length === 3) {
-                isoDateEntrevista = `${parts[2]}-${parts[1]}-${parts[0]}`;
-              }
-            }
-            document.getElementById('editDataEntrevista').value = isoDateEntrevista;
-            
-            // Se a dataLaudo estiver vazia, pré-preenche com hoje
-            if (!isoDateLaudo) {
+            // Se a data estiver vazia, pré-preenche com hoje
+            if (!isoDate) {
               const today = new Date();
               const yyyy = today.getFullYear();
               const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
@@ -1151,7 +1135,6 @@
             // 1. Coleta os dados do formulário
             const formData = {
               isNumber: document.getElementById('editIsNumber').value,
-              dataEntrevista: document.getElementById('editDataEntrevista').value, // Vem como yyyy-mm-dd
               laudo: document.getElementById('editLaudo').value,
               dataLaudo: document.getElementById('editDataLaudo').value, // Vem como yyyy-mm-dd
               tis: document.getElementById('editTis').value,
