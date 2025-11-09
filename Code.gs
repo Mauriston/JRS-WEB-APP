@@ -8,7 +8,7 @@ const listasRefSheet = ss.getSheetByName('ListasRef');
 const listaControleSheet = ss.getSheetByName('ListaControle');
 const militaresHnreSheet = ss.getSheetByName('MilitaresHNRe');
 const concursosSheet = ss.getSheetByName('ListaConcursos');
-// --- Configs do Gerador de Pareceres (ORIGINAL) ---
+// --- Configs do Gerador de Pareceres (NOVO) ---
 const TEMPLATE_IDS = {
   'Psiquiatria': '1dBBPpAUigm9DFUWqyP0NkTEVGxeHWwKZF8dnoJ7xqP8',
   'Psicologia': '1eQiRCtmF-V1Etn7fp6AbhTGZbYkqJlLrQYGjLRfePqQ',
@@ -26,47 +26,8 @@ const PERITO_EMAILS = {
   '1T Luz': 'lucas.luz@marinha.mil.br',
   '2T Trindade': 'marcelo.trindade@marinha.mil.br'
 };
-
-// ================================================================= //
-//       --- CÓDIGO DO MENU PERSONALIZADO (INJETADO) ---         //
-// ================================================================= //
-
-// Mapeamento das colunas da 'ListaControle' para o gerador de minutas
-// VERIFIQUE se os números das colunas estão corretos (A=1, B=2, M=13, O=15)
-const COL_MAP = {
-  IS: 1,                // Coluna A
-  DataEntrevista: 2,    // Coluna B
-  NIP: 3,               // Coluna C
-  PGQ: 4,               // Coluna D
-  Inspecionado: 5,      // Coluna E
-  OM: 6,                // Coluna F
-  Finalidade: 7,        // Coluna G
-  DataLaudo: 8,         // Coluna H
-  Laudo: 9,             // Coluna I
-  Restricoes: 10,       // Coluna J
-  TIS: 11,              // Coluna K
-  DS1a: 12,             // Coluna L
-  StatusIS: 13,         // Coluna M
-  MINUTA_OUTPUT: 15     // Coluna O (onde a minuta será escrita)
-};
-
-// Nome exato da sua aba de mapeamento (case-sensitive)
-const DEPARA_SHEET_NAME = 'DEPARA_ANEXO_M';
-
-// Alfabeto fonético para minutas múltiplas
-const NATO_ALPHABET = [
-  'ALFA', 'BRAVO', 'CHARLIE', 'DELTA', 'ECHO', 'FOXTROT', 'GOLF', 'HOTEL',
-  'INDIA', 'JULIETT', 'KILO', 'LIMA', 'MIKE', 'NOVEMBER', 'OSCAR', 'PAPA',
-  'QUEBEC', 'ROMEO', 'SIERRA', 'TANGO', 'UNIFORM', 'VICTOR', 'WHISKEY',
-  'X-RAY', 'YANKEE', 'ZULU'
-];
-
-// Meses para formatação de data DDMMMAAA
-const MESES_ABREV = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
-
 // ================================================================= //
 //          ROTEADOR PRINCIPAL E FUNÇÕES DE SERVIÇO WEB              //
-//          (SEU CÓDIGO ORIGINAL - INTOCADO)                         //
 // ================================================================= //
 
 function doGet(e) {
@@ -136,7 +97,6 @@ function addNewInspection(formData) {
       'DataLaudo': formData.dataLaudo,
       'Restrições': restricoesString
   
-
     };
 
     const newRow = headers.map(header => rowData[header] || null);
@@ -199,7 +159,7 @@ function updateMsgStatus(isNumber) {
     if (rowFound) { return { success: true, message: 'Status atualizado para ENVIADA.'
     }; } 
     else { Logger.log(`IS ${isNumber} não encontrada.`);
-      return { success: false, message: 'Número da IS não encontrado.' };
+    return { success: false, message: 'Número da IS não encontrado.' };
     }
   } catch (e) {
     Logger.log('Erro em updateMsgStatus: ' + e.toString());
@@ -224,6 +184,7 @@ function updateInspectionConclusion(formData) {
       restricoes: headers.indexOf('Restrições'),
       statusIS: headers.indexOf('StatusIS') // <-- ADICIONADO
     };
+    
     // <-- CÉLULA DE ERRO ATUALIZADA -->
     if (colIndices.is === -1 || colIndices.laudo === -1 || colIndices.dataLaudo === -1 || colIndices.tis === -1 || colIndices.ds1a === -1 || colIndices.restricoes === -1 || colIndices.statusIS === -1) {
       throw new Error("Colunas essenciais (IS, Laudo, DataLaudo, TIS, DS-1a, Restrições, StatusIS) não encontradas. Verifique a 1ª linha da planilha.");
@@ -277,15 +238,12 @@ function updateInspectionConclusion(formData) {
 
     // 5. Preparar dados de retorno
     const updatedData = { 
-      Laudo: formData.laudo ||
-      '',
+      Laudo: formData.laudo || '',
       DataLaudo: formData.dataLaudo ?
         new Date(formData.dataLaudo).toLocaleDateString('pt-BR') : '', // Re-formata para pt-BR
-      TIS: formData.tis ||
-      '',
+      TIS: formData.tis || '',
       'DS-1a': formData.ds1a || '',
-      Restrições: restricoesString ||
-      ''
+      Restrições: restricoesString || ''
     };
 
     // 6. Atualizar o status se a lógica definiu um novo
@@ -312,12 +270,10 @@ function updateInspectionConclusion(formData) {
 // --- NOVA FUNÇÃO DE REMARCAÇÃO ---
 function remarcarInspecao(formData) {
   try {
-    if (!listaControleSheet) { throw new Error("Planilha 'ListaControle' não encontrada.");
-    }
+    if (!listaControleSheet) { throw new Error("Planilha 'ListaControle' não encontrada."); }
 
     const isNumber = formData.isNumber;
-    const novaData = formData.novaData;
-    // Formato YYYY-MM-DD
+    const novaData = formData.novaData; // Formato YYYY-MM-DD
 
     if (!isNumber || !novaData) {
       throw new Error("Número da IS ou a Nova Data não foram fornecidos.");
@@ -330,6 +286,7 @@ function remarcarInspecao(formData) {
       dataEntrevista: headers.indexOf('DataEntrevista'),
       statusIS: headers.indexOf('StatusIS')
     };
+
     if (colIndices.is === -1 || colIndices.dataEntrevista === -1 || colIndices.statusIS === -1) {
       throw new Error("Colunas essenciais (IS, DataEntrevista, StatusIS) não encontradas. Verifique a 1ª linha da planilha.");
     }
@@ -351,8 +308,7 @@ function remarcarInspecao(formData) {
     }
 
     // 3. Atualizar a planilha
-    const targetRowOnSheet = targetRowIndex + 2;
-    // 1-based + cabeçalho
+    const targetRowOnSheet = targetRowIndex + 2; // 1-based + cabeçalho
     
     // Converte a data YYYY-MM-DD para um objeto Date do GAS (respeitando o fuso)
     const [year, month, day] = novaData.split('-');
@@ -360,6 +316,7 @@ function remarcarInspecao(formData) {
 
     listaControleSheet.getRange(targetRowOnSheet, colIndices.dataEntrevista + 1).setValue(dataObj);
     listaControleSheet.getRange(targetRowOnSheet, colIndices.statusIS + 1).setValue('Remarcada');
+
     Logger.log(`IS ${isNumber} (Linha ${targetRowOnSheet}) remarcada para ${novaData}.`);
     
     // 4. Retornar os dados formatados para o frontend
@@ -379,7 +336,7 @@ function remarcarInspecao(formData) {
 
 
 // ================================================================= //
-//           FUNÇÕES DO GERADOR DE PARECERES (ORIGINAL)              //
+//           FUNÇÕES DO GERADOR DE PARECERES (NOVO MÓDULO)           //
 // ================================================================= //
 
 // FUNÇÃO RENOMEADA
@@ -445,455 +402,6 @@ function sendPdfByEmail(pdfId, formData, emailTarget) {
 }
 
 function getPeritoFullName(peritoSelection) { const nomes = { 'CT Mauriston': 'Mauriston Renan Martins Silva', 'CT Júlio César': 'Júlio César Xavier Filho', '1T Salyne': 'Salyne Regina Martins Roberto', '1T Luz': 'Lucas Luz Nunes', '2T Trindade': 'Marcelo Fulco Trindade' };
-  return nomes[peritoSelection] || ''; }
+return nomes[peritoSelection] || ''; }
 function getPeritoPosto(peritoSelection) { const postos = { 'CT Mauriston': 'Capitão-Tenente (Md)', '1T Salyne': 'Primeiro-Tenente (Md)', '1T Luz': 'Primeiro-Tenente (Md)', 'CT Júlio César': 'Capitão-Tenente (RM2-Md)', '2T Trindade': 'Segundo-Tenente (RM2-Md)' };
-  return postos[peritoSelection] || ''; }
-
-
-// ================================================================= //
-//     --- CÓDIGO DO MENU PERSONALIZADO (INJETADO) ---           //
-// ================================================================= //
-
-/**
- * Cria o menu 'Minutas JRS' ao abrir a planilha.
- */
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('Minutas JRS')
-    .addItem('1. Gerar Minuta(s) para Linha(s) Selecionada(s)', 'gerarMinutas')
-    .addToUi();
-}
-
-/**
- * Função principal (controladora) acionada pelo menu.
- * Gerencia a seleção de linha única ou múltiplas e chama o gerador correto.
- */
-function gerarMinutas() {
-  const ui = SpreadsheetApp.getUi();
-  // Usa a constante 'listaControleSheet' já definida no seu código original
-  const sheet = listaControleSheet; 
-  if (!sheet) {
-    ui.alert("Erro: A aba 'ListaControle' não foi encontrada.");
-    return;
-  }
-  
-  const range = SpreadsheetApp.getActiveRange();
-  
-  // Garante que o usuário está na aba 'ListaControle'
-  if (range.getSheet().getName() !== sheet.getName()) {
-    ui.alert("Erro: Por favor, selecione as linhas na aba 'ListaControle' para gerar a minuta.");
-    return;
-  }
-
-  const numRows = range.getNumRows();
-  const firstRowIndex = range.getRowIndex();
-  
-  // getValues() retorna um array 2D de dados
-  const selectedData = range.getValues();
-
-  try {
-    if (numRows > 1) {
-      // LÓGICA DE MÚLTIPLAS LINHAS
-      processarMultiplasLinhas(sheet, selectedData, firstRowIndex);
-    } else {
-      // LÓGICA DE LINHA ÚNICA
-      processarLinhaUnica(sheet, selectedData[0], firstRowIndex);
-    }
-  } catch (e) {
-    Logger.log(e);
-    ui.alert(`Erro inesperado: ${e.message}`);
-  }
-}
-
-// -------------------------------------------------------------------
-// PROCESSADORES (Controladores de Lógica)
-// -------------------------------------------------------------------
-
-/**
- * Processa uma única linha selecionada.
- */
-function processarLinhaUnica(sheet, rowData, rowIndex) {
-  const ui = SpreadsheetApp.getUi();
-  const status = getString(rowData[COL_MAP.StatusIS - 1]);
-  let minuta = '';
-
-  // Validação de dados essenciais
-  if (!status) {
-    ui.alert('A célula de Status (Coluna M) está vazia.');
-    return;
-  }
-
-  // Cria um objeto 'row' para facilitar a leitura do código
-  const row = mapRowData(rowData);
-
-  switch (status) {
-    case 'TIS Assinado':
-      minuta = gerarMsgConclusao(row);
-      break;
-    case 'Cancelada':
-      minuta = gerarMsgCanceladaUnica(row);
-      break;
-    case 'Faltou':
-      minuta = gerarMsgFaltaUnica(row);
-      break;
-    default:
-      // Se não for um status gerador, não faz nada (silencioso)
-      // ui.alert(`O StatusIS "${status}" não é reconhecido para geração de minuta.`);
-      return;
-  }
-
-  // Escreve a minuta na coluna de output
-  if (minuta) {
-    sheet.getRange(rowIndex, COL_MAP.MINUTA_OUTPUT).setValue(minuta);
-  }
-}
-
-/**
- * Processa múltiplas linhas selecionadas.
- */
-function processarMultiplasLinhas(sheet, selectedData, firstRowIndex) {
-  const ui = SpreadsheetApp.getUi();
-  const firstRow = mapRowData(selectedData[0]);
-  const statusBase = firstRow.StatusIS;
-  const omBase = firstRow.OM;
-  let minuta = '';
-
-  // Validação 1: Todas as linhas devem ter um Status
-  if (!statusBase) {
-    ui.alert('Erro: A primeira linha selecionada não possui StatusIS.');
-    return;
-  }
-  
-  // Validação 2: Status 'TIS Assinado' não pode ser múltiplo
-  if (statusBase === 'TIS Assinado') {
-    ui.alert('Erro: Não é permitido gerar minutas múltiplas para "TIS Assinado". Processe uma de cada vez.');
-    return;
-  }
-
-  // Array para guardar os dados mapeados
-  const rows = [firstRow];
-
-  // Validação 3 e 4: Mesmo Status e Mesma OM
-  for (let i = 1; i < selectedData.length; i++) {
-    const currentRowData = selectedData[i];
-    const currentRow = mapRowData(currentRowData);
-
-    if (getString(currentRow.StatusIS) !== statusBase) {
-      ui.alert('Erro: Para minutas múltiplas, todas as linhas devem ter o MESMO StatusIS.');
-      return;
-    }
-    if (getString(currentRow.OM) !== omBase) {
-      ui.alert('Erro: Para minutas múltiplas, todos os militares devem ser da MESMA OM.');
-      return;
-    }
-    rows.push(currentRow); // Adiciona a linha válida ao array
-  }
-
-  // Se passou em todas as validações, chama o gerador múltiplo
-  switch (statusBase) {
-    case 'Cancelada':
-      minuta = gerarMsgCanceladaMultipla(rows);
-      break;
-    case 'Faltou':
-      minuta = gerarMsgFaltaMultipla(rows);
-      break;
-  }
-
-  // Escreve a minuta na coluna de output da *primeira* linha selecionada
-  if (minuta) {
-    sheet.getRange(firstRowIndex, COL_MAP.MINUTA_OUTPUT).setValue(minuta);
-  }
-}
-
-
-// -------------------------------------------------------------------
-// GERADORES DE TEMPLATE (StatusIS)
-// -------------------------------------------------------------------
-
-/**
- * GERADOR: TIS Assinado (Diretriz 12)
- */
-function gerarMsgConclusao(row) {
-  // 1. Validar dados de entrada
-  if (!row.Finalidade || !row.PGQ || !row.Laudo || !row.DataLaudo || !row.TIS || !row.DS1a) {
-    return 'ERRO: Faltam dados essenciais (Finalidade, Laudo, DataLaudo, TIS, etc.) para gerar a minuta.';
-  }
-
-  // 2. Buscar destinatários na tabela de-para
-  const destinatarios = buscarDestinatarios(row);
-  if (!destinatarios.AÇÃO) {
-    return `ERRO: Não foi possível encontrar regra de tramitação para ${row.Finalidade} / ${row.Laudo} / RM2: ${row.isRM2} / Restr: ${row.temRestricao}. Verifique a aba ${DEPARA_SHEET_NAME}.`;
-  }
-
-  // 3. Montar o template
-  const dataLaudoFmt = formatarData(row.DataLaudo);
-  
-  // Lógica condicional de Restrições (Diretriz 12.3)
-  const restricoesTxt = row.Restricoes ? ` Deverá ser dispensado de ${row.Restricoes}.` : '';
-
-  // Template (Diretriz 12.3)
-  const template = `
-PARA: ${destinatarios.AÇÃO}
-INFO:  ${destinatarios.INFORMAÇÃO}
-
-ASSUNTO: INSPEÇÃO DE SAÚDE FIM ${row.Finalidade} - ${row.PGQ}	${row.NIP} ${row.Inspecionado} (${row.OM})
-
-ALFA - PTC que a JRS/HNRe concluiu em ${dataLaudoFmt} a IS FIM ${row.Finalidade} atinente ao ${row.PGQ}	${row.NIP} ${row.Inspecionado} (${row.OM}) e exarou o seguinte laudo: "${row.Laudo}".${restricoesTxt} ACD TIS nº ${row.TIS}; e
-
-BRAVO - O REF TIS (modelo DS-1A) pode ser verificado digitalmente por meio do acesso ao sítio “https://sinais.dsm.mb/tisonline”, informando o código de validação ${row.DS1a} e selecionando a opção “Download do TIS” BT
-  `;
-  
-  // .trim() remove o espaço extra no início
-  return template.trim();
-}
-
-/**
- * GERADOR: Cancelada - IS Única (Diretriz 13.2)
- */
-function gerarMsgCanceladaUnica(row) {
-  // Validar dados
-  if (!row.IS || !row.Finalidade || !row.PGQ || !row.NIP || !row.Inspecionado || !row.OM) {
-    return 'ERRO: Faltam dados essenciais (IS, Finalidade, OM, NIP, etc.) para esta minuta.';
-  }
-
-  // Template (Diretriz 13.2)
-  const template = `
-PARA: OM DE ORIGEM
-INFO: ÓRGÃO DE PESSOAL + SDP
-
-ASSUNTO: CAN IS FIM ${row.Finalidade} - ${row.PGQ} ${row.NIP} ${row.Inspecionado} (${row.OM})
-
-CFM DGPM-406 (9ª rev) incisos 2.1.2 alíneas “a” e “b” e 2.3.3 alínea “e”, PTC:
-
-ALFA - JRS/HNRe CAN IS nº ${row.IS} FIM ${row.Finalidade} atinente ao ${row.PGQ} ${row.NIP} ${row.Inspecionado} (${row.OM}) por não comparecer a esta JRS para proceder aos agendamento da IS dentro do prazo de 7 dias úteis a contar da data de APS via SEIS; 
-
-BRAVO - o REF MIL deverá ser APS novamente via SEIS pelo encarregado da Divisão de Pessoal dessa OM para nova IS; e
-
-CHARLIE - ACD antecitada norma, os inspecionados são responsáveis pelo agendamento no prazo estipulado e comparecimento às JS na data marcada para realização de sua IS, podendo a inobservância de tal orientação ser caracterizada como contravenção disciplinar com medidas cabíveis a critério do Titular dessa OM BT
-  `;
-  return template.trim();
-}
-
-/**
- * GERADOR: Cancelada - IS Múltiplas (Diretriz 13.3)
- */
-function gerarMsgCanceladaMultipla(rows) {
-  let itensDinamicos = [];
-  
-  rows.forEach((row, index) => {
-    // Validar dados de cada linha
-    if (!row.IS || !row.Finalidade || !row.PGQ || !row.NIP || !row.Inspecionado || !row.OM) {
-      throw new Error(`A linha ${index + 1} da seleção (IS ${row.IS}) tem dados faltantes.`);
-    }
-    const letra = NATO_ALPHABET[index];
-    itensDinamicos.push(
-      `${letra} - IS nº ${row.IS} FIM ${row.Finalidade} atinente ao ${row.PGQ} ${row.NIP} ${row.Inspecionado} (${row.OM});`
-    );
-  });
-
-  // Adiciona os itens finais (Diretriz 13.3.B)
-  const letraFinal1 = NATO_ALPHABET[rows.length];
-  const letraFinal2 = NATO_ALPHABET[rows.length + 1];
-
-  const template = `
-PARA: OM DE ORIGEM
-INFO: ÓRGÃO DE PESSOAL + SDP
-
-ASSUNTO: CANCELAMENTO DE INSPEÇÕES DE SAÚDE
-
-CFM DGPM-406 (9ª rev) incisos 2.1.2 alíneas “a” e “b” e 2.3.3 alínea “e”, PTC JRS/HNRe CAN IS MIL abaixo relacionados por não comparecerem a esta JRS para proceder aos agendamento da IS dentro do prazo de 7 dias úteis a contar da data de APS via SEIS:
-
-${itensDinamicos.join('\n\n')}
-
-${letraFinal1} - os REF MIL deverão ser APS novamente via SEIS pelo encarregado da Divisão de Pessoal dessa OM para nova IS; e
-
-${letraFinal2} - ACD antecitada norma, os inspecionados são responsáveis pelo agendamento no prazo estipulado e comparecimento às JS na data marcada para realização de sua IS, podendo a inobservância de tal orientação ser caracterizada como contravenção disciplinar com medidas cabíveis a critério do Titular dessa OM BT
-  `;
-  return template.trim();
-}
-
-/**
- * GERADOR: Faltou - IS Única (Diretriz 14.2)
- */
-function gerarMsgFaltaUnica(row) {
-  // Validar dados
-  if (!row.IS || !row.Finalidade || !row.PGQ || !row.NIP || !row.Inspecionado || !row.OM || !row.DataEntrevista) {
-    return 'ERRO: Faltam dados essenciais (IS, DataEntrevista, OM, NIP, etc.) para esta minuta.';
-  }
-
-  const dataEntrevistaFmt = formatarData(row.DataEntrevista);
-
-  // Template (Diretriz 14.2)
-  const template = `
-PARA: OM DE ORIGEM
-INFO: ÓRGÃO DE PESSOAL + SDP
-
-ASSUNTO: CAN IS FIM ${row.Finalidade} - ${row.PGQ} ${row.NIP} ${row.Inspecionado} (${row.OM})
-
-CFM DGPM-406 (9ª rev) incisos 2.1.2 alíneas “a” e “b” e 2.3.3 alínea “e”, PTC:
-
-ALFA - JRS/HNRe CAN IS nº ${row.IS} FIM ${row.Finalidade} atinente ao ${row.PGQ} ${row.NIP} ${row.Inspecionado} (${row.OM}) agendada em ${dataEntrevistaFmt} por não comparecimento; 
-
-BRAVO - o REF MIL deverá ser APS novamente via SEIS pelo encarregado da Divisão de Pessoal dessa OM para nova IS; e
-
-CHARLIE - ACD antecitada norma, os inspecionados são responsáveis pelo agendamento no prazo estipulado e comparecimento às JS na data marcada para realização de sua IS, podendo a inobservância de tal orientação ser caracterizada como contravenção disciplinar com medidas cabíveis a critério do Titular dessa OM BT
-  `;
-  return template.trim();
-}
-
-/**
- * GERADOR: Faltou - IS Múltiplas (Diretriz 14.3)
- */
-function gerarMsgFaltaMultipla(rows) {
-  let itensDinamicos = [];
-  
-  rows.forEach((row, index) => {
-    // Validar dados de cada linha
-    if (!row.IS || !row.Finalidade || !row.PGQ || !row.NIP || !row.Inspecionado || !row.OM || !row.DataEntrevista) {
-      throw new Error(`A linha ${index + 1} da seleção (IS ${row.IS}) não possui DataEntrevista.`);
-    }
-    const letra = NATO_ALPHABET[index];
-    const dataEntrevistaFmt = formatarData(row.DataEntrevista);
-    itensDinamicos.push(
-      `${letra} - IS nº ${row.IS} FIM ${row.Finalidade} atinente ao ${row.PGQ} ${row.NIP} ${row.Inspecionado} (${row.OM}) agendada em ${dataEntrevistaFmt};`
-    );
-  });
-
-  // Adiciona os itens finais (Diretriz 14.3.B)
-  const letraFinal1 = NATO_ALPHABET[rows.length];
-  const letraFinal2 = NATO_ALPHABET[rows.length + 1];
-
-  const template = `
-PARA: OM DE ORIGEM
-INFO: ÓRGÃO DE PESSOAL + SDP
-
-ASSUNTO: CANCELAMENTO DE INSPEÇÕES DE SAÚDE
-
-CFM DGPM-406 (9ª rev) incisos 2.1.2 alíneas “a” e “b” e 2.3.3 alínea “e”, PTC JRS/HNRe CAN IS MIL abaixo relacionados por não comparecerem nas datas agendadas para as IS:
-
-${itensDinamicos.join('\n\n')}
-
-${letraFinal1} - os REF MIL deverão ser APS novamente via SEIS pelo encarregado da Divisão de Pessoal dessa OM para nova IS; e
-
-${letraFinal2} - ACD antecitada norma, os inspecionados são responsáveis pelo agendamento no prazo estipulado e comparecimento às JS na data marcada para realização de sua IS, podendo a inobservância de tal orientação ser caracterizada como contravenção disciplinar com medidas cabíveis a critério do Titular dessa OM BT
-  `;
-  return template.trim();
-}
-
-
-// -------------------------------------------------------------------
-// FUNÇÕES AUXILIARES (Helpers)
-// -------------------------------------------------------------------
-
-/**
- * Mapeia um array de dados de linha (rowData) para um objeto de fácil utilização,
- * com base no COL_MAP.
- */
-function mapRowData(rowData) {
-  // Inverte o COL_MAP para mapear 1 -> IS, 2 -> DataEntrevista
-  const data = {};
-  for (const key in COL_MAP) {
-    const colIndex = COL_MAP[key] - 1; // Ajusta para índice 0
-    if (colIndex < rowData.length) {
-       data[key] = rowData[colIndex];
-    }
-  }
-
-  // Adiciona as chaves lógicas do Anexo M
-  data.temRestricao = getString(data.Restricoes) ? 'SIM' : 'NÃO';
-  data.isRM2 = getString(data.PGQ).includes('RM2') ? 'SIM' : 'NÃO';
-  
-  // Limpa e padroniza os dados para correspondência
-  data.Finalidade = getString(data.Finalidade);
-  data.Laudo = getString(data.Laudo);
-  data.StatusIS = getString(data.StatusIS);
-  data.OM = getString(data.OM);
-  data.PGQ = getString(data.PGQ);
-
-  return data;
-}
-
-/**
- * Busca os destinatários AÇÃO e INFORMAÇÃO na aba DEPARA_ANEXO_M.
- * Esta é a implementação da (Diretriz 12.2 - CoT).
- */
-function buscarDestinatarios(row) {
-  // Usa a constante 'ss' já definida no seu código original
-  const deparaSheet = ss.getSheetByName(DEPARA_SHEET_NAME);
-  if (!deparaSheet) {
-    throw new Error(`Aba de mapeamento "${DEPARA_SHEET_NAME}" não foi encontrada.`);
-  }
-
-  // Pega todos os dados da aba de-para (ignorando o cabeçalho)
-  // Colunas: A=Chave_Finalidade, B=Chave_Laudo, C=Chave_Restricoes, D=Chave_PG_RM2, E=AÇÃO, F=INFORMAÇÃO
-  const deparaData = deparaSheet.getRange(2, 1, deparaSheet.getLastRow() - 1, 6).getValues();
-
-  for (const deparaRow of deparaData) {
-    const chaveFin = getString(deparaRow[0]);
-    const chaveLaudo = getString(deparaRow[1]);
-    const chaveRest = getString(deparaRow[2]);
-    const chaveRM2 = getString(deparaRow[3]);
-
-    // Lógica de correspondência (match)
-    const finMatch = (chaveFin === row.Finalidade) || (chaveFin === '(qualquer)');
-    // Para o Laudo, verificamos se a chave "contém" no laudo da planilha
-    const laudoMatch = (row.Laudo.includes(chaveLaudo)) || (chaveLaudo === '(qualquer)');
-    const restMatch = (chaveRest === row.temRestricao) || (chaveRest === '(qualquer)');
-    const rm2Match = (chaveRM2 === row.isRM2) || (chaveRM2 === '(qualquer)');
-
-    // Se todas as 4 chaves baterem, encontramos nossa regra
-    if (finMatch && laudoMatch && restMatch && rm2Match) {
-      Logger.log(`Regra encontrada: ${chaveFin}, ${chaveLaudo}, ${chaveRest}, ${chaveRM2}`);
-      return {
-        AÇÃO: getString(deparaRow[4]),
-        INFORMAÇÃO: getString(deparaRow[5]) || '-' // Se INFORMAÇÃO estiver vazia, usa '-'
-      };
-    }
-  }
-
-  // Se o loop terminar, nenhuma regra foi encontrada
-  return { AÇÃO: null, INFORMAÇÃO: null };
-}
-
-/**
- * Formata uma data (objeto Date ou string) para o padrão DDMMMAAA (ex: 13OUT2025).
- * Em conformidade com a Regra Global 4.1.
- */
-function formatarData(data) {
-  try {
-    if (!data) return '';
-    
-    // Converte string de data ou timestamp do Google Sheets para um objeto Date
-    if (!(data instanceof Date)) {
-      data = new Date(data);
-    }
-    
-    // Valida se a data é válida
-    if (isNaN(data.getTime())) {
-      return "(Data Inválida)";
-    }
-    
-    // Adiciona o fuso horário para corrigir a data (comum no Apps Script)
-    const offset = data.getTimezoneOffset() * 60000;
-    const correctedDate = new Date(data.getTime() + offset);
-
-    const dia = correctedDate.getDate().toString().padStart(2, '0');
-    const mes = MESES_ABREV[correctedDate.getMonth()]; // getMonth() é 0-indexado
-    const ano = correctedDate.getFullYear();
-
-    return `${dia}${mes}${ano}`;
-  } catch (e) {
-    Logger.log(`Erro ao formatar data: ${e}`);
-    return "(Erro Data)";
-  }
-}
-
-/**
- * Garante que o valor seja uma string e remove espaços em branco.
- */
-function getString(value) {
-  if (value === null || value === undefined) {
-    return '';
-  }
-  return value.toString().trim();
-}
+return postos[peritoSelection] || ''; }
