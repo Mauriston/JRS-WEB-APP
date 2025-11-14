@@ -97,6 +97,7 @@ function addNewInspection(formData) {
       'DataLaudo': formData.dataLaudo,
       'Restrições': restricoesString
   
+
     };
 
     const newRow = headers.map(header => rowData[header] || null);
@@ -167,7 +168,7 @@ function updateMsgStatus(isNumber) {
   }
 }
 
-// --- NOVA FUNÇÃO DE UPDATE DE CONCLUSÃO (ATUALIZADA) ---
+// --- FUNÇÃO DE UPDATE DE CONCLUSÃO (ATUALIZADA) ---
 function updateInspectionConclusion(formData) {
   try {
     if (!listaControleSheet) { throw new Error("Planilha 'ListaControle' não encontrada.");
@@ -184,9 +185,9 @@ function updateInspectionConclusion(formData) {
       restricoes: headers.indexOf('Restrições'),
       statusIS: headers.indexOf('StatusIS') // <-- ADICIONADO
     };
-    // Validação dos índices
+    // <-- CÉLULA DE ERRO ATUALIZADA -->
     if (colIndices.is === -1 || colIndices.laudo === -1 || colIndices.dataLaudo === -1 || colIndices.tis === -1 || colIndices.ds1a === -1 || colIndices.restricoes === -1 || colIndices.statusIS === -1) {
-      throw new Error("Colunas essenciais (IS, Laudo, DataLaudo, StatusIS, etc.) não encontradas. Verifique a 1ª linha da planilha.");
+      throw new Error("Colunas essenciais (IS, Laudo, DataLaudo, TIS, DS-1a, Restrições, StatusIS) não encontradas. Verifique a 1ª linha da planilha.");
     }
 
     // 2. Encontrar a linha da inspeção
@@ -205,7 +206,7 @@ function updateInspectionConclusion(formData) {
       throw new Error(`IS ${formData.isNumber} não encontrada.`);
     }
 
-    // 3. Formatar Restrições (lógica copiada de addNewInspection)
+    // 3. Formatar Restrições
     let restricoesString = formData.restricoes.join(', ');
     if (formData.restricoes.includes('Outros') && formData.outrosRestricao) {
       restricoesString = restricoesString.replace('Outros', `Outros: ${formData.outrosRestricao}`);
@@ -215,34 +216,53 @@ function updateInspectionConclusion(formData) {
     const targetRowOnSheet = targetRowIndex + 2;
     // +2 porque o array é 0-based e a planilha é 1-based + cabeçalho
     
-    // Atualiza os valores individualmente
+    // Atualiza os valores dos campos
     listaControleSheet.getRange(targetRowOnSheet, colIndices.laudo + 1).setValue(formData.laudo || null);
     listaControleSheet.getRange(targetRowOnSheet, colIndices.dataLaudo + 1).setValue(formData.dataLaudo || null);
     listaControleSheet.getRange(targetRowOnSheet, colIndices.tis + 1).setValue(formData.tis || null);
     listaControleSheet.getRange(targetRowOnSheet, colIndices.ds1a + 1).setValue(formData.ds1a || null);
     listaControleSheet.getRange(targetRowOnSheet, colIndices.restricoes + 1).setValue(restricoesString || null);
-    
-    // ATUALIZA O STATUSIS
-    listaControleSheet.getRange(targetRowOnSheet, colIndices.statusIS + 1).setValue(formData.novoStatusIS || 'Conclusão Pendente');
 
-    Logger.log(`IS ${formData.isNumber} (Linha ${targetRowOnSheet}) atualizada com sucesso.`);
-    // 5. Retornar os dados formatados para o frontend
+    // --- LÓGICA DE STATUS (NOVA) ---
+    const { laudo, dataLaudo, tis, ds1a } = formData;
+    let newStatus = '';
+
+    if (laudo && dataLaudo && tis && ds1a) {
+      newStatus = 'TIS assinado';
+    } else if (laudo && dataLaudo && tis && !ds1a) {
+      newStatus = 'Votada JRS';
+    } else if (laudo && dataLaudo && !tis && !ds1a) {
+      newStatus = 'Concluída';
+    }
+    // --- FIM DA LÓGICA DE STATUS ---
+
+    // 5. Preparar dados de retorno
+    const updatedData = { 
+      Laudo: formData.laudo ||
+    '',
+      DataLaudo: formData.dataLaudo ?
+        new Date(formData.dataLaudo).toLocaleDateString('pt-BR') : '', // Re-formata para pt-BR
+      TIS: formData.tis ||
+    '',
+      'DS-1a': formData.ds1a || '',
+      Restrições: restricoesString ||
+    ''
+    };
+
+    // 6. Atualizar o status se a lógica definiu um novo
+    if (newStatus) {
+      listaControleSheet.getRange(targetRowOnSheet, colIndices.statusIS + 1).setValue(newStatus);
+      updatedData.StatusIS = newStatus; // Adiciona o status ao objeto de retorno
+      Logger.log(`IS ${formData.isNumber} (Linha ${targetRowOnSheet}) atualizada. Novo Status: ${newStatus}`);
+    } else {
+      Logger.log(`IS ${formData.isNumber} (Linha ${targetRowOnSheet}) atualizada. Status não alterado.`);
+    }
+
+    // 7. Retornar os dados formatados para o frontend
     return { 
       success: true, 
       message: 'Conclusão salva com sucesso!',
-      updatedData: {
-        Laudo: formData.laudo ||
-        '',
-        DataLaudo: formData.dataLaudo ?
-        new Date(formData.dataLaudo).toLocaleDateString('pt-BR') : '', // Re-formata para pt-BR
-        TIS: formData.tis ||
-        '',
-        'DS-1a': formData.ds1a ||
-        '',
-        Restrições: restricoesString ||
-        '',
-        StatusIS: formData.novoStatusIS || 'Conclusão Pendente' // <-- ADICIONADO
-      } 
+      updatedData: updatedData
     };
   } catch (e) {
     Logger.log('Erro em updateInspectionConclusion: ' + e.toString());
@@ -253,10 +273,12 @@ function updateInspectionConclusion(formData) {
 // --- NOVA FUNÇÃO DE REMARCAÇÃO ---
 function remarcarInspecao(formData) {
   try {
-    if (!listaControleSheet) { throw new Error("Planilha 'ListaControle' não encontrada."); }
+    if (!listaControleSheet) { throw new Error("Planilha 'ListaControle' não encontrada.");
+    }
 
     const isNumber = formData.isNumber;
-    const novaData = formData.novaData; // Formato YYYY-MM-DD
+    const novaData = formData.novaData;
+    // Formato YYYY-MM-DD
 
     if (!isNumber || !novaData) {
       throw new Error("Número da IS ou a Nova Data não foram fornecidos.");
@@ -269,7 +291,6 @@ function remarcarInspecao(formData) {
       dataEntrevista: headers.indexOf('DataEntrevista'),
       statusIS: headers.indexOf('StatusIS')
     };
-
     if (colIndices.is === -1 || colIndices.dataEntrevista === -1 || colIndices.statusIS === -1) {
       throw new Error("Colunas essenciais (IS, DataEntrevista, StatusIS) não encontradas. Verifique a 1ª linha da planilha.");
     }
@@ -291,7 +312,8 @@ function remarcarInspecao(formData) {
     }
 
     // 3. Atualizar a planilha
-    const targetRowOnSheet = targetRowIndex + 2; // 1-based + cabeçalho
+    const targetRowOnSheet = targetRowIndex + 2;
+    // 1-based + cabeçalho
     
     // Converte a data YYYY-MM-DD para um objeto Date do GAS (respeitando o fuso)
     const [year, month, day] = novaData.split('-');
@@ -299,7 +321,6 @@ function remarcarInspecao(formData) {
 
     listaControleSheet.getRange(targetRowOnSheet, colIndices.dataEntrevista + 1).setValue(dataObj);
     listaControleSheet.getRange(targetRowOnSheet, colIndices.statusIS + 1).setValue('Remarcada');
-
     Logger.log(`IS ${isNumber} (Linha ${targetRowOnSheet}) remarcada para ${novaData}.`);
     
     // 4. Retornar os dados formatados para o frontend
@@ -313,6 +334,60 @@ function remarcarInspecao(formData) {
     };
   } catch (e) {
     Logger.log('Erro em remarcarInspecao: ' + e.toString());
+    return { success: false, message: e.toString() };
+  }
+}
+
+// =============================================
+// NOVA FUNÇÃO - REGISTRAR FALTA
+// =============================================
+function registrarFalta(isNumber) {
+  try {
+    if (!listaControleSheet) { 
+      throw new Error("Planilha 'ListaControle' não encontrada.");
+    }
+    
+    // 1. Encontrar os índices das colunas
+    const headers = listaControleSheet.getRange(1, 1, 1, listaControleSheet.getLastColumn()).getValues()[0];
+    const isColIndex = headers.indexOf('IS');
+    const statusColIndex = headers.indexOf('StatusIS');
+    
+    if (isColIndex === -1 || statusColIndex === -1) { 
+      throw new Error("Colunas 'IS' ou 'StatusIS' não encontradas.");
+    }
+    
+    // 2. Encontrar a linha da inspeção
+    const dataRange = listaControleSheet.getRange(2, isColIndex + 1, listaControleSheet.getLastRow() - 1, 1);
+    const isValues = dataRange.getValues();
+    let targetRowIndex = -1; // 0-based
+    
+    for (let i = 0; i < isValues.length; i++) {
+      if (String(isValues[i][0]) == String(isNumber)) {
+        targetRowIndex = i;
+        break;
+      }
+    }
+    
+    if (targetRowIndex === -1) {
+      throw new Error(`IS ${isNumber} não encontrada.`);
+    }
+
+    // 3. Atualizar a planilha
+    const targetRowOnSheet = targetRowIndex + 2; // 1-based + cabeçalho
+    listaControleSheet.getRange(targetRowOnSheet, statusColIndex + 1).setValue('Faltou');
+    Logger.log(`IS ${isNumber} (Linha ${targetRowOnSheet}) atualizada para 'Faltou'.`);
+    
+    // 4. Retornar sucesso
+    return { 
+      success: true, 
+      message: 'Falta registrada com sucesso!',
+      updatedData: {
+        StatusIS: 'Faltou'
+      } 
+    };
+    
+  } catch (e) {
+    Logger.log('Erro em registrarFalta: ' + e.toString());
     return { success: false, message: e.toString() };
   }
 }
