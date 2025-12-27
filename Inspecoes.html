@@ -65,8 +65,17 @@
 
       /* Table Styles */
       .table-container { background-color: transparent; padding: 20px; } 
-      .table-cell-main { font-weight: bold; color: #333; font-size: 1.15em; }
-      .table-cell-sub { font-size: 0.8em; color: var(--dark-gray-3); }
+      
+      /* Ajuste geral da fonte da tabela (-15%) */
+      .table tbody td { font-size: 0.9rem; }
+
+      /* Ajuste dos textos principais e secundários (-15%) */
+      .table-cell-main { font-weight: bold; color: #333; font-size: 1em; /* Reduzido de 1.15em */ }
+      .table-cell-sub { font-size: 0.7em; color: var(--dark-gray-3); /* Reduzido de 0.8em */ }
+      
+      /* Estilo para a OM na mesma linha */
+      .om-text { font-size: 0.85em; color: var(--dark-gray-3); font-weight: normal; margin-left: 5px; }
+
       .table-row-alert td, .table-row-alert .table-cell-main, .table-row-alert .table-cell-sub { background-color: var(--danger-color-light) !important; color: var(--danger-color) !important; font-weight: bold !important; }
       .actions-cell-content { display: flex; justify-content: space-between; align-items: center; }
       .actions-icon { cursor: pointer; color: #777; font-size: 1.4em; }
@@ -135,18 +144,30 @@
                 <div class="table-container">
                     <h2 class="section-title"><span class="material-symbols-outlined">patient_list</span> DETALHES DAS INSPEÇÕES</h2>
                     
-                    <div class="row g-3 mb-3 align-items-end">
-                        <div class="col-md-3"> 
-                            <input type="text" id="searchInput" class="form-control mb-2" placeholder="Buscar por nome...">
-                            <div class="dropdown">
-                                <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="purposeFilterButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                                    Finalidades
-                                </button>
-                                <ul class="dropdown-menu w-100 purpose-filter-menu" id="purposeFilterMenu" aria-labelledby="purposeFilterButton"></ul>
-                            </div>
-                        </div>
+                    <!-- ÁREA DE FILTROS REFATORADA -->
+                    <div class="filter-section mb-4">
                         
-                        <div class="col-md-9 d-flex align-items-center justify-content-start pb-1 gap-2 flex-wrap">
+                        <!-- LINHA 1: Busca e Finalidade -->
+                        <!-- Ajuste: Container com 50% de largura (em telas grandes) e elementos com flex-grow igual -->
+                        <div class="d-flex flex-row align-items-center gap-3 mb-3" style="width: 50%; min-width: 500px;">
+                            
+                            <!-- Campo de Busca (50% do container pai) -->
+                            <div style="flex: 1;">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome...">
+                            </div>
+                            
+                            <!-- Dropdown de Finalidades (50% do container pai) -->
+                            <div class="dropdown" style="flex: 1;">
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" id="purposeFilterButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    <span class="text-truncate">Finalidades</span>
+                                </button>
+                                <ul class="dropdown-menu purpose-filter-menu w-100" id="purposeFilterMenu" aria-labelledby="purposeFilterButton"></ul>
+                            </div>
+
+                        </div>
+
+                        <!-- LINHA 2: Chips -->
+                        <div class="d-flex align-items-center justify-content-start pb-1 gap-2 flex-wrap">
                             <div class="chip-filter" id="agendadasFilter" title="Filtrar IS Agendadas"><span class="material-symbols-outlined">event_available</span> IS Agendadas</div>
                             <div class="chip-filter chip-danger" id="isPendenteFilter" title="Filtrar IS com pendência de status"><span class="material-symbols-outlined">pending_actions</span> IS Pendentes</div>
                             <div class="chip-filter chip-danger" id="pendingMsgFilter" title="Filtrar mensagens pendentes"><span class="material-symbols-outlined">unsubscribe</span> MSG PENDENTES</div>
@@ -155,7 +176,9 @@
                             <div class="chip-filter chip-danger" id="faltasFilter" title="Filtrar Faltas"><span class="material-symbols-outlined">person_off</span> Faltas</div>
                             <div class="chip-filter chip-danger" id="canceladasFilter" title="Filtrar IS Canceladas"><span class="material-symbols-outlined">event_busy</span> IS Canceladas</div>
                         </div>
+
                     </div>
+                    <!-- FIM ÁREA DE FILTROS -->
 
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -168,7 +191,7 @@
         </div>
     </div>
 
-    <!-- MODAIS (Copiados do Dashboard.html original) -->
+    <!-- MODAIS (Mantidos originais) -->
     
     <!-- Modal Detalhes -->
     <div class="modal fade" id="detailsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Detalhes da Inspeção</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="modalDetailsInspecionado"></p><p id="modalDetailsFinalidade"></p><hr><div id="laudo-section"><span>Laudo</span><p id="modalDetailsLaudo"></p></div><div id="restricoes-section"><span>Restrições</span><p id="modalDetailsRestricoes"></p></div><div class="row"><div class="col-md-4" id="dataLaudo-section"><span>Data do Laudo</span><p id="modalDetailsDataLaudo"></p></div><div class="col-md-4" id="tis-section"><span>TIS</span><p id="modalDetailsTis"></p></div><div class="col-md-4" id="ds1a-section"><span>DS-1a</span><p id="modalDetailsDs1a"></p></div></div><div id="minuta-msg-section" class="accordion mt-3 d-none"><div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinuta">MINUTA MSG</button></h2><div id="collapseMinuta" class="accordion-collapse collapse"><div class="accordion-body"><p id="modalMinutaMsgText" style="white-space: pre-wrap;"></p></div></div></div></div></div></div></div></div>
@@ -233,10 +256,29 @@
                 populateEditModalOptions(allRestricoes);
                 applyFilters();
                 
-                // Configurar Listeners de Chips
-                ['isPendenteFilter','pendingMsgFilter','revisaoFilter','restituidaFilter','agendadasFilter','faltasFilter','canceladasFilter'].forEach(id => {
+                // Configurar Listeners de Chips (AGORA COM LÓGICA DE SELEÇÃO ÚNICA)
+                const chipIds = ['isPendenteFilter','pendingMsgFilter','revisaoFilter','restituidaFilter','agendadasFilter','faltasFilter','canceladasFilter'];
+                
+                chipIds.forEach(id => {
                     const el = document.getElementById(id);
-                    if(el) el.addEventListener('click', () => { el.classList.toggle('active'); applyFilters(); });
+                    if(el) {
+                        el.addEventListener('click', () => {
+                            const isCurrentlyActive = el.classList.contains('active');
+                            
+                            // 1. Limpa TODOS os chips primeiro (comportamento de rádio)
+                            chipIds.forEach(otherId => {
+                                document.getElementById(otherId)?.classList.remove('active');
+                            });
+
+                            // 2. Se o clicado NÃO estava ativo, ativa ele (toggle ON)
+                            // Se estava ativo, ele permanece desativado pelo passo 1 (toggle OFF)
+                            if (!isCurrentlyActive) {
+                                el.classList.add('active');
+                            }
+                            
+                            applyFilters();
+                        });
+                    }
                 });
 
             } catch(e) { onDataError(e); } 
@@ -309,7 +351,12 @@
 
         function updatePurposeButtonText() {
             const count = document.querySelectorAll('.purpose-filter-item:checked').length;
-            document.getElementById('purposeFilterButton').textContent = count === 0 ? 'Finalidades' : `Finalidades (${count})`;
+            const btn = document.getElementById('purposeFilterButton');
+            // Mantém o span para o texto truncar corretamente
+            const textSpan = btn.querySelector('span');
+            if (textSpan) {
+                textSpan.textContent = count === 0 ? 'Finalidades' : `Finalidades (${count})`;
+            }
         }
 
         function renderTable(dataToRender) { 
@@ -351,8 +398,10 @@
 
                 tr.innerHTML = `
                     <td><div style="display: flex; align-items: center; gap: 10px;">${statusHtml}${msgHtml}</div></td>
-                    <td><div class="table-cell-main">${row.DataEntrevista || ''}</div><div class="table-cell-sub">${row.IS || ''}</div></td>
-                    <td><div><div class="table-cell-main">${inspecionadoNome}</div><div class="table-cell-sub">${row.OM || ''}</div></div></td>
+                    <!-- REMOVIDO: row.IS -->
+                    <td><div class="table-cell-main">${row.DataEntrevista || ''}</div></td>
+                    <!-- MOVIDO: OM para a linha principal com estilo menor -->
+                    <td><div class="table-cell-main">${inspecionadoNome}${row.OM ? `<span class="om-text">(${row.OM})</span>` : ''}</div></td>
                     <td><div class="actions-cell-content"><span>${row.Finalidade||''}</span><span style="display: flex; align-items: center; gap: 8px;">${syncIconHtml}${editIconHtml}${remarcarIconHtml} <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(event, ${index})">more_vert</span></span></div></td>
                 `; 
             }); 
