@@ -7,7 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
-      body{font-family:'Carlito',sans-serif;background-color:#f4f4f9;margin:0;padding:20px;color:#333}
+      :root { --primary-color: #050f41; --warning-color: #FAB932; --font-oswald: 'Oswald', sans-serif; }
+      body{font-family:'Carlito',sans-serif;background-color:#f4f4f9;margin:0; transition: margin-left .3s; }
+      
+      /* Sidebar Styles */
+      .sidenav {
+        height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: var(--primary-color);
+        overflow-x: hidden; transition: 0.3s; padding-top: 60px; box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+      }
+      .sidenav a {
+        padding: 15px 25px; text-decoration: none; font-size: 18px; font-family: var(--font-oswald); color: #e0e0e0; display: block; transition: 0.2s; border-left: 4px solid transparent;
+      }
+      .sidenav a:hover { background-color: rgba(255,255,255,0.1); color: #fff; border-left: 4px solid var(--warning-color); }
+      .sidenav .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; margin-left: 50px; }
+      .sidenav-header { text-align: center; color: white; margin-bottom: 30px; }
+      .sidenav-header img { width: 80px; margin-bottom: 10px; }
+      .sidenav-header h4 { font-family: var(--font-oswald); font-size: 1.2rem; }
+
       .container{max-width:800px;margin:20px auto;background-color:#fff;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.1);overflow:hidden}
       .header-box{display:flex;align-items:center;background-color:#050f41;color:#fff;padding:20px 30px}
       .header-logo{height:65px;width:auto;margin-right:25px}
@@ -47,53 +63,62 @@
       .specialty-grid-container label{display:block;padding:12px 10px;border:2px solid #050f41;border-radius:4px;cursor:pointer;text-align:center;font-weight:700;font-family:'Carlito',sans-serif;font-size:16px;transition:all .3s ease;color:#050f41;background-color:transparent}
       .specialty-grid-container input[type=radio]:checked+label{background-color:#050f41;color:#fff;font-weight:700}
       
-     /* --- ESTILOS PARA NAVEGAÇÃO (ATUALIZADO) --- */
-      .header-actions{display:flex;margin-left:auto;gap:15px}
       .IconButton{display:flex;align-items:center;justify-content:center;width:55px;height:55px;border-radius:50%;background-color:rgba(255,255,255,0.1);color:#fff;cursor:pointer;transition:background-color .2s ease-in-out}
       .IconButton:hover{background-color:rgba(255,255,255,0.2)}
       .IconButton .material-symbols-outlined { font-size: 30px; }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header-box">
-          <img src="https://i.imgur.com/KUbQz08.png" alt="Logo do Hospital Naval de Recife" class="header-logo">
-          <div class="header-text">
-              <h2>HOSPITAL NAVAL DE RECIFE</h2>
-              <p>Junta Regular de Saúde</p>
-          </div>
-          <div class="header-actions">
-            <div class="IconButton" onclick="navigateTo('formulario')" title="Formulário de Inspeção">
-              <span class="material-symbols-outlined">description</span>
-            </div>
-            <div class="IconButton" onclick="navigateTo('dashboard')" title="Dashboard">
-              <span class="material-symbols-outlined">dashboard</span>
-            </div>
-          </div>
-      </div>
-      
-      <h2 class="form-title">SOLICITAÇÃO DE PARECER MÉDICO</h2>
-
-      <form id="myForm" autocomplete="off">
-        <div class="form-group">
-          <label>ESPECIALIDADE:</label>
-          <div class="specialty-grid-container">
-              <div><input type="radio" id="spec_psiquiatria" name="ESPECIALIDADE" value="Psiquiatria" checked><label for="spec_psiquiatria">Psiquiatria</label></div>
-              <div><input type="radio" id="spec_psicologia" name="ESPECIALIDADE" value="Psicologia"><label for="spec_psicologia">Psicologia</label></div>
-              <div><input type="radio" id="spec_hepatologia" name="ESPECIALIDADE" value="Hepatologia"><label for="spec_hepatologia">Hepatologia</label></div>
-              <div><input type="radio" id="spec_cardiologia" name="ESPECIALIDADE" value="Cardiologia"><label for="spec_cardiologia">Cardiologia</label></div>
-              <div><input type="radio" id="spec_ortopedia" name="ESPECIALIDADE" value="Ortopedia"><label for="spec_ortopedia">Ortopedia</label></div>
-          </div>
+    
+    <!-- MENU LATERAL -->
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="sidenav-header">
+            <img src="https://i.imgur.com/KUbQz08.png" alt="Logo">
+            <h4>JRS - HNRe</h4>
         </div>
-        <div class="form-group"><label>OM DO MILITAR</label><div class="om-selector"><input type="radio" id="om_hnre" name="om_selection" value="hnre" checked><label for="om_hnre">HNRe</label><input type="radio" id="om_outras" name="om_selection" value="outras"><label for="om_outras">Outras OM</label></div></div>
-        <div id="name-container" class="form-group"></div>
-        <div class="form-row"><div class="form-group"><label for="GRAU_HIERARQUICO">GRAU HIERÁRQUICO:</label><select id="GRAU_HIERARQUICO" name="GRAU_HIERARQUICO" required><option value="">Selecione...</option><option value="CMG">CMG</option><option value="CF">CF</option><option value="CC">CC</option><option value="CT">CT</option><option value="1TEN">1TEN</option><option value="2TEN">2TEN</option><option value="GM">GM</option><option value="SO">SO</option><option value="1SG">1SG</option><option value="2SG">2SG</option><option value="3SG">3SG</option><option value="CB">CB</option><option value="SD">SD</option><option value="MN">MN</option><option value="MNRC">MNRC</option><option value="SERVIDOR CIVIL">SERVIDOR CIVIL</option><option value="DEPENDENTE">DEPENDENTE</option><option value="PENSIONISTA">PENSIONISTA</option><option value="CANDIDATO">CANDIDATO</option><option value="EX-MILITAR">EX-MILITAR</option></select></div><div class="form-group"><label for="NIP_MAT">NIP / MAT:</label><input type="text" id="NIP_MAT" name="NIP_MAT" required></div></div>
-        <div class="form-group"><label for="FINALIDADE_INSP">FINALIDADE DA INSP. DE SAÚDE:</label><select id="FINALIDADE_INSP" name="FINALIDADE_INSP" required><option value="">Selecione...</option><option value="BENEFÍCIO: PENSÃO CIVIL PARA PARENTE OU BENEFICIÁRIO INVÁLIDO">BENEFÍCIO: PENSÃO CIVIL PARA PARENTE OU BENEFICIÁRIO INVÁLIDO</option><option value="BENEFÍCIO: PREEXISTÊNCIA DE DOENÇA ESPECIFICADA EM LEI , ISENÇÃO DE PAGAMENTO DE IMPOSTO DE RENDA CIVIL">BENEFÍCIO: PREEXISTÊNCIA DE DOENÇA ESPECIFICADA EM LEI , ISENÇÃO DE PAGAMENTO DE IMPOSTO DE RENDA CIVIL</option><option value="CONTROLE SEMESTRAL DE RAIO-X">CONTROLE SEMESTRAL DE RAIO-X</option><option value="CONTROLE TRIENAL">CONTROLE TRIENAL</option><option value="Deixar o SAM">DEIXAR O SAM</option><option value="DEIXAR O SMI">DEIXAR O SMI</option><option value="DEIXAR O SMV">DEIXAR O SMV</option><option value="DEIXAR O SMV / TÉRMINO DE RESTRIÇÕES">DEIXAR O SMV / TÉRMINO DE RESTRIÇÕES</option><option value="ENGAJAMENTO">ENGAJAMENTO</option><option value="ENGAJAMENTO / DEIXAR O SMI">ENGAJAMENTO / DEIXAR O SMI</option><option value="INGRESSO NA EAM">INGRESSO NA EAM</option><option value="INGRESSO NO SERVIÇO MILITAR VOLUNTÁRIO">INGRESSO NO SERVIÇO MILITAR VOLUNTÁRIO</option><option value="REENGAJAMENTO PARA SMV / DEIXAR O SMV">REENGAJAMENTO PARA SMV / DEIXAR O SMV</option><option value="TAREFA POR TEMPO CERTO">TAREFA POR TEMPO CERTO</option><option value="TÉRMINO DE INCAPACIDADE">TÉRMINO DE INCAPACidade</option><option value="TÉRMINO DE RESTRIÇÕES">TÉRMINO DE RESTRIÇÕES</option><option value="VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL">VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL</option></select></div>
-        <div class="form-group"><label for="INFO_COMPLEMENTARES">INFORMAÇÕES COMPLEMENTARES:</label><textarea id="INFO_COMPLEMENTARES" name="INFO_COMPLEMENTARES"></textarea></div>
-        <div class="form-group"><label for="PERITO_SELECAO">PERITO RESPONSÁVEL:</label><select id="PERITO_SELECAO" name="PERITO_SELECAO" required><option value="">Selecione o Perito...</option><option value="CT Mauriston">CT Mauriston</option><option value="CT Júlio César">CT Júlio César</option><option value="1T Salyne">1T Salyne</option><option value="1T Luz">1T Luz</option><option value="2T Trindade">2T Trindade</option></select></div>
-        <div class="form-actions" id="formActionsContainer"></div>
-      </form>
-      <div id="status"></div>
+        <a href="#" onclick="navigateTo('dashboard'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">dashboard</span>Dashboard</a>
+        <a href="#" onclick="navigateTo('inspecoes'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">table_view</span>Inspeções</a>
+        <a href="#" onclick="navigateTo('formulario'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">description</span>Formulário</a>
+        <a href="#" onclick="navigateTo('parecer'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">edit_note</span>Parecer</a>
+    </div>
+
+    <div id="main">
+        <div class="container">
+          <div class="header-box">
+             <div class="IconButton" onclick="openNav()" style="margin-right: 20px;">
+                <span class="material-symbols-outlined">menu</span>
+            </div>
+              <img src="https://i.imgur.com/KUbQz08.png" alt="Logo do Hospital Naval de Recife" class="header-logo">
+              <div class="header-text">
+                  <h2>HOSPITAL NAVAL DE RECIFE</h2>
+                  <p>Junta Regular de Saúde</p>
+              </div>
+          </div>
+          
+          <h2 class="form-title">SOLICITAÇÃO DE PARECER MÉDICO</h2>
+    
+          <form id="myForm" autocomplete="off">
+            <div class="form-group">
+              <label>ESPECIALIDADE:</label>
+              <div class="specialty-grid-container">
+                  <div><input type="radio" id="spec_psiquiatria" name="ESPECIALIDADE" value="Psiquiatria" checked><label for="spec_psiquiatria">Psiquiatria</label></div>
+                  <div><input type="radio" id="spec_psicologia" name="ESPECIALIDADE" value="Psicologia"><label for="spec_psicologia">Psicologia</label></div>
+                  <div><input type="radio" id="spec_hepatologia" name="ESPECIALIDADE" value="Hepatologia"><label for="spec_hepatologia">Hepatologia</label></div>
+                  <div><input type="radio" id="spec_cardiologia" name="ESPECIALIDADE" value="Cardiologia"><label for="spec_cardiologia">Cardiologia</label></div>
+                  <div><input type="radio" id="spec_ortopedia" name="ESPECIALIDADE" value="Ortopedia"><label for="spec_ortopedia">Ortopedia</label></div>
+              </div>
+            </div>
+            <div class="form-group"><label>OM DO MILITAR</label><div class="om-selector"><input type="radio" id="om_hnre" name="om_selection" value="hnre" checked><label for="om_hnre">HNRe</label><input type="radio" id="om_outras" name="om_selection" value="outras"><label for="om_outras">Outras OM</label></div></div>
+            <div id="name-container" class="form-group"></div>
+            <div class="form-row"><div class="form-group"><label for="GRAU_HIERARQUICO">GRAU HIERÁRQUICO:</label><select id="GRAU_HIERARQUICO" name="GRAU_HIERARQUICO" required><option value="">Selecione...</option><option value="CMG">CMG</option><option value="CF">CF</option><option value="CC">CC</option><option value="CT">CT</option><option value="1TEN">1TEN</option><option value="2TEN">2TEN</option><option value="GM">GM</option><option value="SO">SO</option><option value="1SG">1SG</option><option value="2SG">2SG</option><option value="3SG">3SG</option><option value="CB">CB</option><option value="SD">SD</option><option value="MN">MN</option><option value="MNRC">MNRC</option><option value="SERVIDOR CIVIL">SERVIDOR CIVIL</option><option value="DEPENDENTE">DEPENDENTE</option><option value="PENSIONISTA">PENSIONISTA</option><option value="CANDIDATO">CANDIDATO</option><option value="EX-MILITAR">EX-MILITAR</option></select></div><div class="form-group"><label for="NIP_MAT">NIP / MAT:</label><input type="text" id="NIP_MAT" name="NIP_MAT" required></div></div>
+            <div class="form-group"><label for="FINALIDADE_INSP">FINALIDADE DA INSP. DE SAÚDE:</label><select id="FINALIDADE_INSP" name="FINALIDADE_INSP" required><option value="">Selecione...</option><option value="BENEFÍCIO: PENSÃO CIVIL PARA PARENTE OU BENEFICIÁRIO INVÁLIDO">BENEFÍCIO: PENSÃO CIVIL PARA PARENTE OU BENEFICIÁRIO INVÁLIDO</option><option value="BENEFÍCIO: PREEXISTÊNCIA DE DOENÇA ESPECIFICADA EM LEI , ISENÇÃO DE PAGAMENTO DE IMPOSTO DE RENDA CIVIL">BENEFÍCIO: PREEXISTÊNCIA DE DOENÇA ESPECIFICADA EM LEI , ISENÇÃO DE PAGAMENTO DE IMPOSTO DE RENDA CIVIL</option><option value="CONTROLE SEMESTRAL DE RAIO-X">CONTROLE SEMESTRAL DE RAIO-X</option><option value="CONTROLE TRIENAL">CONTROLE TRIENAL</option><option value="Deixar o SAM">DEIXAR O SAM</option><option value="DEIXAR O SMI">DEIXAR O SMI</option><option value="DEIXAR O SMV">DEIXAR O SMV</option><option value="DEIXAR O SMV / TÉRMINO DE RESTRIÇÕES">DEIXAR O SMV / TÉRMINO DE RESTRIÇÕES</option><option value="ENGAJAMENTO">ENGAJAMENTO</option><option value="ENGAJAMENTO / DEIXAR O SMI">ENGAJAMENTO / DEIXAR O SMI</option><option value="INGRESSO NA EAM">INGRESSO NA EAM</option><option value="INGRESSO NO SERVIÇO MILITAR VOLUNTÁRIO">INGRESSO NO SERVIÇO MILITAR VOLUNTÁRIO</option><option value="REENGAJAMENTO PARA SMV / DEIXAR O SMV">REENGAJAMENTO PARA SMV / DEIXAR O SMV</option><option value="TAREFA POR TEMPO CERTO">TAREFA POR TEMPO CERTO</option><option value="TÉRMINO DE INCAPACIDADE">TÉRMINO DE INCAPACidade</option><option value="TÉRMINO DE RESTRIÇÕES">TÉRMINO DE RESTRIÇÕES</option><option value="VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL">VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL</option></select></div>
+            <div class="form-group"><label for="INFO_COMPLEMENTARES">INFORMAÇÕES COMPLEMENTARES:</label><textarea id="INFO_COMPLEMENTARES" name="INFO_COMPLEMENTARES"></textarea></div>
+            <div class="form-group"><label for="PERITO_SELECAO">PERITO RESPONSÁVEL:</label><select id="PERITO_SELECAO" name="PERITO_SELECAO" required><option value="">Selecione o Perito...</option><option value="CT Mauriston">CT Mauriston</option><option value="CT Júlio César">CT Júlio César</option><option value="1T Salyne">1T Salyne</option><option value="1T Luz">1T Luz</option><option value="2T Trindade">2T Trindade</option></select></div>
+            <div class="form-actions" id="formActionsContainer"></div>
+          </form>
+          <div id="status"></div>
+        </div>
     </div>
 
     <div id="emailModal" class="modal-overlay">
@@ -107,11 +132,13 @@
     </div>
 
     <script>
+      function openNav() { document.getElementById("mySidenav").style.width = "250px"; document.getElementById("main").style.marginLeft = "250px"; }
+      function closeNav() { document.getElementById("mySidenav").style.width = "0"; document.getElementById("main").style.marginLeft= "0"; }
+    
       let hnreData=[],cachedPdfId=null,cachedFormData=null;const form=document.getElementById("myForm"),nameContainer=document.getElementById("name-container"),grauSelect=document.getElementById("GRAU_HIERARQUICO"),nipInput=document.getElementById("NIP_MAT"),statusDiv=document.getElementById("status"),actionsContainer=document.getElementById("formActionsContainer"),emailModal=document.getElementById("emailModal"),modalStatus=document.getElementById("modalStatus");function handleNipInput(e){let t=e.target.value.replace(/\D/g,"");t.length>8&&(t=t.slice(0,8)),t.length>6?t=t.replace(/^(\d{2})(\d{4})(\d{1,2})/,"$1.$2.$3"):t.length>2&&(t=t.replace(/^(\d{2})(\d{1,4})/,"$1.$2")),e.target.value=t}function toggleNipMask(){const e=grauSelect.value;nipInput.required="CANDIDATO"!==e;const t="SERVIDOR CIVIL"===e||"CANDIDATO"===e;t?(nipInput.removeEventListener("input",handleNipInput),nipInput.placeholder="Digite o identificador",nipInput.maxLength=50,"CANDIDATO"===e&&(nipInput.placeholder="Opcional")):(nipInput.addEventListener("input",handleNipInput),nipInput.placeholder="Ex: 13.0450.24",nipInput.maxLength=11)}function resetToManual(){nameContainer.innerHTML='<label for="NOME">NOME:</label><input type="text" id="NOME" name="NOME" required>',grauSelect.value="",nipInput.value="",grauSelect.disabled=!1,nipInput.disabled=!1,toggleNipMask()}function setupHnreAutocomplete(){nameContainer.innerHTML='<label for="NOME">NOME:</label><div class="autocomplete-container"><input type="text" id="NOME" name="NOME" required placeholder="Buscar militar do HNRe..."><div id="autocomplete-list" class="autocomplete-items"></div></div>';const e=document.getElementById("NOME");e.addEventListener("input",function(){const t=this.value;closeAllLists(),t&&hnreData.filter(e=>e.name.toUpperCase().includes(t.toUpperCase())).forEach(n=>{let o=document.createElement("DIV");o.innerHTML=n.name.replace(new RegExp(t,"gi"),"<strong>$&</strong>"),o.addEventListener("click",function(){e.value=n.name,grauSelect.value=n.posto,nipInput.value=n.nip,grauSelect.disabled=!0,nipInput.disabled=!0,toggleNipMask(),closeAllLists()}),document.getElementById("autocomplete-list").appendChild(o)})}),document.addEventListener("click",t=>{t.target!==e&&closeAllLists()})}function closeAllLists(){const e=document.getElementById("autocomplete-list");e&&(e.innerHTML="")}function handleOmSelection(e){
         "hnre"===e
           ? 0===hnreData.length
             ?(statusDiv.textContent="Buscando militares do HNRe...",
-              // AQUI ESTÁ A MUDANÇA:
               google.script.run.withSuccessHandler(e=>{
                 statusDiv.textContent="",
                 "error"in e
@@ -119,7 +146,7 @@
                   :(hnreData=e,setupHnreAutocomplete())
               }).withFailureHandler(e=>{
                 statusDiv.className="error",statusDiv.textContent="Falha no script: "+e.message
-              }).getHnreMilitaryDataForParecer() // <-- NOME DA FUNÇÃO ATUALIZADO
+              }).getHnreMilitaryDataForParecer() 
             )
             :setupHnreAutocomplete()
           :resetToManual()
@@ -138,21 +165,8 @@
     
     <script>
       let BASE_URL = '';
-      function navigateTo(page) {
-        if (BASE_URL) {
-          window.top.location.href = BASE_URL + '?page=' + page;
-        } else {
-          alert('Aguarde o carregamento da página e tente novamente.');
-        }
-      }
-      document.addEventListener('DOMContentLoaded', () => {
-        google.script.run.withSuccessHandler((url) => {
-          BASE_URL = url;
-        }).withFailureHandler((error) => {
-          console.error('Failed to get Web App URL:', error);
-          alert('Não foi possível carregar os links de navegação.');
-        }).getWebAppUrl();
-      });
+      function navigateTo(page) { if (BASE_URL) window.top.location.href = BASE_URL + '?page=' + page; else alert('Aguarde o carregamento...'); }
+      document.addEventListener('DOMContentLoaded', () => { google.script.run.withSuccessHandler((url) => { BASE_URL = url; }).getWebAppUrl(); });
     </script>
   </body>
 </html>
