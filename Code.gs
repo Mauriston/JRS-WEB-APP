@@ -34,6 +34,9 @@ function doGet(e) {
   let page = e.parameter.page;
   if (page == 'dashboard') {
     return HtmlService.createTemplateFromFile('Dashboard').evaluate().setTitle('Dashboard JRS').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } else if (page == 'inspecoes') {
+    // NOVA ROTA ADICIONADA
+    return HtmlService.createTemplateFromFile('Inspecoes').evaluate().setTitle('Gerenciar Inspeções').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   } else if (page == 'parecer') {
     return HtmlService.createTemplateFromFile('Parecer').evaluate().setTitle('Gerador de Pareceres').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
@@ -96,7 +99,7 @@ function addNewInspection(formData) {
       'Laudo': formData.laudo,
       'DataLaudo': formData.dataLaudo,
       'Restrições': restricoesString
-  
+   
     };
 
     const newRow = headers.map(header => rowData[header] || null);
@@ -319,7 +322,7 @@ function remarcarInspecao(formData) {
 
 
 // ================================================================= //
-//           FUNÇÕES DO GERADOR DE PARECERES (NOVO MÓDULO)           //
+//            FUNÇÕES DO GERADOR DE PARECERES (NOVO MÓDULO)          //
 // ================================================================= //
 
 // FUNÇÃO RENOMEADA
