@@ -2,12 +2,24 @@
 <html>
 <head>
     <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Fontes e Ícones -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Oswald:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- Bibliotecas Externas -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
       :root {
         --primary-color: #050f41;
@@ -15,70 +27,78 @@
         --danger-color-vivid: #d9534f;
         --danger-color-light: #fef5f5;
         --success-color: #146c43;
-        --link-color: #0d6efd;
         --warning-color: #FAB932;
-        --info-color: #6c757d;
-        --secondary-color: #adb5bd;
-        --font-oswald: 'Oswald', sans-serif;
-        --font-carlito: 'Carlito', sans-serif;
+        --info-color: #6c757d; 
         --light-gray-1: #fcfcfc;
         --dark-gray-3: #6c757d; 
         --card-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        --card-shadow-hover: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        --font-oswald: 'Oswald', sans-serif;
+        --font-carlito: 'Carlito', sans-serif;
+        --sidebar-width: 250px;
       }
+      
       body {
         font-family: var(--font-carlito);
         background-color: #f4f4f9;
         margin: 0;
         padding: 0;
-        transition: margin-left .3s;
       }
-      
-      /* Sidebar */
+
+      /* --- SIDEBAR FIXA --- */
       .sidenav {
-        height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: var(--primary-color);
-        overflow-x: hidden; transition: 0.3s; padding-top: 60px; box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+        height: 100%;
+        width: var(--sidebar-width);
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        background-color: var(--primary-color);
+        overflow-x: hidden;
+        padding-top: 20px;
+        transition: transform 0.3s ease;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
       }
+      .sidenav-header { text-align: center; color: white; margin-bottom: 30px; display: flex; justify-content: center; align-items: center; height: 100px; }
+      .sidenav-header img { width: 100px; height: auto; }
       .sidenav a {
-        padding: 15px 25px; text-decoration: none; font-size: 18px; font-family: var(--font-oswald); color: #e0e0e0; display: block; transition: 0.2s; border-left: 4px solid transparent;
+        padding: 15px 25px; text-decoration: none; font-size: 18px; font-family: var(--font-oswald); color: #e0e0e0;
+        display: flex; align-items: center; transition: 0.2s; border-left: 4px solid transparent;
       }
-      .sidenav a:hover { background-color: rgba(255,255,255,0.1); color: #fff; border-left: 4px solid var(--warning-color); }
-      .sidenav .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; margin-left: 50px; }
-      .sidenav-header { text-align: center; color: white; margin-bottom: 30px; }
-      .sidenav-header img { width: 80px; margin-bottom: 10px; }
-      .sidenav-header h4 { font-family: var(--font-oswald); font-size: 1.2rem; }
+      .sidenav a:hover, .sidenav a.active { background-color: rgba(255,255,255,0.1); color: #fff; border-left: 4px solid var(--warning-color); }
+      .sidenav a .material-symbols-outlined { margin-right: 15px; }
 
-      .container-main { max-width: 1400px; margin: 20px auto; padding: 20px; }
-      
-      .header-box { display: flex; align-items: center; background-color: var(--primary-color); color: #fff; padding: 20px 30px; border-radius: 8px; margin-bottom: 20px; box-shadow: var(--card-shadow); }
+      /* --- CONTEÚDO --- */
+      .container-main { margin-left: var(--sidebar-width); padding: 20px; transition: margin-left 0.3s ease; }
+      .header-box {
+        display: flex; align-items: center; background-color: var(--primary-color); color: #fff; padding: 20px 30px;
+        border-radius: 8px; margin-bottom: 20px; box-shadow: var(--card-shadow); position: relative;
+      }
       .header-logo { height: 65px; margin-right: 25px; }
-      .header-text h1 { font-family: var(--font-oswald); font-size: 32px; margin: 0; font-weight: 700; }
-      .header-text p { font-family: var(--font-carlito); font-size: 18px; margin: 5px 0 0; opacity: .9; }
       
-      .IconButton{display:flex;align-items:center;justify-content:center;width:55px;height:55px;border-radius:50%;background-color:rgba(255,255,255,0.1);color:#fff;cursor:pointer;transition:background-color .2s ease-in-out; text-decoration: none; margin-left: auto;}
-      .IconButton:hover{background-color:rgba(255,255,255,0.2)}
+      .header-text { flex-grow: 1; text-align: center; }
+      .header-text h1 { font-family: var(--font-oswald); font-size: 32px; margin: 0; font-weight: 700; line-height: 1.1; }
+      
+      .mobile-toggle { display: none; margin-right: 20px; cursor: pointer; color: white; }
 
+      @media (max-width: 992px) {
+        .sidenav { transform: translateX(-100%); }
+        .sidenav.active { transform: translateX(0); }
+        .container-main { margin-left: 0; }
+        .mobile-toggle { display: block; position: absolute; left: 20px; }
+        .header-text { padding-left: 40px; }
+        .sidenav .closebtn { display: block; position: absolute; top: 10px; right: 10px; color: white; font-size: 30px; cursor: pointer;}
+      }
+      @media (min-width: 993px) { .sidenav .closebtn { display: none; } }
+
+      /* --- TABELA --- */
       .card-elevated { background-color: #fff; border-radius: 8px; box-shadow: var(--card-shadow); border: 1px solid #e9e9e9; margin-bottom: 20px; overflow: hidden; }
-      
-      .section-title { display: flex; align-items: center; justify-content: center; font-family: var(--font-oswald); font-size: 32px; font-weight: 700; text-transform: uppercase; gap: 15px; color: #333; margin-top: 40px; margin-bottom: 25px; }
-      .section-title .material-symbols-outlined { font-size: 38px !important; }
-
-      /* Table Styles */
-      .table-container { background-color: transparent; padding: 20px; } 
-      
-      /* Ajuste geral da fonte da tabela (-15%) */
-      .table tbody td { font-size: 0.9rem; }
-
-      /* Ajuste dos textos principais e secundários (-15%) */
-      .table-cell-main { font-weight: bold; color: #333; font-size: 1em; /* Reduzido de 1.15em */ }
-      .table-cell-sub { font-size: 0.7em; color: var(--dark-gray-3); /* Reduzido de 0.8em */ }
-      
-      /* Estilo para a OM na mesma linha */
+      .table-container { padding: 20px; background-color: transparent; }
+      .table tbody td { font-size: 0.9rem; vertical-align: middle; }
+      .table-cell-main { font-weight: bold; color: #333; font-size: 1em; }
       .om-text { font-size: 0.85em; color: var(--dark-gray-3); font-weight: normal; margin-left: 5px; }
-
-      .table-row-alert td, .table-row-alert .table-cell-main, .table-row-alert .table-cell-sub { background-color: var(--danger-color-light) !important; color: var(--danger-color) !important; font-weight: bold !important; }
+      .table-row-alert td, .table-row-alert .table-cell-main { background-color: var(--danger-color-light) !important; color: var(--danger-color) !important; font-weight: bold !important; }
       .actions-cell-content { display: flex; justify-content: space-between; align-items: center; }
-      .actions-icon { cursor: pointer; color: #777; font-size: 1.4em; }
+      .actions-icon { cursor: pointer; color: #777; font-size: 1.4em; transition: color 0.2s; }
       .actions-icon:hover { color: #000; }
       .status-icon { font-size: 1.4em; vertical-align: middle; margin-right: 0px; }
 
@@ -90,465 +110,460 @@
       .chip-filter.chip-warning { background-color: #fff8e1; color: #FAB932; border: 1px solid #FAB932; }
       .chip-filter.chip-warning.active { background-color: #FAB932; color: #fff; }
       .chip-filter .material-symbols-outlined { font-size: 1.2em; }
-      
+
       /* Purpose Filter */
       .purpose-filter-menu { max-height: 300px; overflow-y: auto; }
       .purpose-item-wrapper { display: flex; align-items: center; padding: .25rem 1rem; cursor: pointer; }
       .purpose-item-wrapper:hover { background-color: #f8f9fa; }
 
-      /* Modals */
+      /* --- ESTILOS DO FORMULÁRIO --- */
       .modal-header { background-color: var(--primary-color); color: white; }
-      .modal-body span { font-family: var(--font-oswald); text-transform: uppercase; color: #050f41; font-size: 1.2rem; }
-      .restricoes-accordion-body { max-height: 250px; overflow-y: auto; padding: 1rem; column-count: 2; }
+      .modal-title { font-family: var(--font-oswald); }
+      
+      .section-header { font-family: 'Oswald', sans-serif; font-size: 18px; color: var(--primary-color); margin-top: 15px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid var(--primary-color); }
+      label { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; color: #555; text-transform: uppercase; margin-bottom: 4px;}
+      .hidden { display: none !important; }
+      
+      .btn-add-inspection { background-color: var(--warning-color); color: var(--primary-color); font-weight: bold; border: none; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: var(--font-oswald); text-decoration: none;}
+      .btn-add-inspection:hover { background-color: #e0a629; color: var(--primary-color); }
+      
+      /* Layout de Form Original */
+      .form-row-custom { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px; }
+      .form-group-custom { flex: 1; display: flex; flex-direction: column; min-width: 200px; }
+      
+      .modal-body input[type=text], .modal-body input[type=date], .modal-body textarea, .modal-body select { 
+          padding: 10px; font-size: 16px; font-family: 'Carlito', sans-serif; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; 
+      }
+      .modal-body input:disabled, .modal-body input[readonly] { background-color: #e9ecef; cursor: not-allowed; }
+      
+      .custom-accordion-btn { 
+          width: 100%; background-color: #f1f1f1; border: 1px solid #ccc; border-radius: 4px; padding: 12px; 
+          text-align: left; font-family: var(--font-oswald); font-weight: 700; text-transform: uppercase; color: #444; 
+          display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+      }
+      .custom-accordion-btn:hover { background-color: #ddd; }
+      .custom-accordion-panel { padding: 15px; border: 1px solid #ccc; border-top: none; display: none; }
+      .custom-accordion-panel.show { display: block; }
+      
+      .checkbox-grid { column-count: 2; column-gap: 15px; }
+      @media(min-width: 768px) { .checkbox-grid { column-count: 3; } }
+      .checkbox-item { display: flex; align-items: center; margin-bottom: 8px; break-inside: avoid; }
+      .checkbox-item label { font-family: 'Carlito', sans-serif; font-weight: normal; text-transform: none; margin-bottom: 0; cursor: pointer; margin-left: 8px; }
+      
+      .select2-container { width: 100% !important; }
+      .select2-container--bootstrap-5 .select2-selection { border-color: #ccc; min-height: 45px; }
+      
+      /* Modais */
       #modalDetailsInspecionado { font-size: 1.5rem; font-weight: bold; font-family: var(--font-oswald); }
+      .modal-backdrop { z-index: 1050; }
+      .modal { z-index: 1060; }
     </style>
 </head>
 <body>
-    
-    <!-- MENU LATERAL -->
-    <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <div class="sidenav-header">
-            <img src="https://i.imgur.com/KUbQz08.png" alt="Logo">
-            <h4>JRS - HNRe</h4>
-        </div>
-        <a href="#" onclick="navigateTo('dashboard'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">dashboard</span>Dashboard</a>
-        <a href="#" onclick="navigateTo('inspecoes'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">table_view</span>Inspeções</a>
-        <a href="#" onclick="navigateTo('formulario'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">description</span>Formulário</a>
-        <a href="#" onclick="navigateTo('parecer'); return false;"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 10px;">edit_note</span>Parecer</a>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main" class="container-main">
-        <div class="header-box"> 
-            <div class="IconButton" onclick="openNav()" style="margin-right: 20px; margin-left: 0;">
-                <span class="material-symbols-outlined">menu</span>
-            </div>
+    <!-- 1. SIDEBAR FIXA -->
+    <nav class="sidenav" id="mySidenav">
+        <span class="closebtn" onclick="toggleSidebar()">&times;</span>
+        <div class="sidenav-header">
+            <img src="https://i.imgur.com/KUbQz08.png" alt="Logo HNRe">
+        </div>
+        <a href="#" onclick="navigateTo('dashboard'); return false;"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+        <a href="#" onclick="navigateTo('inspecoes'); return false;" class="active"><span class="material-symbols-outlined">table_view</span>Inspeções</a>
+        <!-- Formulario removido do menu pois agora é um modal dentro de Inspeções -->
+        <a href="#" onclick="navigateTo('parecer'); return false;"><span class="material-symbols-outlined">edit_note</span>Parecer</a>
+    </nav>
+
+    <!-- 2. CONTEÚDO PRINCIPAL -->
+    <main class="container-main">
+        <div class="header-box">
+            <span class="material-symbols-outlined mobile-toggle" onclick="toggleSidebar()">menu</span>
             <img src="https://i.imgur.com/KUbQz08.png" alt="Logo HNRe" class="header-logo">
             <div class="header-text">
-                <h1>JUNTA REGULAR DE SAÚDE</h1>
-                <p>HOSPITAL NAVAL DE RECIFE</p>
+                <h1>DETALHES DAS INSPEÇÕES</h1>
             </div>
-            <div class="IconButton" onclick="navigateTo('formulario')" title="Nova Inspeção" style="margin-left: auto;">
-                <span class="material-symbols-outlined">add_circle</span>
-            </div>
+            <button class="btn-add-inspection" onclick="openCreateModal()">
+                <span class="material-symbols-outlined">add_circle</span> NOVA INSPEÇÃO
+            </button>
         </div>
 
         <div id="loader" class="text-center card-elevated" style="padding: 50px;"> 
             <div class="spinner-border" style="width: 3rem; height: 3rem; color: var(--primary-color);" role="status"></div>
-            <p class="mt-2">A carregar dados...</p>
+            <p class="mt-2">Carregando dados...</p>
         </div>
 
         <div id="mainContent" class="d-none">
-            <div class="card-elevated"> 
+            <!-- ÁREA DE FILTROS -->
+            <div class="card-elevated">
                 <div class="table-container">
-                    <h2 class="section-title"><span class="material-symbols-outlined">patient_list</span> DETALHES DAS INSPEÇÕES</h2>
                     
-                    <!-- ÁREA DE FILTROS REFATORADA -->
+                    <!-- FILTROS -->
                     <div class="filter-section mb-4">
-                        
-                        <!-- LINHA 1: Busca e Finalidade -->
-                        <!-- Ajuste: Container com 50% de largura (em telas grandes) e elementos com flex-grow igual -->
                         <div class="d-flex flex-row align-items-center gap-3 mb-3" style="width: 50%; min-width: 500px;">
-                            
-                            <!-- Campo de Busca (50% do container pai) -->
-                            <div style="flex: 1;">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome...">
-                            </div>
-                            
-                            <!-- Dropdown de Finalidades (50% do container pai) -->
+                            <div style="flex: 1;"><input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome..."></div>
                             <div class="dropdown" style="flex: 1;">
-                                <button class="btn btn-outline-secondary dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" id="purposeFilterButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" id="purposeFilterButton" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                                     <span class="text-truncate">Finalidades</span>
                                 </button>
-                                <ul class="dropdown-menu purpose-filter-menu w-100" id="purposeFilterMenu" aria-labelledby="purposeFilterButton"></ul>
+                                <ul class="dropdown-menu purpose-filter-menu w-100" id="purposeFilterMenu" style="max-height: 300px; overflow-y: auto;"></ul>
                             </div>
-
                         </div>
-
-                        <!-- LINHA 2: Chips -->
-                        <div class="d-flex align-items-center justify-content-start pb-1 gap-2 flex-wrap">
-                            <div class="chip-filter" id="agendadasFilter" title="Filtrar IS Agendadas"><span class="material-symbols-outlined">event_available</span> IS Agendadas</div>
-                            <div class="chip-filter chip-danger" id="isPendenteFilter" title="Filtrar IS com pendência de status"><span class="material-symbols-outlined">pending_actions</span> IS Pendentes</div>
-                            <div class="chip-filter chip-danger" id="pendingMsgFilter" title="Filtrar mensagens pendentes"><span class="material-symbols-outlined">unsubscribe</span> MSG PENDENTES</div>
-                            <div class="chip-filter chip-warning" id="revisaoFilter" title="Filtrar inspeções Em Revisão"><span class="material-symbols-outlined">manage_search</span> Em Revisão</div>
-                            <div class="chip-filter chip-warning" id="restituidaFilter" title="Filtrar inspeções Restituídas"><span class="material-symbols-outlined">arrow_circle_left</span> Restituídas</div>
-                            <div class="chip-filter chip-danger" id="faltasFilter" title="Filtrar Faltas"><span class="material-symbols-outlined">person_off</span> Faltas</div>
-                            <div class="chip-filter chip-danger" id="canceladasFilter" title="Filtrar IS Canceladas"><span class="material-symbols-outlined">event_busy</span> IS Canceladas</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <div class="chip-filter" id="agendadasFilter"><span class="material-symbols-outlined">event_available</span> IS Agendadas</div>
+                            <div class="chip-filter chip-danger" id="isPendenteFilter"><span class="material-symbols-outlined">pending_actions</span> Pendentes</div>
+                            <div class="chip-filter chip-danger" id="pendingMsgFilter"><span class="material-symbols-outlined">unsubscribe</span> MSG Pendente</div>
+                            <div class="chip-filter chip-warning" id="revisaoFilter"><span class="material-symbols-outlined">manage_search</span> Em Revisão</div>
+                            <div class="chip-filter chip-warning" id="restituidaFilter"><span class="material-symbols-outlined">arrow_circle_left</span> Restituídas</div>
+                            <div class="chip-filter chip-danger" id="faltasFilter"><span class="material-symbols-outlined">person_off</span> Faltas</div>
+                            <div class="chip-filter chip-danger" id="canceladasFilter"><span class="material-symbols-outlined">event_busy</span> Canceladas</div>
                         </div>
-
                     </div>
-                    <!-- FIM ÁREA DE FILTROS -->
 
+                    <!-- TABELA -->
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            <thead><tr><th>STATUS</th><th>DATA</th><th>INSPECIONADO</th> <th>FINALIDADE</th></tr></thead>
+                            <thead class="table-light"><tr><th>STATUS</th><th>DATA</th><th>INSPECIONADO</th><th>FINALIDADE</th></tr></thead>
                             <tbody id="dataTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
+    </main>
+
+    <!-- MODAIS -->
+    
+    <!-- Modal Criar -->
+    <div class="modal fade" id="createModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="material-symbols-outlined" style="vertical-align: sub;">add_circle</span> ADICIONAR NOVA INSPEÇÃO</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="inspectionForm">
+                        <h3 class="section-header">INSPECIONADO</h3>
+                        <div class="form-row-custom">
+                            <div class="form-group-custom">
+                                <label for="om">OM</label>
+                                <select id="om" name="om" required></select>
+                            </div>
+                            <div class="form-group-custom" style="flex: 2;">
+                                <label for="inspecionado">Inspecionado</label>
+                                <div id="inspecionadoContainer">
+                                    <input type="text" id="inspecionado" name="inspecionado" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row-custom">
+                            <div class="form-group-custom">
+                                <label for="nip">NIP</label>
+                                <input type="text" id="nip" name="nip">
+                            </div>
+                            <div class="form-group-custom">
+                                <label for="pg">Posto/Graduação</label>
+                                <div id="pgContainer">
+                                    <select id="pg" name="pg" required></select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="border-top: 1px solid #e0e0e0; margin: 20px 0;"></div>
+                        
+                        <h3 class="section-header">IS</h3>
+                        <div class="form-row-custom">
+                            <div class="form-group-custom">
+                                <label for="is">Nº IS</label>
+                                <input type="text" id="is" name="is">
+                            </div>
+                            <div class="form-group-custom">
+                                <label for="dataEntrevista">Data da Entrevista</label>
+                                <input type="date" id="dataEntrevista" name="dataEntrevista" required>
+                            </div>
+                        </div>
+                        <div class="form-row-custom">
+                            <div class="form-group-custom" style="flex: 2;">
+                                <label for="finalidade">Finalidade</label>
+                                <select id="finalidade" name="finalidade" required></select>
+                            </div>
+                            <div class="form-group-custom">
+                                <label for="statusIS">Status</label>
+                                <select id="statusIS" name="statusIS" required></select>
+                            </div>
+                        </div>
+                        
+                        <div id="secao-conclusao" class="hidden">
+                            <div style="border-top: 1px solid #e0e0e0; margin: 20px 0;"></div>
+                            <h3 class="section-header">CONCLUSÃO</h3>
+                            <div class="form-group-custom" style="margin-bottom: 15px;">
+                                <label for="laudo">Laudo</label>
+                                <textarea id="laudo" name="laudo" rows="4"></textarea>
+                            </div>
+                            
+                            <!-- Accordion Restrições Customizado -->
+                            <div id="restricoes-section" class="form-group-custom hidden">
+                                <button type="button" class="custom-accordion-btn" onclick="toggleCustomAccordion()">
+                                    <span>SELECIONAR RESTRIÇÕES</span>
+                                    <span class="material-symbols-outlined">expand_more</span>
+                                </button>
+                                <div id="customRestricoesPanel" class="custom-accordion-panel">
+                                    <div id="restricoes-grid" class="checkbox-grid"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="dataLaudo-group" class="form-group-custom hidden" style="margin-top: 15px;">
+                                <label for="dataLaudo">Data do Laudo</label>
+                                <input type="date" id="dataLaudo" name="dataLaudo">
+                            </div>
+                            
+                            <div class="form-row-custom" style="margin-top: 15px;">
+                                <div id="tis-group" class="form-group-custom hidden">
+                                    <label for="tis">Nº TIS</label>
+                                    <input type="text" id="tis" name="tis">
+                                </div>
+                                <div id="ds1a-group" class="form-group-custom hidden">
+                                    <label for="ds1a">CÓDIGO DS-1A</label>
+                                    <input type="text" id="ds1a" name="ds1a">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnSalvarNova" class="btn btn-primary" onclick="submitNewInspection()">
+                        <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">add_circle</span> Adicionar Inspeção
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- MODAIS (Mantidos originais) -->
     
-    <!-- Modal Detalhes -->
-    <div class="modal fade" id="detailsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Detalhes da Inspeção</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="modalDetailsInspecionado"></p><p id="modalDetailsFinalidade"></p><hr><div id="laudo-section"><span>Laudo</span><p id="modalDetailsLaudo"></p></div><div id="restricoes-section"><span>Restrições</span><p id="modalDetailsRestricoes"></p></div><div class="row"><div class="col-md-4" id="dataLaudo-section"><span>Data do Laudo</span><p id="modalDetailsDataLaudo"></p></div><div class="col-md-4" id="tis-section"><span>TIS</span><p id="modalDetailsTis"></p></div><div class="col-md-4" id="ds1a-section"><span>DS-1a</span><p id="modalDetailsDs1a"></p></div></div><div id="minuta-msg-section" class="accordion mt-3 d-none"><div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMinuta">MINUTA MSG</button></h2><div id="collapseMinuta" class="accordion-collapse collapse"><div class="accordion-body"><p id="modalMinutaMsgText" style="white-space: pre-wrap;"></p></div></div></div></div></div></div></div></div>
-    
-    <!-- Modal Edição -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><form id="editForm"><div class="modal-header"><h5 class="modal-title" id="editModalLabel">Editar Conclusão da Inspeção - <span id="editModalIsTitle"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><div class="card-elevated" style="padding: 1.0rem; background-color: var(--light-gray-1, #fcfcfc); margin-bottom: 1.5rem;"><p class="h5" style="color: var(--primary-color); margin-bottom: 0; text-align: center; font-size: 1.5rem; font-weight: 700;"><span id="editModalInspecionado"></span></p></div><input type="hidden" id="editIsNumber"><div class="mb-3"><label for="editLaudo" class="form-label">Laudo</label><textarea class="form-control" id="editLaudo" rows="3"></textarea></div><div class="mb-3" id="editRestricoesContainer"><label class="form-label">Restrições</label><div class="accordion" id="editRestricoesAccordion"><div class="accordion-item"><h2 class="accordion-header" id="edit-headingOne"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edit-collapseOne" aria-expanded="false" aria-controls="edit-collapseOne">Selecionar Restrições</button></h2><div id="edit-collapseOne" class="accordion-collapse collapse" aria-labelledby="edit-headingOne" data-bs-parent="#editRestricoesAccordion"><div class="accordion-body restricoes-accordion-body" id="editRestricoesBody"></div><div class="input-group p-3 d-none" id="editOutrosRestricaoContainer"><span class="input-group-text">Outros:</span><input type="text" class="form-control" id="editOutrosRestricaoText"></div></div></div></div></div><div class="row mb-3"><div class="col-md-4"><label for="editDataLaudo" class="form-label">Data do Laudo</label><input type="date" class="form-control" id="editDataLaudo"></div><div class="col-md-4"><label for="editTis" class="form-label">Nº TIS</label><input type="text" class="form-control" id="editTis" placeholder="000.000.00000" onkeyup="applyTISMask(this)"></div><div class="col-md-4"><label for="editDs1a" class="form-label">Código DS-1a</label><input type="text" class="form-control" id="editDs1a"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary" id="saveEditButton">Salvar Alterações</button></div></form></div></div></div>
+    <!-- Modais Auxiliares -->
+    <div class="modal fade" id="detailsModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Detalhes</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="modalDetailsInspecionado" class="text-center text-primary h5"></p><p id="modalDetailsFinalidade" class="text-center fw-bold"></p><hr><p><strong>Laudo:</strong> <span id="modalDetailsLaudo"></span></p><p><strong>Restrições:</strong> <span id="modalDetailsRestricoes" class="text-danger"></span></p><div class="row"><div class="col-4"><strong>Data:</strong> <span id="modalDetailsDataLaudo"></span></div><div class="col-4"><strong>TIS:</strong> <span id="modalDetailsTis"></span></div><div class="col-4"><strong>DS-1a:</strong> <span id="modalDetailsDs1a"></span></div></div></div></div></div></div>
+    <div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Editar</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="editForm"><input type="hidden" id="editIsNumber"><h5 id="editModalInspecionado" class="text-center text-primary"></h5><small id="editModalIsTitle" class="d-block text-center text-muted mb-3"></small><label>Laudo</label><textarea id="editLaudo" class="form-control mb-3" rows="3"></textarea><div id="editRestricoesContainer" class="mb-3"><button type="button" class="btn btn-outline-secondary w-100 mb-2" data-bs-toggle="collapse" data-bs-target="#editResCollapse">Editar Restrições</button><div id="editResCollapse" class="collapse"><div id="editRestricoesBody" class="checkbox-grid mb-2"></div><input type="text" id="editOutrosRestricaoText" class="form-control d-none" placeholder="Outros..."></div></div><div class="row"><div class="col-4"><label>Data Laudo</label><input type="date" id="editDataLaudo" class="form-control"></div><div class="col-4"><label>TIS</label><input type="text" id="editTis" class="form-control"></div><div class="col-4"><label>DS-1a</label><input type="text" id="editDs1a" class="form-control"></div></div></form></div><div class="modal-footer"><button type="button" class="btn btn-primary" id="saveEditButton">Salvar</button></div></div></div></div>
+    <div class="modal fade" id="remarcarModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Remarcar</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="remarcarForm"><input type="hidden" id="remarcarIsNumber"><p><strong>Inspecionado:</strong> <span id="remarcarModalInspecionado"></span></p><label>Nova Data</label><input type="date" id="remarcarNovaData" class="form-control" required></form></div><div class="modal-footer"><button type="submit" form="remarcarForm" id="saveRemarcarButton" class="btn btn-primary">Salvar</button></div></div></div></div>
 
-    <!-- Modal Remarcação -->
-    <div class="modal fade" id="remarcarModal" tabindex="-1" aria-labelledby="remarcarModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="remarcarForm"><div class="modal-header"><h5 class="modal-title" id="remarcarModalLabel">Remarcar Inspeção</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><p><strong>Inspecionado:</strong> <span id="remarcarModalInspecionado"></span></p><p><strong>IS:</strong> <span id="remarcarModalIs"></span></p><input type="hidden" id="remarcarIsNumber"><div class="mb-3"><label for="remarcarNovaData" class="form-label">Nova Data da Entrevista</label><input type="date" class="form-control" id="remarcarNovaData" required></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary" id="saveRemarcarButton">Salvar Nova Data</button></div></form></div></div></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- NAVEGAÇÃO E SIDEBAR ---
-        function openNav() { document.getElementById("mySidenav").style.width = "250px"; document.getElementById("main").style.marginLeft = "250px"; }
-        function closeNav() { document.getElementById("mySidenav").style.width = "0"; document.getElementById("main").style.marginLeft= "0"; }
-        
         let BASE_URL = '';
-        function navigateTo(page) { if (BASE_URL) window.top.location.href = BASE_URL + '?page=' + page; }
+        function navigateTo(page) { if(BASE_URL) window.top.location.href = BASE_URL + '?page=' + page; }
+        function toggleSidebar() { document.getElementById("mySidenav").classList.toggle('active'); }
         
-        // --- VARIÁVEIS GLOBAIS DA TABELA ---
-        let allTableData = []; let filteredData = []; let allRestricoes = [];
-        let detailsModalInstance, editModalInstance, remarcarModalInstance;
-        let tooltipList = [];
+        let createModalInstance, detailsModalInstance, editModalInstance, remarcarModalInstance;
+        let allTableData = [], filteredData = [], hnreMilitaryData = [], originalPgOptions = [];
 
-        document.addEventListener('DOMContentLoaded', () => { 
-            google.script.run.withSuccessHandler((url) => { BASE_URL = url; }).getWebAppUrl();
-            
-            detailsModalInstance = new bootstrap.Modal(document.getElementById('detailsModal')); 
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicialização Robusta dos Modais
+            createModalInstance = new bootstrap.Modal(document.getElementById('createModal'));
+            detailsModalInstance = new bootstrap.Modal(document.getElementById('detailsModal'));
             editModalInstance = new bootstrap.Modal(document.getElementById('editModal'));
             remarcarModalInstance = new bootstrap.Modal(document.getElementById('remarcarModal'));
-
-            document.getElementById('loader').classList.remove('d-none'); 
-            document.getElementById('mainContent').classList.add('d-none'); 
-            initializeTooltips();
             
-            document.getElementById('editForm').addEventListener('submit', handleEditFormSubmit);
-            document.getElementById('remarcarForm').addEventListener('submit', handleRemarcarFormSubmit);
+            google.script.run.withSuccessHandler(url => BASE_URL = url).getWebAppUrl();
+            loadInitialData();
+            
             document.getElementById('searchInput').addEventListener('keyup', applyFilters);
-
-            google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onDataError).getDashboardData(); 
+            document.getElementById('remarcarForm').addEventListener('submit', handleRemarcarSubmit);
+            document.getElementById('saveEditButton').addEventListener('click', handleEditSubmit);
+            
+            // Listeners Form (usando jQuery para compatibilidade com Select2)
+            $('#om').on('change', handleOmChange);
+            $('#finalidade').on('change', checkRestricoesVisibility);
+            $('#statusIS').on('change', handleStatusChange);
+            $('#nip').on('input', maskNip);
+            $('#secao-conclusao').on('input keyup', '#laudo', handleLaudoInput);
         });
 
-        function initializeTooltips() {
-            tooltipList.forEach(tooltip => tooltip.dispose());
-            tooltipList = [];
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl, {html: true}); 
-            });
+        // Função Global para o Botão
+        window.openCreateModal = function() {
+            document.getElementById('inspectionForm').reset();
+            document.getElementById('dataEntrevista').valueAsDate = new Date();
+            $('#om').val('HNRe').trigger('change');
+            $('#statusIS').val('Agendada').trigger('change');
+            
+            // Garante reset visual
+            $('#secao-conclusao').addClass('hidden');
+            $('#customRestricoesPanel').removeClass('show');
+            
+            createModalInstance.show();
+        };
+        
+        function toggleCustomAccordion() {
+            document.getElementById('customRestricoesPanel').classList.toggle('show');
         }
 
-        function onDataLoaded(response) { 
-            try { 
-                if (!response || !Array.isArray(response.tableData)) throw new Error("Dados inválidos."); 
-                allTableData = response.tableData; 
-                allRestricoes = response.restricoesOptions;
-                
-                document.getElementById('loader').classList.add('d-none'); 
-                document.getElementById('mainContent').classList.remove('d-none'); 
-                
+        function loadInitialData() {
+            google.script.run.withSuccessHandler(res => {
+                allTableData = res.tableData || [];
+                document.getElementById('loader').classList.add('d-none');
+                document.getElementById('mainContent').classList.remove('d-none');
                 populateFilters(allTableData);
-                populateEditModalOptions(allRestricoes);
+                populateEditModalOptions(res.restricoesOptions || []);
                 applyFilters();
                 
-                // Configurar Listeners de Chips (AGORA COM LÓGICA DE SELEÇÃO ÚNICA)
-                const chipIds = ['isPendenteFilter','pendingMsgFilter','revisaoFilter','restituidaFilter','agendadasFilter','faltasFilter','canceladasFilter'];
-                
-                chipIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if(el) {
-                        el.addEventListener('click', () => {
-                            const isCurrentlyActive = el.classList.contains('active');
-                            
-                            // 1. Limpa TODOS os chips primeiro (comportamento de rádio)
-                            chipIds.forEach(otherId => {
-                                document.getElementById(otherId)?.classList.remove('active');
-                            });
-
-                            // 2. Se o clicado NÃO estava ativo, ativa ele (toggle ON)
-                            // Se estava ativo, ele permanece desativado pelo passo 1 (toggle OFF)
-                            if (!isCurrentlyActive) {
-                                el.classList.add('active');
-                            }
-                            
-                            applyFilters();
-                        });
-                    }
+                ['agendadasFilter','isPendenteFilter','pendingMsgFilter','revisaoFilter','restituidaFilter','faltasFilter','canceladasFilter'].forEach(id => {
+                    document.getElementById(id).addEventListener('click', function() {
+                        const isActive = this.classList.contains('active');
+                        document.querySelectorAll('.chip-filter').forEach(c => c.classList.remove('active'));
+                        if(!isActive) this.classList.add('active');
+                        applyFilters();
+                    });
                 });
+            }).getDashboardData();
 
-            } catch(e) { onDataError(e); } 
+            google.script.run.withSuccessHandler(data => {
+                originalPgOptions = data.pgOptions;
+                populateSelect('#om', data.omOptions);
+                populateSelect('#finalidade', data.finalidadeOptions);
+                populateSelect('#pg', originalPgOptions);
+                populateSelect('#statusIS', data.statusOptions);
+                populateCheckboxGrid('#restricoes-grid', data.restricoesOptions);
+                $('#om').val('HNRe').trigger('change'); $('#statusIS').val('Agendada');
+            }).getDropdownData();
         }
 
-        function onDataError(error) { 
-             document.getElementById('loader').innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`; 
-        }
-
-        // --- LÓGICA DE FILTROS E TABELA (Mantida do Original) ---
-        function populateFilters(tableData) { 
-            try { 
-                const purposeMenu = document.getElementById('purposeFilterMenu');
-                purposeMenu.innerHTML = '<li><button class="dropdown-item" type="button" id="clearPurposeFilter">Limpar Seleção</button></li><li><hr class="dropdown-divider"></li>';
-                const purposes = [...new Set(tableData.map(row => row.Finalidade).filter(Boolean).sort())]; 
-                
-                purposes.forEach((p, index) => {
-                  const li = document.createElement('li');
-                  const uniqueId = 'check-purpose-' + index; 
-                  li.innerHTML = `<div class="purpose-item-wrapper form-check"><input type="checkbox" class="form-check-input purpose-filter-item" value="${p}" id="${uniqueId}"><label class="form-check-label" for="${uniqueId}">${p}</label></div>`;
-                  purposeMenu.appendChild(li);
-                });
-
-                // Listeners
-                document.getElementById('clearPurposeFilter').addEventListener('click', (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    document.querySelectorAll('.purpose-filter-item:checked').forEach(cb => cb.checked = false);
-                    applyFilters(); updatePurposeButtonText();
-                });
-                purposeMenu.addEventListener('change', (e) => {
-                    if (e.target.classList.contains('purpose-filter-item')) { applyFilters(); updatePurposeButtonText(); }
-                });
-            } catch (e) { console.error("Erro populateFilters:", e); } 
-        }
-
-        function applyFilters() { 
-            try { 
-                const search = document.getElementById('searchInput').value.toLowerCase(); 
-                const selectedPurposes = Array.from(document.querySelectorAll('.purpose-filter-item:checked')).map(cb => cb.value);
-                
-                const pendingMsgOnly = document.getElementById('pendingMsgFilter').classList.contains('active'); 
-                const isPendenteOnly = document.getElementById('isPendenteFilter').classList.contains('active');
-                const revisaoOnly = document.getElementById('revisaoFilter').classList.contains('active');
-                const restituidaOnly = document.getElementById('restituidaFilter').classList.contains('active');
-                const agendadasOnly = document.getElementById('agendadasFilter').classList.contains('active');
-                const faltasOnly = document.getElementById('faltasFilter').classList.contains('active');
-                const canceladasOnly = document.getElementById('canceladasFilter').classList.contains('active');
-
-                const pendingStatusList = ['Conclusão Pendente', 'Concluída', 'Votada JRS']; 
-
-                filteredData = allTableData.filter(r => { 
-                    if (!r) return false;
-                    const inspecionadoLower = (r.Inspecionado || '').toLowerCase(); 
-                    const finalidadeMatch = (selectedPurposes.length === 0 || selectedPurposes.includes(r.Finalidade));
-                    const searchMatch = (!search || inspecionadoLower.includes(search)); 
-                    const pendingMsgMatch = (!pendingMsgOnly || r.MSG === 'PENDENTE'); 
-                    const isPendenteMatch = (!isPendenteOnly || pendingStatusList.includes(r.StatusIS));
-                    const emRevisaoMatch = (!revisaoOnly || (r.StatusIS === 'Auditoria' || r.StatusIS === 'JSD'));
-                    const restituidaMatch = (!restituidaOnly || (r.StatusIS === 'Restituída Auditoria' || r.StatusIS === 'Restituída JSD'));
-                    const agendadasMatch = (!agendadasOnly || r.StatusIS === 'Agendada');
-                    const faltasMatch = (!faltasOnly || r.StatusIS === 'Faltou');
-                    const canceladasMatch = (!canceladasOnly || r.StatusIS === 'Cancelada');
-                    return searchMatch && finalidadeMatch && pendingMsgMatch && isPendenteMatch && emRevisaoMatch && restituidaMatch && agendadasMatch && faltasMatch && canceladasMatch; 
-                }); 
-                
-                renderTable(filteredData); 
-                initializeTooltips(); 
-            } catch(e) { console.error("Erro filtros:", e); } 
-        }
-
-        function updatePurposeButtonText() {
-            const count = document.querySelectorAll('.purpose-filter-item:checked').length;
-            const btn = document.getElementById('purposeFilterButton');
-            // Mantém o span para o texto truncar corretamente
-            const textSpan = btn.querySelector('span');
-            if (textSpan) {
-                textSpan.textContent = count === 0 ? 'Finalidades' : `Finalidades (${count})`;
-            }
-        }
-
-        function renderTable(dataToRender) { 
-            const tBody = document.getElementById('dataTableBody'); 
-            tBody.innerHTML = ''; 
-            if (dataToRender.length === 0) { tBody.innerHTML = `<tr><td colspan="4" class="text-center">Nenhum resultado.</td></tr>`; return; } 
-            
-            const statusConfig = {
-                'Agendada': { icon: 'event_available', color: 'info-color', tooltipText: 'Agendada'},
-                'Auditoria': { icon: 'quick_reference_all', color: 'warning-color', tooltipText: 'Em Auditoria'},
-                'Cancelada': { icon: 'event_busy', color: 'danger-color', tooltipText: 'Cancelada'},
-                'Conclusão Pendente': { icon: 'help', color: 'danger-color', tooltipText: 'Conclusão Pendente'},
-                'Concluída': { icon: 'gavel', color: 'danger-color', tooltipText: 'Votação Pendente'}, 
-                'Faltou': { icon: 'disabled_by_default', color: 'danger-color', tooltipText: 'Faltou'},
-                'JSD': { icon: 'quick_reference_all', color: 'warning-color', tooltipText: 'Revisão JSD'},
-                'Remarcada': { icon: 'event_repeat', color: 'warning-color', tooltipText: 'Remarcada'},
-                'Restituída Auditoria': { icon: 'arrow_circle_left', color: 'warning-color', tooltipText: 'Restituída (Auditoria)'},
-                'Restituída JSD': { icon: 'arrow_circle_left', color: 'warning-color', tooltipText: 'Restituída (JSD)'},
-                'TIS assinado': { icon: 'assignment_turned_in',color: 'success-color', tooltipText: 'TIS Assinado'}, 
-                'Votada JRS': { icon: 'unknown_document', color: 'danger-color', tooltipText: 'Assinatura Pendente'} 
-            };
-            
-            dataToRender.forEach((row, index) => { 
-                const tr = tBody.insertRow(); 
-                if (['AGU exames', 'Conclusão Pendente', 'Concluída', 'Votada JRS'].includes(row.StatusIS) || row.MSG === 'PENDENTE') { tr.classList.add('table-row-alert'); } 
-                
-                const config = statusConfig[row.StatusIS] || {};
-                const statusHtml = config.icon ? `<span class="material-symbols-outlined status-icon" style="color: var(--${config.color});" data-bs-toggle="tooltip" title="${config.tooltipText}">${config.icon}</span>` : `<span>${row.StatusIS}</span>`;
-                
-                let msgHtml = '';
-                if (row.MSG === 'ENVIADA') msgHtml = `<span class="material-symbols-outlined" style="color:var(--success-color);" data-bs-toggle="tooltip" title="Mensagem Enviada">mark_email_read</span>`; 
-                else if (row.MSG === 'PENDENTE') msgHtml = `<span class="material-symbols-outlined" style="color:var(--danger-color-vivid);" data-bs-toggle="tooltip" title="Mensagem Pendente">unsubscribe</span>`; 
-                
-                const inspecionadoNome = `${row['P/G/Q'] && !['CANDIDATO', 'DEPEND / PENS'].includes(row['P/G/Q']) ? row['P/G/Q'] + ' ' : ''}${row.Inspecionado || ''}`;
-                
-                let syncIconHtml = row.MSG === 'PENDENTE' ? `<span class="material-symbols-outlined actions-icon" title="Marcar MSG como Enviada" onclick="updateMsgStatus(event, '${row.IS}', ${index})">sync</span>` : ''; 
-                let editIconHtml = row.MSG !== 'ENVIADA' ? `<span class="material-symbols-outlined actions-icon" title="Editar Conclusão" onclick="openEditModal(event, ${index})">edit</span>` : '';
-                let remarcarIconHtml = (row.StatusIS === 'Agendada' || row.StatusIS === 'Remarcada') ? `<span class="material-symbols-outlined actions-icon" title="Remarcar Inspeção" onclick="openRemarcarModal(event, ${index})">event_repeat</span>` : '';
-
-                tr.innerHTML = `
-                    <td><div style="display: flex; align-items: center; gap: 10px;">${statusHtml}${msgHtml}</div></td>
-                    <!-- REMOVIDO: row.IS -->
-                    <td><div class="table-cell-main">${row.DataEntrevista || ''}</div></td>
-                    <!-- MOVIDO: OM para a linha principal com estilo menor -->
-                    <td><div class="table-cell-main">${inspecionadoNome}${row.OM ? `<span class="om-text">(${row.OM})</span>` : ''}</div></td>
-                    <td><div class="actions-cell-content"><span>${row.Finalidade||''}</span><span style="display: flex; align-items: center; gap: 8px;">${syncIconHtml}${editIconHtml}${remarcarIconHtml} <span class="material-symbols-outlined actions-icon" onclick="showDetailsModal(event, ${index})">more_vert</span></span></div></td>
-                `; 
-            }); 
-        }
-
-        // --- LÓGICA DE MODAIS E CRUD (Mantida do Original) ---
-        function updateMsgStatus(event, isNumber, rowIndex) {
-             if (event) event.stopPropagation();
-             const icon = event.target;
-             icon.textContent = 'hourglass_top';
-             google.script.run.withSuccessHandler(response => {
-                 if (response.success) {
-                     const originalDataIndex = allTableData.findIndex(item => item.IS == isNumber);
-                     if (originalDataIndex > -1) allTableData[originalDataIndex].MSG = 'ENVIADA';
-                     applyFilters();
-                 } else { alert("Erro: " + response.message); icon.textContent = 'sync'; }
-             }).updateMsgStatus(isNumber);
-        }
-
-        function showDetailsModal(event, index) { 
-             if (event) event.stopPropagation();
-             const data = filteredData[index]; 
-             document.getElementById('modalDetailsInspecionado').textContent = data.Inspecionado; 
-             document.getElementById('modalDetailsFinalidade').textContent = data.Finalidade;
-             document.getElementById('modalDetailsLaudo').textContent = data.Laudo;
-             document.getElementById('modalDetailsRestricoes').textContent = data.Restrições;
-             document.getElementById('modalDetailsDataLaudo').textContent = data.DataLaudo;
-             document.getElementById('modalDetailsTis').textContent = data.TIS;
-             document.getElementById('modalDetailsDs1a').textContent = data['DS-1a'];
-             
-             // Minuta (simplificada para brevidade, lógica original mantida)
-             if (data['DS-1a']) {
-                 document.getElementById('modalMinutaMsgText').textContent = `INSPEÇÃO DE SAÚDE FIM ${data.Finalidade} - ${data.Inspecionado}... (Ver detalhes completos)`;
-                 document.getElementById('minuta-msg-section').classList.remove('d-none');
-             } else { document.getElementById('minuta-msg-section').classList.add('d-none'); }
-             detailsModalInstance.show(); 
-        }
-
-        function populateEditModalOptions(restricoes) {
-            const container = document.getElementById('editRestricoesBody');
-            container.innerHTML = ''; 
-            restricoes.forEach((item, index) => {
-              const div = document.createElement('div');
-              div.className = 'form-check';
-              div.innerHTML = `<input class="form-check-input edit-restricao-item" type="checkbox" value="${item}" id="edit-check-${index}"><label class="form-check-label" for="edit-check-${index}">${item}</label>`;
-              if (item === 'Outros') div.querySelector('input').addEventListener('click', function() { document.getElementById('editOutrosRestricaoContainer').classList.toggle('d-none', !this.checked); });
-              container.appendChild(div);
+        // Tabela & Filtros
+        function populateFilters(data) {
+            const purposes = [...new Set(data.map(r => r.Finalidade).filter(Boolean))].sort();
+            const menu = document.getElementById('purposeFilterMenu');
+            menu.innerHTML = '<li><button class="dropdown-item" id="clearPurpose">Limpar</button></li><li><hr class="dropdown-divider"></li>';
+            purposes.forEach((p, i) => {
+                menu.innerHTML += `<li><div class="purpose-item-wrapper form-check"><input type="checkbox" class="form-check-input purpose-filter-item" value="${p}" id="chk-p-${i}"><label class="form-check-label" for="chk-p-${i}">${p}</label></div></li>`;
             });
+            document.getElementById('clearPurpose').onclick = () => { document.querySelectorAll('.purpose-filter-item').forEach(c=>c.checked=false); applyFilters(); };
+            menu.addEventListener('change', (e) => { if(e.target.classList.contains('purpose-filter-item')) applyFilters(); });
         }
-        
-        function openEditModal(event, index) {
-            if (event) event.stopPropagation();
-            const data = filteredData[index];
-            document.getElementById('editModalIsTitle').textContent = data.IS;
-            document.getElementById('editModalInspecionado').textContent = data.Inspecionado;
-            document.getElementById('editIsNumber').value = data.IS;
-            document.getElementById('editLaudo').value = data.Laudo || '';
-            document.getElementById('editTis').value = data.TIS || '';
-            document.getElementById('editDs1a').value = data['DS-1a'] || '';
-            
-            // Tratamento de Data
-            if (data.DataLaudo) {
-                const parts = data.DataLaudo.split('/');
-                if(parts.length===3) document.getElementById('editDataLaudo').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
-            } else { document.getElementById('editDataLaudo').valueAsDate = new Date(); }
 
-            // Restrições
-            const allCheckboxes = document.querySelectorAll('.edit-restricao-item');
-            allCheckboxes.forEach(cb => cb.checked = false);
-            document.getElementById('editOutrosRestricaoText').value = '';
-            document.getElementById('editOutrosRestricaoContainer').classList.add('d-none');
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const selectedP = Array.from(document.querySelectorAll('.purpose-filter-item:checked')).map(c => c.value);
+            const activeChip = document.querySelector('.chip-filter.active');
+            const chipId = activeChip ? activeChip.id : null;
 
-            const arr = data.Restrições ? data.Restrições.split(', ') : [];
-            arr.forEach(r => {
-                let match = false;
-                allCheckboxes.forEach(cb => { if(cb.value === r) { cb.checked = true; match = true; } });
-                if (!match && r.startsWith('Outros: ')) {
-                    const outros = Array.from(allCheckboxes).find(cb => cb.value === 'Outros');
-                    if(outros) { outros.checked = true; document.getElementById('editOutrosRestricaoContainer').classList.remove('d-none'); document.getElementById('editOutrosRestricaoText').value = r.substring(8); }
-                }
+            filteredData = allTableData.filter(r => {
+                const sMatch = !search || (r.Inspecionado||'').toLowerCase().includes(search) || (r.NIP||'').includes(search);
+                const pMatch = selectedP.length === 0 || selectedP.includes(r.Finalidade);
+                let cMatch = true;
+                if(chipId === 'agendadasFilter') cMatch = r.StatusIS === 'Agendada';
+                else if(chipId === 'isPendenteFilter') cMatch = ['Conclusão Pendente','Concluída','Votada JRS'].includes(r.StatusIS);
+                else if(chipId === 'pendingMsgFilter') cMatch = r.MSG === 'PENDENTE';
+                else if(chipId === 'revisaoFilter') cMatch = ['Auditoria','JSD'].includes(r.StatusIS);
+                else if(chipId === 'restituidaFilter') cMatch = r.StatusIS && r.StatusIS.includes('Restituída');
+                else if(chipId === 'faltasFilter') cMatch = r.StatusIS === 'Faltou';
+                else if(chipId === 'canceladasFilter') cMatch = r.StatusIS === 'Cancelada';
+                return sMatch && pMatch && cMatch;
             });
             
-            // Visibilidade Restrições
-            const showList = ['VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL','TÉRMINO DE INCAPACIDADE','TÉRMINO DE RESTRIÇÕES'];
-            document.getElementById('editRestricoesContainer').style.display = showList.includes((data.Finalidade||'').toUpperCase()) ? 'block' : 'none';
+            const btn = document.getElementById('purposeFilterButton').querySelector('span');
+            btn.textContent = selectedP.length ? `Finalidades (${selectedP.length})` : 'Finalidades';
+            renderTable(filteredData);
+        }
 
+        function renderTable(data) {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+            if(data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum resultado.</td></tr>'; return; }
+
+            const statusConfig = { 'Agendada': {icon:'event_available',color:'info-color'}, 'Auditoria': {icon:'quick_reference_all',color:'warning-color'}, 'Cancelada': {icon:'event_busy',color:'danger-color'}, 'Conclusão Pendente': {icon:'help',color:'danger-color'}, 'Concluída': {icon:'gavel',color:'danger-color'}, 'Faltou': {icon:'disabled_by_default',color:'danger-color'}, 'JSD': {icon:'quick_reference_all',color:'warning-color'}, 'Remarcada': {icon:'event_repeat',color:'warning-color'}, 'TIS assinado': {icon:'assignment_turned_in',color:'success-color'}, 'Votada JRS': {icon:'unknown_document',color:'danger-color'} };
+
+            data.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                if(['AGU exames','Conclusão Pendente','Concluída','Votada JRS'].includes(row.StatusIS) || row.MSG === 'PENDENTE') tr.classList.add('table-row-alert');
+                
+                const conf = statusConfig[row.StatusIS] || {};
+                const sHtml = conf.icon ? `<span class="material-symbols-outlined status-icon" style="color:var(--${conf.color});" title="${row.StatusIS}">${conf.icon}</span>` : `<span>${row.StatusIS}</span>`;
+                
+                let mHtml = '';
+                if(row.MSG==='ENVIADA') mHtml = `<span class="material-symbols-outlined" style="color:var(--success-color);" title="Enviada">mark_email_read</span>`;
+                else if(row.MSG==='PENDENTE') mHtml = `<span class="material-symbols-outlined" style="color:var(--danger-color-vivid);" title="Pendente">unsubscribe</span>`;
+
+                const nome = `${row['P/G/Q'] && !['CANDIDATO','DEPEND / PENS'].includes(row['P/G/Q']) ? row['P/G/Q']+' ' : ''}${row.Inspecionado||''}`;
+                
+                let sync = row.MSG==='PENDENTE' ? `<span class="material-symbols-outlined actions-icon" onclick="updateMsg(event,'${row.IS}')">sync</span>` : '';
+                let edit = row.MSG!=='ENVIADA' ? `<span class="material-symbols-outlined actions-icon" onclick="openEdit(event,${idx})">edit</span>` : '';
+                let remarcar = (row.StatusIS==='Agendada' || row.StatusIS==='Remarcada') ? `<span class="material-symbols-outlined actions-icon" onclick="openRemarcar(event,${idx})">event_repeat</span>` : '';
+
+                tr.innerHTML = `<td><div style="display:flex;align-items:center;gap:10px;">${sHtml}${mHtml}</div></td><td><div class="table-cell-main">${row.DataEntrevista||''}</div></td><td><div class="table-cell-main">${nome}${row.OM ? `<span class="om-text">(${row.OM})</span>` : ''}</div></td><td><div class="actions-cell-content"><span>${row.Finalidade||''}</span><span style="display:flex;align-items:center;gap:8px;">${sync}${edit}${remarcar} <span class="material-symbols-outlined actions-icon" onclick="openDetails(event,${idx})">more_vert</span></span></div></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Ações
+        function updateMsg(e, is) { e.stopPropagation(); google.script.run.withSuccessHandler(r=>{ if(r.success){ loadInitialData(); } else alert(r.message); }).updateMsgStatus(is); }
+        function openDetails(e, i) { 
+            e.stopPropagation(); const d = filteredData[i]; 
+            $('#modalDetailsInspecionado').text(d.Inspecionado); $('#modalDetailsFinalidade').text(d.Finalidade);
+            $('#modalDetailsLaudo').text(d.Laudo||'-'); $('#modalDetailsRestricoes').text(d.Restrições||'-');
+            $('#modalDetailsDataLaudo').text(d.DataLaudo); $('#modalDetailsTis').text(d.TIS); $('#modalDetailsDs1a').text(d['DS-1a']);
+            
+            if(d['DS-1a']) { $('#modalMinutaMsgText').text(`INSPEÇÃO DE SAÚDE FIM ${d.Finalidade} - ${d.Inspecionado}...`); $('#minuta-msg-section').removeClass('d-none'); } 
+            else $('#minuta-msg-section').addClass('d-none');
+            
+            detailsModalInstance.show(); 
+        }
+        function openEdit(e, i) {
+            e.stopPropagation(); const d = filteredData[i];
+            $('#editIsNumber').val(d.IS); $('#editModalInspecionado').text(d.Inspecionado); $('#editModalIsTitle').text('IS: '+d.IS);
+            $('#editLaudo').val(d.Laudo||''); $('#editTis').val(d.TIS||''); $('#editDs1a').val(d['DS-1a']||'');
+            if(d.DataLaudo) { const p=d.DataLaudo.split('/'); if(p.length===3) $('#editDataLaudo').val(`${p[2]}-${p[1]}-${p[0]}`); } else document.getElementById('editDataLaudo').valueAsDate=new Date();
+            
+            $('.edit-restricao-item').prop('checked',false);
+            const rList=(d.Restrições||'').split(', ');
+            $('#editOutrosRestricaoContainer').addClass('d-none'); $('#editOutrosRestricaoText').val('');
+            
+            rList.forEach(r=>{ 
+                const chk = $(`.edit-restricao-item[value="${r}"]`);
+                if(chk.length) chk.prop('checked',true);
+                else if(r.startsWith('Outros: ')) { $('#editOutrosRestricaoContainer').removeClass('d-none'); $('#editOutrosRestricaoText').val(r.substring(8)); }
+            });
+            const finalidade = (d.Finalidade||'').toUpperCase();
+            const show = ['VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL','TÉRMINO DE INCAPACIDADE','TÉRMINO DE RESTRIÇÕES'].includes(finalidade);
+            $('#editRestricoesContainer').toggle(show);
             editModalInstance.show();
         }
+        function handleEditSubmit() {
+            const btn=this; btn.disabled=true; btn.innerText='Salvando...';
+            const data={ isNumber:$('#editIsNumber').val(), laudo:$('#editLaudo').val(), dataLaudo:$('#editDataLaudo').val(), tis:$('#editTis').val(), ds1a:$('#editDs1a').val(), restricoes:[], outrosRestricao:$('#editOutrosRestricaoText').val() };
+            $('.edit-restricao-item:checked').each(function(){ data.restricoes.push($(this).val()) });
+            google.script.run.withSuccessHandler(r=>{ btn.disabled=false;btn.innerText='Salvar'; if(r.success){ editModalInstance.hide(); loadInitialData(); } else alert(r.message); }).updateInspectionConclusion(data);
+        }
+        function openRemarcar(e, i) { e.stopPropagation(); const d=filteredData[i]; $('#remarcarIsNumber').val(d.IS); $('#remarcarModalInspecionado').text(d.Inspecionado); $('#remarcarNovaData').val(''); remarcarModalInstance.show(); }
+        function handleRemarcarSubmit(e) { e.preventDefault(); google.script.run.withSuccessHandler(r=>{ if(r.success){ remarcarModalInstance.hide(); loadInitialData(); } else alert(r.message); }).remarcarInspecao({isNumber:$('#remarcarIsNumber').val(), novaData:$('#remarcarNovaData').val()}); }
 
-        function handleEditFormSubmit(e) {
-            e.preventDefault();
-            const btn = document.getElementById('saveEditButton');
-            btn.disabled = true; btn.textContent = 'Salvando...';
-            
-            const formData = {
-                isNumber: document.getElementById('editIsNumber').value,
-                laudo: document.getElementById('editLaudo').value,
-                dataLaudo: document.getElementById('editDataLaudo').value,
-                tis: document.getElementById('editTis').value,
-                ds1a: document.getElementById('editDs1a').value,
-                restricoes: Array.from(document.querySelectorAll('.edit-restricao-item:checked')).map(cb => cb.value),
-                outrosRestricao: document.getElementById('editOutrosRestricaoText').value
-            };
-            
-            google.script.run.withSuccessHandler(response => {
-                if(response.success) {
-                    const idx = allTableData.findIndex(i => i.IS == formData.isNumber);
-                    if(idx > -1) Object.assign(allTableData[idx], response.updatedData);
-                    editModalInstance.hide();
-                    applyFilters();
-                } else { alert("Erro: " + response.message); }
-                btn.disabled = false; btn.textContent = 'Salvar Alterações';
-            }).updateInspectionConclusion(formData);
+        // Form Logic
+        function populateSelect(sel, opts) { $(sel).empty().append('<option disabled selected>Selecione...</option>'); if(opts) opts.forEach(o=>$(sel).append(new Option(o,o))); }
+        function populateCheckboxGrid(sel, opts) { $(sel).empty(); 
+            $(sel).append(`<div class="checkbox-item"><input type="checkbox" id="restricao-lts" name="restricoes" value="LTS"><label for="restricao-lts">LTS</label></div>`);
+            if(opts) opts.forEach((o,i)=>{ if(o!=='LTS') $(sel).append(`<div class="checkbox-item"><input type="checkbox" id="chk${i}" name="restricoes" value="${o}"><label for="chk${i}">${o}</label></div>`); });
+            $(sel).append(`<div class="checkbox-item"><input type="checkbox" id="restricao-outros" name="restricoes" value="Outros"><label for="restricao-outros">Outros:</label><input type="text" id="restricao-outros-text" class="hidden" placeholder="Descreva..." style="margin-left:5px; padding:2px;"></div>`);
+            $('input[name="restricoes"]').on('change', handleRestricaoChange);
+        }
+        
+        function handleRestricaoChange(e) { 
+            const checkbox = $(e.target); const isChecked = checkbox.is(':checked'); const value = checkbox.val(); 
+            if (value === 'LTS' && isChecked) { $('input[name="restricoes"]').not(checkbox).prop('checked', false).prop('disabled', true); $('#restricao-outros-text').addClass('hidden').val(''); } 
+            else if (value === 'LTS' && !isChecked) { $('input[name="restricoes"]').prop('disabled', false); } 
+            else if (value !== 'LTS' && isChecked) { $('input[name="restricoes"][value="LTS"]').prop('disabled', true); } 
+            else if (value !== 'LTS' && !isChecked) { if ($('input[name="restricoes"]:checked').not('[value="LTS"]').length === 0) { $('input[name="restricoes"][value="LTS"]').prop('disabled', false); } } 
+            if (value === 'Outros') { $('#restricao-outros-text').toggleClass('hidden', !isChecked); if (!isChecked) $('#restricao-outros-text').val(''); } 
         }
 
-        function openRemarcarModal(event, index) {
-            if (event) event.stopPropagation();
-            const data = filteredData[index];
-            document.getElementById('remarcarModalInspecionado').textContent = data.Inspecionado;
-            document.getElementById('remarcarModalIs').textContent = data.IS;
-            document.getElementById('remarcarIsNumber').value = data.IS;
-            document.getElementById('remarcarNovaData').value = '';
-            remarcarModalInstance.show();
+        function populateEditModalOptions(opts) { $('#editRestricoesBody').empty(); opts.forEach((o,i)=>$('#editRestricoesBody').append(`<div class="form-check"><input class="form-check-input edit-restricao-item" type="checkbox" value="${o}" id="edchk${i}"><label class="form-check-label" for="edchk${i}">${o}</label></div>`)); }
+        function handleOmChange() { if($(this).val()==='HNRe') setupHnre(); else setupManual(); checkRestricoesVisibility(); }
+        function setupHnre() { $('#inspecionadoContainer').html('<select id="inspecionado" name="inspecionado" class="form-select" required></select>'); $('#pg').prop('readonly',true); $('#nip').prop('readonly',true); google.script.run.withSuccessHandler(d=>{ hnreMilitaryData=d; const s=$('#inspecionado'); s.empty().append('<option></option>'); d.forEach(m=>s.append(new Option(m.inspecionado,m.inspecionado))); s.select2({dropdownParent:$('#createModal'),placeholder:'Nome...',allowClear:true,theme:'bootstrap-5'}); s.on('change', function(){ const m=d.find(x=>x.inspecionado===$(this).val()); if(m){$('#pg').val(m.pg);$('#nip').val(m.nip);} }); }).getHnreMilitaryDataForForm(); }
+        function setupManual() { if($('#inspecionado').data('select2')) $('#inspecionado').select2('destroy'); $('#inspecionadoContainer').html('<input type="text" id="inspecionado" name="inspecionado" class="form-control" required>'); $('#pg').prop('readonly',false); populateSelect('#pg',originalPgOptions); $('#nip').prop('readonly',false).val(''); }
+        function handleStatusChange() { const s=$(this).val(); const show=['Concluída','TIS assinado','Votada JRS'].includes(s); $('#secao-conclusao').toggleClass('hidden',!show); $('#tis-group').toggleClass('hidden',!['TIS assinado','Votada JRS'].includes(s)); $('#ds1a-group').toggleClass('hidden',s!=='TIS assinado'); }
+        function checkRestricoesVisibility() { const show=$('#laudo').val() && $('#om').val()==='HNRe' && ['TÉRMINO DE RESTRIÇÕES','TÉRMINO DE INCAPACIDADE','VERIFICAÇÃO DE DEFICIÊNCIA FUNCIONAL'].includes($('#finalidade').val()); $('#restricoes-section').toggleClass('hidden',!show); }
+        function handleLaudoInput() { if($(this).val() && !$('#dataLaudo').val()) document.getElementById('dataLaudo').valueAsDate=new Date(); checkRestricoesVisibility(); }
+        function maskNip() { let v=this.value.replace(/\D/g,""); if(v.length>8) v=v.slice(0,8); if(v.length>6) v=v.replace(/^(\d{2})(\d{4})(\d{1,2})/,"$1.$2.$3"); else if(v.length>2) v=v.replace(/^(\d{2})(\d{1,4})/,"$1.$2"); this.value=v; }
+        function submitNewInspection() {
+            const btn=document.getElementById('btnSalvarNova'); btn.disabled=true; btn.innerText='Salvando...';
+            const f=document.getElementById('inspectionForm'); if(!f.checkValidity()){f.reportValidity();btn.disabled=false;btn.innerText='Salvar';return;}
+            const d={ om:$('#om').val(), inspecionado:$('#inspecionado').val(), pg:$('#pg').val(), nip:$('#nip').val(), is:$('#is').val(), finalidade:$('#finalidade').val(), dataEntrevista:$('#dataEntrevista').val(), statusIS:$('#statusIS').val(), laudo:$('#laudo').val(), dataLaudo:$('#dataLaudo').val(), tis:$('#tis').val(), ds1a:$('#ds1a').val(), restricoes:[], outrosRestricao:$('#restricao-outros-text').val() };
+            $('input[name="restricoes"]:checked').each(function(){d.restricoes.push($(this).val())});
+            google.script.run.withSuccessHandler(r=>{ btn.disabled=false;btn.innerText='Salvar'; if(r.status==='success'){ createModalInstance.hide(); loadInitialData(); } else alert(r.message); }).addNewInspection(d);
         }
-
-        function handleRemarcarFormSubmit(e) {
-            e.preventDefault();
-            const btn = document.getElementById('saveRemarcarButton');
-            btn.disabled = true; btn.textContent = 'Salvando...';
-            
-            const formData = { isNumber: document.getElementById('remarcarIsNumber').value, novaData: document.getElementById('remarcarNovaData').value };
-            
-            google.script.run.withSuccessHandler(response => {
-                if(response.success) {
-                    const idx = allTableData.findIndex(i => i.IS == formData.isNumber);
-                    if(idx > -1) { allTableData[idx].DataEntrevista = response.updatedData.DataEntrevista; allTableData[idx].StatusIS = response.updatedData.StatusIS; }
-                    remarcarModalInstance.hide();
-                    applyFilters();
-                } else { alert("Erro: " + response.message); }
-                btn.disabled = false; btn.textContent = 'Salvar Nova Data';
-            }).remarcarInspecao(formData);
-        }
-
-        function applyTISMask(input) {
-            let v = input.value.replace(/\D/g, '').substring(0, 11);
-            input.value = v.length > 6 ? `${v.substring(0,3)}.${v.substring(3,6)}.${v.substring(6)}` : v.length > 3 ? `${v.substring(0,3)}.${v.substring(3)}` : v;
-        }
+        function applyTISMask(input) { let v = input.value.replace(/\D/g, '').substring(0, 11); input.value = v.length > 6 ? `${v.substring(0,3)}.${v.substring(3,6)}.${v.substring(6)}` : v.length > 3 ? `${v.substring(0,3)}.${v.substring(3)}` : v; }
     </script>
 </body>
 </html>
