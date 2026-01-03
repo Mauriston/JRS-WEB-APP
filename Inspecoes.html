@@ -71,9 +71,9 @@
       .container-main { margin-left: var(--sidebar-width); padding: 20px; transition: margin-left 0.3s ease; }
       .header-box {
         display: flex; align-items: center; background-color: var(--primary-color); color: #fff; padding: 20px 30px;
-        border-radius: 8px; margin-bottom: 20px; box-shadow: var(--card-shadow); position: relative;
+        border-radius: 8px; margin-bottom: 20px; box-shadow: var(--card-shadow); position: relative; gap: 10px;
       }
-      .header-logo { height: 65px; margin-right: 25px; }
+      .header-logo { height: 65px; margin-right: 15px; }
       
       .header-text { flex-grow: 1; text-align: center; }
       .header-text h1 { font-family: var(--font-oswald); font-size: 32px; margin: 0; font-weight: 700; line-height: 1.1; }
@@ -127,6 +127,9 @@
       .btn-add-inspection { background-color: var(--warning-color); color: var(--primary-color); font-weight: bold; border: none; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: var(--font-oswald); text-decoration: none;}
       .btn-add-inspection:hover { background-color: #e0a629; color: var(--primary-color); }
       
+      .btn-add-batch { background-color: #6c757d; color: white; font-weight: bold; border: none; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: var(--font-oswald); text-decoration: none; }
+      .btn-add-batch:hover { background-color: #5a6268; color: white; }
+
       /* Layout de Form Original */
       .form-row-custom { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px; }
       .form-group-custom { flex: 1; display: flex; flex-direction: column; min-width: 200px; }
@@ -169,7 +172,6 @@
         </div>
         <a href="#" onclick="navigateTo('dashboard'); return false;"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
         <a href="#" onclick="navigateTo('inspecoes'); return false;" class="active"><span class="material-symbols-outlined">table_view</span>Inspeções</a>
-        <!-- Formulario removido do menu pois agora é um modal dentro de Inspeções -->
         <a href="#" onclick="navigateTo('parecer'); return false;"><span class="material-symbols-outlined">edit_note</span>Parecer</a>
     </nav>
 
@@ -181,9 +183,14 @@
             <div class="header-text">
                 <h1>DETALHES DAS INSPEÇÕES</h1>
             </div>
+            
             <button class="btn-add-inspection" onclick="openCreateModal()">
                 <span class="material-symbols-outlined">add_circle</span> NOVA INSPEÇÃO
             </button>
+            <button class="btn-add-batch" onclick="triggerBatchUpload()">
+                <span class="material-symbols-outlined">upload_file</span> ADD IS EM LOTE
+            </button>
+            <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
         </div>
 
         <div id="loader" class="text-center card-elevated" style="padding: 50px;"> 
@@ -372,6 +379,9 @@
             $('#statusIS').on('change', handleStatusChange);
             $('#nip').on('input', maskNip);
             $('#secao-conclusao').on('input keyup', '#laudo', handleLaudoInput);
+            
+            // Listener Arquivo CSV
+            document.getElementById('csvFileInput').addEventListener('change', handleCsvUpload);
         });
 
         // Função Global para o Botão
@@ -387,6 +397,38 @@
             
             createModalInstance.show();
         };
+        
+        function triggerBatchUpload() {
+            document.getElementById('csvFileInput').click();
+        }
+        
+        function handleCsvUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                // Exibe loading
+                const btn = document.querySelector('.btn-add-batch');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Processando...';
+                btn.disabled = true;
+                
+                google.script.run.withSuccessHandler(res => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    document.getElementById('csvFileInput').value = ''; // Reset input
+                    if (res.success) {
+                        alert(res.message);
+                        loadInitialData(); // Recarrega tabela
+                    } else {
+                        alert('Erro: ' + res.message);
+                    }
+                }).processBatchCsv(text);
+            };
+            reader.readAsText(file);
+        }
         
         function toggleCustomAccordion() {
             document.getElementById('customRestricoesPanel').classList.toggle('show');
