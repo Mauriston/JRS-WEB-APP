@@ -88,10 +88,10 @@
 | :---------- | :---------: | ----------: |
 | <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="36" height="36">   | -    | `Cancelar`   |
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">   | `Cancelada`   | -   |
-| <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">   | `Cancelada`   | -   | 
-| <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">   | `Cancelada`   | -   | 
-| <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">   | `Cancelada`   | -   | 
-| <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">   | `Cancelada`   | -   | 
+| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="cencel" width="36" height="36">   | `Restituída AUDITORIA / JSD`   | `Restituir`  | 
+| <img src="https://github.com/user-attachments/assets/59d4addd-210c-463f-a70d-ad4cad198825" alt="cencel" width="36" height="36">   | `Votada JRS`   | -   | 
+| <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="cencel" width="36" height="36">   | `Concluída`   | -   | 
+| <img src="https://github.com/user-attachments/assets/5dbe6506-c08e-4df1-a47c-ee95ba1f9e79" alt="cencel" width="36" height="36">   |    | `Detalhamento IS`   | 
 
 
 
