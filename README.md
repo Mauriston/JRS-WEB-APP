@@ -86,7 +86,7 @@
 
 # _🔗 LISTA DE ÍCONES_  
 
-
+### ÍCONES DE ⏩ AÇÃO DA COLUNA `FINALIDADE` DA TABELA DA PÁGINA `INSPEÇÕES`
 
 | Icon | Icon Name  | Color | Style | `StatusIS` | Action |
 | :---------- | :---------- | :---------- |  :--------- | :---------- | :---------- |
@@ -107,10 +107,12 @@
 | <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cancel" width="36" height="36">     |"cancel"|`#B71C1C` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | -    | `Cancelar` |
 | <img width="36" height="36" alt="event_busy" src="https://github.com/user-attachments/assets/0b18dccd-dd91-47af-aa8b-2e04560957bf"/>   |"event_busy" |`#B71C1C`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `Faltou` | -   |
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="event_busy" width="36" height="36">     |"person_cancel" |`#B71C1C`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Cancelada` | -   |
-| <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="unsubscribe" width="36" height="36">     |"unsubscribe" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `MSG PENDENTE`   | -   |
+| <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="unsubscribe" width="36" height="36">     |"unsubscribe" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `MSG PENDENTE`   | -   |   
 
-### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑  </br>
 
+
+
+### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑  
 
 |  `Icon` | `Icon Name`  | `Color` | `Style` | `StatusIS` | 
 | :----------: | :----------: | :----------: |  :---------: | :----------: |
