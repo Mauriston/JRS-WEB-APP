@@ -118,7 +118,7 @@
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2b34e0bd-7511-4bae-9da2-fcf0c4fe082b"/>  | "how_to_vote" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `IS Concluída s/ voto`   |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/0e7b01b2-2d82-43be-9622-c5fac7ecba2e"/> |"signature"|`#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |  `IS Votada s/ assinatura` |
 | <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="unsubscribe" width="36" height="36">     |"unsubscribe" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `MSG PENDENTE`   | 
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/927709de-b290-4592-ae8e-06abf6a30a75" />     |"unsubscribe" | `#B71C1C` | `FILL 0`, `wght 600`, `GRAD -25`, `opsz 24`  | `MSG ATRASADA`   | 
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/80c5972e-0493-4959-860f-9cd848bbe50e" />     |"bomb" | `#B71C1C` | `FILL 1`, `wght 700`, `GRAD 400`, `opsz 48`  | `MSG ATRASADA`   | 
 | <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36">     |"mark_email_read"|`#079551`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|  `MSG ENVIADA`   | 
 
 
@@ -130,6 +130,7 @@
 
 <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/25c16a28-b0e4-4a94-8c6d-4e1df91e41d7" />
 
+<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/80c5972e-0493-4959-860f-9cd848bbe50e" />
 
 
 <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/6d44708c-7ee5-49b9-83d0-78e1cf41d7fd" />
