@@ -76,9 +76,12 @@
 
 ### 🔗 LISTA DE ÍCONES:
 
-<img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="36" height="36">
+| Icon | `StatusIS` | Action |
+| :---------- | :---------: | ----------: |
+| <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="36" height="36">   | -    | 'Cancelar'   |
+| <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">   | `Cancelada`   | -   |
 
-<img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">
+
 
 
 
