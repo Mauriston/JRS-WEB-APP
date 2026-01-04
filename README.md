@@ -83,15 +83,12 @@
 
 ---
 
-
 ## 📝 LISTAS DE ÍCONES  📝    
 
 ### ÍCONES DE ⏩ AÇÃO DA COLUNA `FINALIDADE` DA TABELA DA PÁGINA `INSPEÇÕES`  
 
-
-
-| Icon | Icon Name  | Color | Style | Action |
-| :---------- | :---------- | :---------- |  :--------- | :---------- |
+| `Icon` | `Icon Name`  | `Color` | `Style` | `Action` |
+| :----------: | :----------: | :----------: |  :---------: | :----------: |
 | <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |"outgoing_mail"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Reg MSG enviada`|
 | <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |"Edit"| `#050F41`   |`FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Editar` |
 | <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Detalhamento IS` |
@@ -100,8 +97,7 @@
 | <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cancel" width="36" height="36">     |"cancel"|`#B71C1C` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Cancelar` |
 
 
-
-### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑   </hr> 
+### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑 
 
 |  `Icon` | `Icon Name`  | `Color` | `Style` | `StatusIS` | 
 | :----------: | :----------: | :----------: |  :---------: | :----------: |
