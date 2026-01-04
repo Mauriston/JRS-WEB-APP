@@ -91,10 +91,13 @@
 | <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="cencel" width="36" height="36">   | `Restituída AUDITORIA / JSD`   | `Restituir`  | 
 | <img src="https://github.com/user-attachments/assets/59d4addd-210c-463f-a70d-ad4cad198825" alt="cencel" width="36" height="36">   | `Votada JRS`   | -   | 
 | <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="cencel" width="36" height="36">   | `Concluída`   | -   | 
-| <img src="https://github.com/user-attachments/assets/5dbe6506-c08e-4df1-a47c-ee95ba1f9e79" alt="cencel" width="36" height="36">   |    | `Detalhamento IS`   | 
+| <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="cencel" width="36" height="36">   | -   | `Editar`   | 
+| <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="cencel" width="36" height="36">   | `MSG PENDENTE`   | -   |
+| <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="cencel" width="36" height="36">   | `Agendada`   | -   | 
+| <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="cencel" width="36" height="36">   | -   | `Reagendar`   | 
 
 
-
+<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" />
 
 
 ---
