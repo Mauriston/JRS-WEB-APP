@@ -88,8 +88,8 @@
 
 
 
-| Icon | Icon Name | `StatusIS` | Action |
-| :---------- | :----------  :--------- | :---------- | :---------- 
+| Icon | Icon Name | Style | `StatusIS` | Action |
+| :---------- | :---------- |  :--------- | :---------- | :---------- |
 | <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="cencel" width="36" height="36">     | -   | -   | -   | `Reg MSG ennviada` |
 | <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="cencel" width="36" height="36">     | -   | -   | `MSG ENVIADA`   | - |
 | <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="cencel" width="36" height="36">     | -   | -   | `Concluída`   | -   |
