@@ -92,7 +92,7 @@
 | <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |"outgoing_mail"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Reg MSG enviada`|
 | <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |"Edit"| `#050F41`   |`FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Editar` |
 | <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Detalhamento IS` |
-| <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="event_repeat" width="36" height="36">     |"event_repeat"| `#FAB932` | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`   | `Reagendar`   |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/faa744e4-95e5-4442-8608-9e3dad1c62a2" /> |"event_repeat"| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 0`, `opsz 40`   | `Reagendar`   |
 | <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="reply" width="36" height="36">     |"reply"| `#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Restituir`|
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |"close"|`#B71C1C` |`FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | `Cancelar` |
 
