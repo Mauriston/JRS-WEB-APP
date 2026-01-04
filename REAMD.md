@@ -5,8 +5,8 @@
 ### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE `Inspecoes.html`
 
 #### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫
-1. Retire os filtros `OM Solicitante`e `Especialidade`
-2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.
+1. Retire os filtros `OM Solicitante`e `Especialidade`    
+2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.    
 3. Altere os KPI cards para os seguintes:
     - 1º KPI card: `Total Inspeções` (Mantido): Porém a referência dele não deve ser os últimos 30 dias como consta na legenda abaixo do numeral e sim o total de Inspeções registradas, desde que os filtros de data não estejam sendo usados.
     - 2º KPI card: ~~`Concluídas`~~ ˜MSG Pendentes`: Deverá mostrar o número de inspeções cuja coluna `MSG` da planilha = `PENDENTE`
