@@ -82,10 +82,10 @@
 |         `Action`        |    `Icon Name`   |  `Color`  |                   `Style`                   | `Icon` |
 |:-----------------------:|:----------------:|:---------:|:-------------------------------------------:|:------:|
 |       `Agendar IS`      | "event_upcoming" | `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/15bb0b0e-bf5b-4a9d-9b6d-facc6359bd71" /> |   |
-|       `Reagendar`       |  "event_repeat"  | `#FAB932` |  `FILL 0`, `wght 700`, `GRAD 0`, `opsz 40`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/faa744e4-95e5-4442-8608-9e3dad1c62a2" /> |   |
-|         `Editar`        |      "Edit"      | `#050F41` |  `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`  | <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |   |
-|        `Cancelar`       |      "close"     | `#B71C1C` | `FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |   |
-|       `Restituir`       |      "reply"     | `#FAB932` |  `FILL 0`, `wght 700`, `GRAD 0`, `opsz 24`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cccd802a-7f00-430f-af9c-326a9b5650fc" /> |   |
+|       `Reagendar IS`       |  "event_repeat"  | `#FAB932` |  `FILL 0`, `wght 700`, `GRAD 0`, `opsz 40`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/faa744e4-95e5-4442-8608-9e3dad1c62a2" /> |   |
+|         `Editar IS`        |      "Edit"      | `#050F41` |  `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`  | <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |   |
+|        `Cancelar IS`       |      "close"     | `#B71C1C` | `FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |   |
+|       `Registrar IS restituida` |      "reply"     | `#FAB932` |  `FILL 0`, `wght 700`, `GRAD 0`, `opsz 24`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cccd802a-7f00-430f-af9c-326a9b5650fc" /> |   |
 | `Registrar MSG enviada` |  "outgoing_mail" | `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |   |
 | `Abrir Detalhamento IS` |   "visibility"   | `#050F41` |  `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/b78ed295-1c66-4985-ac96-fe0cf75a1113" /> |   |
 
@@ -127,8 +127,9 @@
 
 1. A coluna da tabela `STATUS` deverá ter 01 ícone relativo às colunas da planilha `StatusIS` **OU** `MSG`
 2. A coluna da tabela `FINALIDADE`deverá ter o texto correspondente à coluna na planiha alinhado à esquerda e um ou mais ícones de ação alinhados à direita. Na ordem da direita para esquerda os ícones devem ser:
-    2.1 "visibility" - Tooltip: `Abrir Detalhamento da IS` | Ação: `Abrir o modal de Detalhamento da IS relacionada`
-        2.1.1 **RESTRIÇÕEDS:**Esse ícone só deverá ser exibido em 2 grupos de situações: Quando a IS ainda não foi iniciada (coluna `StatusIS` = `IS aberta`, `Inspecionado atrasado`, `IS Agendada`, `IS Cancelada` **OU** `Faltou`) ou quando a IS já foi encerrada (coluna `StatusIS` = `Homologada  JSD` ou coluna `MSG` = `ENVIADA`    
+    2.1 **_Icon Name_ "visibility"** - Tooltip: `Abrir Detalhamento da IS` | Ação: Abrir o modal de Detalhamento da IS relacionada
+        2.1.1 **RESTRIÇÕEDS:** Esse ícone só deverá ser exibido em 2 grupos de situações: Quando a `IS ainda não foi iniciada` (coluna `StatusIS` = `IS aberta`, `Inspecionado atrasado`, `IS Agendada`, `IS Cancelada` **OU** `Faltou`) ou quando a `IS já foi encerrada` (coluna `StatusIS` = `Homologada  JSD` ou coluna `MSG` = `ENVIADA`
+    2.2. _Icon Name_ "visibility" - Tooltip:      
 
 
 ### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 
