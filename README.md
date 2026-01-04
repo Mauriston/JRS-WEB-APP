@@ -90,27 +90,14 @@
 
 
 
-| Icon | Icon Name  | Color | Style | `StatusIS` | Action |
-| :---------- | :---------- | :---------- |  :--------- | :---------- | :---------- |
-| <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |"outgoing_mail"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| - | `Reg MSG enviada`|
-| <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36">     |"mark_email_read"|`#079551`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|  `MSG ENVIADA`   | - |
-| <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="how_to_vote" width="36" height="36">      | "how_to_vote" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|  `Concluída`   |
-| <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="calendar_check" width="36" height="36">     |"calendar_check"|`#079551` | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48` |`Agendada`   | -   | 
-| <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |"Edit"| `#050F41`   |`FILL 0`, `wght 400`, `GRAD 0`, `opsz 48` | -   | `Editar` |
-| <img width="36" height="36" alt="question_mark" src="https://github.com/user-attachments/assets/cc07c386-66cc-49ca-af68-467548b4fdc7"/>     |"question_mark"| `#B71C1C`  | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|`Conclusão  Pendente`   | - |
-| <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`  |  -  | `Detalhamento IS` |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/11d4bcc5-6cf1-46b3-a5f7-efdd2cfea79a"/> |"signature"|`#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |  `Votada JRS` | -   |
-| <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="event_repeat" width="36" height="36">     |"event_repeat"| `#FAB932` | -   | `Reagendar`   |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/118d2032-81c4-461d-b52a-9df7d19c12cf"/>   |"calendar_clock"| `#FAB932` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | -   | `Remarcada`   |
-| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="reply" width="36" height="36">     |"reply"| `#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`     | `Restituída AUDITORIA` | `Restituir`|
-| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="reply" width="36" height="36">     |"reply"|`#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`     | `Restituída  JSD` | `Restituir`|
-| <img width="36" height="36" alt="gavel" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     |"gavel"| `#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`    |  `AUDITORIA`   | - |
-| <img width="36" height="36" alt="gavel" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     |"gavel"| `#FAB932`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`   |  `JSD`   | - |
-| <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cancel" width="36" height="36">     |"cancel"|`#B71C1C` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | -    | `Cancelar` |
-| <img width="36" height="36" alt="event_busy" src="https://github.com/user-attachments/assets/0b18dccd-dd91-47af-aa8b-2e04560957bf"/>   |"event_busy" |`#B71C1C`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `Faltou` | -   |
-| <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="event_busy" width="36" height="36">     |"person_cancel" |`#B71C1C`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Cancelada` | -   |
-| <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="unsubscribe" width="36" height="36">     |"unsubscribe" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `MSG PENDENTE`   | -   |   
-
+| Icon | Icon Name  | Color | Style | Action |
+| :---------- | :---------- | :---------- |  :--------- | :---------- |
+| <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |"outgoing_mail"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Reg MSG enviada`|
+| <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |"Edit"| `#050F41`   |`FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Editar` |
+| <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Detalhamento IS` |
+| <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="event_repeat" width="36" height="36">     |"event_repeat"| `#FAB932` | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`   | `Reagendar`   |
+| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="reply" width="36" height="36">     |"reply"| `#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Restituir`|
+| <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cancel" width="36" height="36">     |"cancel"|`#B71C1C` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Cancelar` |
 
 
 
