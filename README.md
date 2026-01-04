@@ -87,15 +87,15 @@
 
 ### ÍCONES DE ⏩ AÇÃO DA COLUNA `FINALIDADE` DA TABELA DA PÁGINA `INSPEÇÕES`  
 
-| `Icon` | `Icon Name`  | `Color` | `Style` | `Action` |
-| :----------: | :----------: | :----------: |  :---------: | :----------: |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/15bb0b0e-bf5b-4a9d-9b6d-facc6359bd71" /> |"event_upcoming"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Agendar IS`|
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/faa744e4-95e5-4442-8608-9e3dad1c62a2" /> |"event_repeat"| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 0`, `opsz 40`   | `Reagendar`   |
-| <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |"Edit"| `#050F41`   |`FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Editar` |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |"close"|`#B71C1C` |`FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | `Cancelar` |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cccd802a-7f00-430f-af9c-326a9b5650fc" /> |"reply"| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 0`, `opsz 24` | `Restituir`|
-| <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |"outgoing_mail"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Registrar MSG enviada`|
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/b78ed295-1c66-4985-ac96-fe0cf75a1113" /> |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Abrir Detalhamento IS` |
+|         `Action`        |    `Icon Name`   |  `Color`  |                   `Style`                   | `Icon` |
+|:-----------------------:|:----------------:|:---------:|:-------------------------------------------:|:------:|
+|       `Agendar IS`      | "event_upcoming" | `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/15bb0b0e-bf5b-4a9d-9b6d-facc6359bd71" /> |   |
+|       `Reagendar`       |  "event_repeat"  | `#FAB932` |  `FILL 0`, `wght 700`, `GRAD 0`, `opsz 40`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/faa744e4-95e5-4442-8608-9e3dad1c62a2" /> |   |
+|         `Editar`        |      "Edit"      | `#050F41` |  `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`  | <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |   |
+|        `Cancelar`       |      "close"     | `#B71C1C` | `FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |   |
+|       `Restituir`       |      "reply"     | `#FAB932` |  `FILL 0`, `wght 700`, `GRAD 0`, `opsz 24`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cccd802a-7f00-430f-af9c-326a9b5650fc" /> |   |
+| `Registrar MSG enviada` |  "outgoing_mail" | `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |   |
+| `Abrir Detalhamento IS` |   "visibility"   | `#050F41` |  `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`  | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/b78ed295-1c66-4985-ac96-fe0cf75a1113" /> |   |
 
 
 ### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑 
