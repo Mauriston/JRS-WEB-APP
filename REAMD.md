@@ -8,7 +8,7 @@
 1. Retire os filtros `OM Solicitante`e `Especialidade`    
 2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.    
 3. Altere os KPI cards para os seguintes:
-    - 1º KPI card: `Total Inspeções` (Mantido): Porém a referência dele não deve ser os últimos 30 dias como consta na legenda abaixo do numeral e sim o total de Inspeções registradas, desde que os filtros de data não estejam sendo usados.
+    - 1º KPI card: `Total Inspeções` (Mantido): Porém a referência dele não deve ser os últimos 30 dias como consta na legenda abaixo do numeral e sim o total de Inspeções registradas, desde que os filtros de data não estejam sendo usados. \\
     - 2º KPI card: ~~`Concluídas`~~ ˜MSG Pendentes`: Deverá mostrar o número de inspeções cuja coluna `MSG` da planilha = `PENDENTE`
         - A cor da fonte do numeral e do ícone do card deverão ser alterados para vermelho. O ícone do card também deverá ser alterado para um mais apropriado.
         - O valor de comparação embaixo do numeral, ex: "68% do total" deverá ser mantido, porém deverá ser alterado dinamicamente de acordo com a seleção de filtros.
