@@ -84,9 +84,11 @@
 ---
 
 
-# _🔗 LISTA DE ÍCONES_  
+## 📝 LISTAS DE ÍCONES  📝    
 
-### ÍCONES DE ⏩ AÇÃO DA COLUNA `FINALIDADE` DA TABELA DA PÁGINA `INSPEÇÕES`
+### ÍCONES DE ⏩ AÇÃO DA COLUNA `FINALIDADE` DA TABELA DA PÁGINA `INSPEÇÕES`  
+
+
 
 | Icon | Icon Name  | Color | Style | `StatusIS` | Action |
 | :---------- | :---------- | :---------- |  :--------- | :---------- | :---------- |
