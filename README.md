@@ -101,7 +101,7 @@
 
 
 
-### <p>🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑 </p> 
+### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑   </hr> 
 
 |  `Icon` | `Icon Name`  | `Color` | `Style` | `StatusIS` | 
 | :----------: | :----------: | :----------: |  :---------: | :----------: |
