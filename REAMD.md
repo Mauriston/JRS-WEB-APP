@@ -74,7 +74,7 @@
 
 ---
 
-### 🔗 <mark>LISTA DE ÍCONES</mark>
+### 🔗 !!!LISTA DE ÍCONES
 
 | Icon | `StatusIS` | Action |
 | :---------- | :---------: | ----------: |
