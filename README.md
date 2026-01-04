@@ -40,7 +40,7 @@
 
 ---  
 
-````md
+```md
 
 # ⚓️ REGRAS DE CORRELAÇÕES E EXIBIÇÃO DOS ÍCONES DA TABELA DA PÁGINA [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs) ⚓️
 
@@ -89,7 +89,6 @@
 
   ***
 
-```md
 
 ### REGRAS GERAIS DOS ÍCONES NA PÁGINA `INSPEÇÕES`
 
@@ -116,7 +115,6 @@
 4. O ícone de `MSG` = `ENVIADA` ("mark_email_read") é o ícone de `STATUS` final da IS. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))   
 
 ```  
-````
 
 ---
 
