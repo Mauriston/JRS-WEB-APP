@@ -54,7 +54,8 @@
     -  Icone Reagendar ("event_repeat"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** `Agendada`, `Remarcada` ou `Faltou`
     - Icone de ação Cancelar ("cancel"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** `Agendada`, `Remarcada`ou `Conclusão Pendente`
         - Uma vez clicado nesse ícone o `StatusIS` deverá ser atualizado para `Cancelada` e o ícone da primeira coluna da tabela deverá ser (("person_cancel"))
-    - Icone Registrar MSG ENVIADA ("outgoing_mail"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** 'TIS assinado' e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.  
+    - Icone Registrar MSG ENVIADA ("outgoing_mail"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** 'TIS assinado' e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
+       - ⚠️‼️ **EXCEÇÃO** ⚠️‼️ _Quando o `StatusIs` na planilha for 'Faltou' ou 'Cancelada' o ícone da ação `Registrar MSG ENVIADA` deverá ser exibido._ Uma vez clicado no ícone da ação `Registrar MSG ENVIADA`a coluna `MSG` da planilha deverá ser alterada para `ENVIADA`. Nessa situação, **excepcionalmente**, onde a **coluna `StatusIS` é 'Faltou' ou 'Cancelada' e a coluna `MSG` é 'ENVIADA' deverá haver 2 ícones na coluna `STATUS` da tabela da página Inspeções: o ícone relativo a `Faltou` ou `Cancelada` acompanhado do ícone referente a `MSG ENVIADA`**
 3. Lógicas para exibiçãos dos ícones da coluna 'STATUS' da tabela de acordo com as colunas da planilha 'StatusIS' e `MSG`:
 - O ícone de `MSG PENDENTE`("unsubscribe") só deverá surgir se a coluna `StatusIS`= `TIS assinado` e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
     - Esse ícone deverá substituir o ícone de `StatusIS`= `TIS assinado`, caso esteja eventualmente presente previamente, na primeira coluna da tabela.
@@ -82,7 +83,7 @@
 ---
 
 
-# _🔗  LISTA DE ÍCONES_  
+# _🔗 LISTA DE ÍCONES_  
 
 
 
@@ -93,7 +94,7 @@
 | <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="cencel" width="36" height="36">     | `Concluída`   | -   |
 | <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="cencel" width="36" height="36">     | `Agendada`   | -   | 
 | <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="cencel" width="36" height="36">     | -   | `Editar` |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/f4b2ee14-fe67-4d88-ba66-28c920856c43"/>     | `Conclusão Pendente`   | - |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cc07c386-66cc-49ca-af68-467548b4fdc7"/>     | `Conclusão Pendente`   | - |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     | -   | `Detalhamento IS` |
 | <img src="https://github.com/user-attachments/assets/59d4addd-210c-463f-a70d-ad4cad198825" alt="cencel" width="36" height="36">     | `Votada JRS` | -   |
 | <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="cencel" width="36" height="36">     | -   | `Reagendar`   |
