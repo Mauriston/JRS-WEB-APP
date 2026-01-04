@@ -104,6 +104,7 @@
 | :----------: | :----------: | :----------: |  :---------: | :----------: |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/77487421-ff09-4915-af18-2e3a00887fac" /> |"folder_open"|`#050F41` | `FILL 1`, `wght 400`, `GRAD -25`, `opsz 48` |`IS aberta`   | 
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/7f4c5585-a045-41c2-945e-480c0b24c4d9" /> | "input"|`#050F41` | `FILL 1`, `wght 700`, `GRAD 200`, `opsz 48` |`Declínio de competência de MPI`   |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/d7a7ae32-d5a7-4934-931c-990ee5ae88f8" /> |"document_search"| `#079551` | `FILL 1`, `wght 400`, `GRAD -25`, `opsz 48`    |  `Revisão Ex-officio de MPI`   |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/6348cf28-1695-48bb-a17b-bea87f8bd5c7" /> |"acute"|`#050F41` | `FILL 0`, `wght 600`, `GRAD -25`, `opsz 24` |`Inspecionado atrasado`   |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/88dc069a-375d-4ea8-a768-d690f917dc6c" />     |"folder_delete" |`#B71C1C`| `FILL 1`, `wght 700`, `GRAD 200`, `opsz 40` | `IS Cancelada` | 
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/15696efe-ebf2-4885-9814-5881ca6878bf" /> |"calendar_check"|`#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |`IS Agendada`   |
@@ -130,10 +131,6 @@
 ![MB](https://i.imgur.com/qt97XzO.png)  
 
 
-<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/25c16a28-b0e4-4a94-8c6d-4e1df91e41d7" />
+<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/d7a7ae32-d5a7-4934-931c-990ee5ae88f8" />
 
-<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/80c5972e-0493-4959-860f-9cd848bbe50e" />
-
-
-<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/6d44708c-7ee5-49b9-83d0-78e1cf41d7fd" />
 
