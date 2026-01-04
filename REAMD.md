@@ -74,7 +74,7 @@
 
 ---
 
-### 🔗 #blue(LISTA DE ÍCONES)
+### 🔗 <mark>LISTA DE ÍCONES</mark>
 
 | Icon | `StatusIS` | Action |
 | :---------- | :---------: | ----------: |
