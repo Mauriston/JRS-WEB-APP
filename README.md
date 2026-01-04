@@ -128,9 +128,10 @@
 
 
 
-### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 🛑
+
 
 ```md
+
 ### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 🛑
 
 1. Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `ENVIADA`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "mark_email_read"    
