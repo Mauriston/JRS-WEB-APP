@@ -41,15 +41,8 @@
 
 ### _🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫_  
 
-    - `FINALIDADE`: deverá ter:
-        - os dados da coluna da planilha `Finalidade`, alinhado à esquerda na coluna
-        - o ícone de ação "more_vert" alinhado à direita na coluna que abrirá o modal de detalhamento da IS
-        - à esquerda desse primeiro ícone de ação deverão estar os ícones de `Editar`, `Reagendar`, 'Cancelar' e`Registrar MSG ENVIADA`, respeitando as respectivas lógicas que determinam a exibição deles ou não.  
-2. Lógica para exibição dos ícones de ação e abertura de modais, quando aplicável:
-    - Icone editar ("Edit"): Só deverá surgir se a coluna da planilha 'StatusIs' **NÃO** FOR IGUAL A `Faltou`, `Cancelada`, `Auditoria`, `JSD ` ou `TIS assinado`. Deverá abrir o modal de edição.
-    -  Icone Reagendar ("event_repeat"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** `Agendada`, `Remarcada` ou `Faltou`
-    - Icone de ação Cancelar ("cancel"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** `Agendada`, `Remarcada`ou `Conclusão Pendente`
-        - Uma vez clicado nesse ícone o `StatusIS` deverá ser atualizado para `Cancelada` e o ícone da primeira coluna da tabela deverá ser (("person_cancel"))
+     
+
     - Icone Registrar MSG ENVIADA ("outgoing_mail"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** 'TIS assinado' e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
        - ⚠️‼️ **EXCEÇÃO** ⚠️‼️ _Quando o `StatusIs` na planilha for 'Faltou' ou 'Cancelada' o ícone da ação `Registrar MSG ENVIADA` deverá ser exibido._ Uma vez clicado no ícone da ação `Registrar MSG ENVIADA`a coluna `MSG` da planilha deverá ser alterada para `ENVIADA`. Nessa situação, **excepcionalmente**, onde a **coluna `StatusIS` é 'Faltou' ou 'Cancelada' e a coluna `MSG` é 'ENVIADA' deverá haver 2 ícones na coluna `STATUS` da tabela da página Inspeções: o ícone relativo a `Faltou` ou `Cancelada` acompanhado do ícone referente a `MSG ENVIADA`**
          
@@ -104,7 +97,7 @@
 |           `IS Agendada`          |   "calendar_check"  | `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/15696efe-ebf2-4885-9814-5881ca6878bf" /> |
 |             `Faltou`             |   "person_cancel"   | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |<img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="event_busy" width="36" height="36"> |
 |            `IS Remarcada`        |   "calendar_clock"  | `#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/118d2032-81c4-461d-b52a-9df7d19c12cf"/>   |
-|       `Conclusão  Pendente`      |  "unknown_document" | `#B71C1C` |  `FILL 1`, `wght 500`, `GRAD 0`, `opsz 40`  |<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/fb76cc51-47e1-4427-8965-692d00d512e7" />     |
+|       `Conclusão Pendente`      |  "unknown_document" | `#B71C1C` |  `FILL 1`, `wght 500`, `GRAD 0`, `opsz 40`  |<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/fb76cc51-47e1-4427-8965-692d00d512e7" />     |
 |         `AUDITORIA CPMM`         |  "document_search"  | `#FAB932` | `FILL 1`, `wght 400`, `GRAD -25`, `opsz 48` |<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/75531def-443b-4bf7-a239-865676d888be" /> |
 |     `Aprovada AUDITORIA CPMM`    |        "task"       | `#079551` |  `FILL 1`, `wght 400`, `GRAD 0`, `opsz 24`  |<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/6d44708c-7ee5-49b9-83d0-78e1cf41d7fd" /> |
 |           `REVISÃO JSD`          |       "gavel"       | `#FAB932` | `FILL 1`, `wght 700`, `GRAD 200`, `opsz 48` |<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/11fb92ae-f16c-4014-a8aa-75c74f6e4e3b" />     |
@@ -131,7 +124,11 @@
     2.2. `Icon Name = "Edit"` - Tooltip: `Editar IS` | Ação: Abrir o modal de Edição da IS relacionada
          2.2.1 `RESTRIÇÕES:` esse ícone tem lógica de exibição oposta à lógica do ícone "visibility", ou seja ele só deverá ser exibido quando a IS já tiver sido iniciada mas ainda não encerrada. | `Condições:` quando a coluna da planilha `StatusIS` for igual a `Declínio de competência de MPI`, `Revisão Ex-officio de MPI`, `Revisão Ex-officio de MPI`,  `IS Agendada`, `IS Remarcada`, `Conclusão  Pendente`, `Aprovada AUDITORIA CPMM`, `Restituída AUDITORIA CPMM`, Restituída JSD`, `IS Concluída s/ voto`, `IS Votada s/ assinatura` ou coluna `MSG` = 'PENDENTE' OU `ATRASADA`
     2.3 `Icon name = "event_repeat"`- Tooltip: `Reagendar IS` | Ação: abrir o modal de reagendamento
-        2.3.1 `RESTRIÇÕES:` Esse ícone só deverá ser exibido se a coluna da planilha `StatusIS` = `Agendada`, `Remarcada` ou `Faltou`, desde que a coluna `MSG` não seja igual a `ENVIADA`. /* SE `StatusIS` = `Faltou` + `MSG` = `ENVIADA`; <> Ícone `Reagendar IS` 
+         2.3.1 `RESTRIÇÕES:` Esse ícone só deverá ser exibido se a coluna da planilha `StatusIS` = `Agendada`, `Remarcada` ou `Faltou`, desde que a coluna `MSG` não seja igual a `ENVIADA`. /* SE `StatusIS` = `Faltou` + `MSG` = `ENVIADA`; <> `Ícone Reagendar IS`  
+    2.4 `Icon name = "close"`- Tooltip = `Cancelar IS` | Ação: Altera o valor da coluna `StatusIs` na planilha para `Cancelada` e altera o valor da coluna `MSG` na planilha para `PENDENTE`, desde que `MSG` <> `ENVIADA`  
+        2.4.1 `RESTRIÇÕES:` esse ícone só deverá ser exibido ser a coluna `StatusIS` for igual a `Aberta`, `Agendada`, `Remarcada` ou `Conclusão Pendente`  
+    2.5 `Icon name = "outgoing_mail"`- tooltip = `Registrar MSG enviada` | Ação: altera o valor da coluna `MSG` na planilha para `ENVIADA` desde que `MSG` = `PENDENTE` OU `ATRASADA`   
+        2.5.1 `RESTRIÇÕES:` Esse ícone só deverá ser exibido ser se a coluna da planilha `MSG` `PENDENTE` OU `ATRASADA` OU se a coluna da planilha `StatusIS` = `TIS assinado` + coluna `TIS` <> "" + coluna `DS-1A` <> ""
 
 
 ### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 
