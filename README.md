@@ -41,10 +41,6 @@
 
 ### _🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫_  
 
-1. Altere as colunas da tabela de forma que tem a seguinte ordem:
-    - `STATUS`: Deverá ter os ícones relativos às colunas `StatusIS` e `MSG`. Sempre apenas um dos ícones, nunca os dois ao mesmo (vide lógica no item 3)
-    - `DATA` = coluna `DataEntrevista` da planilha
-    - `INSPECIONADO`: Deverá ser a concatenação textual, separadas por um espaço em branco, das colunas da planilha `P/G/Q` `Inspecionado`e `OM`. Porém `OM` deverá estar em um fonte de menor destaque (menor tamanho e cor mais clara) e entre parenteses. Exs: "1T (MD) NELIA NOGUEIRA VIEIRA (HNRe)", "SO JOSÉ ELIAS BASTOS NETO (CPAL)" e "1T (RM2-CD) ANA BEATRIZ FERNANDES AZEVEDO (EAMPE)"
     - `FINALIDADE`: deverá ter:
         - os dados da coluna da planilha `Finalidade`, alinhado à esquerda na coluna
         - o ícone de ação "more_vert" alinhado à direita na coluna que abrirá o modal de detalhamento da IS
@@ -72,12 +68,7 @@
     - Se o `StatusIS` for igual a `JSD`: tooltip "Registrar restituição pela JSD" | Ação: altera a coluna `StatusIS` para `Restituída JSD`
     - Nessas duas situações, o ícone a ser colocado na primeira coluna da tabela da página Inspeções deverá ser o mesmo (("gavel"))
 - ⚠️ Diariamente as 6h da manhã deverá ser acionada um função em segundo plano na planilha do google sheets que vai **checar em todas as IS com `StatusIS` = `Agendada` ou `Remarcada` se `DataEntrevista` > a DATA ATUAL**, pois se for a coluna **`StatusIS` deverá ser ajustada automaticamente para ⌛️ `Faltou`**
-- `STATUS` `MSG ENVIADA` com ícone (("mark_email_read")) originário de dados da coluna `MSG` da planilha, é o **STATUS final da IS**. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))      
-4. Todos os ícones da tabela deverão ter os respectivos tooltips    
-5. Deverão estar na cor vermelha os ícones: "unsubscribe" "cancel" "person_cancel"    
-6. Deverão estar na cor verde os ícones: "calendar_check" "outgoing_mail"    
-7. Deverão estar na cor cinza os ícones: "visibility" "how_to_vote" "Edit" "check"    
-8. Deverão estar na cor amarelo escuro os ícones: "event_repeat" "reply"    
+- `STATUS` `MSG ENVIADA` com ícone (("mark_email_read")) originário de dados da coluna `MSG` da planilha, é o **STATUS final da IS**. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))         
 
 #### Também diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30% na página Inspeções.
 
@@ -131,6 +122,14 @@
 
 
 ```md
+
+### REGRAS GERAIS DOS ÍCONES NA PÁGINA [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)
+
+1. A coluna da tabela `STATUS` deverá ter 01 ícone relativo às colunas da planilha `StatusIS` **OU** `MSG`
+2. A coluna da tabela `FINALIDADE`deverá ter o texto correspondente à coluna na planiha alinhado à esquerda e um ou mais ícones de ação alinhados à direita. Na ordem da direita para esquerda os ícones devem ser:
+    2.1 "visibility" - Tooltip: `Abrir Detalhamento da IS` | Ação: `Abrir o modal de Detalhamento da IS relacionada`
+        2.1.1 **RESTRIÇÕEDS:**Esse ícone só deverá ser exibido em 2 grupos de situações: Quando a IS ainda não foi iniciada (coluna `StatusIS` = `IS aberta`, `Inspecionado atrasado`, `IS Agendada`, `IS Cancelada` **OU** `Faltou`) ou quando a IS já foi encerrada (coluna `StatusIS` = `Homologada  JSD` ou coluna `MSG` = `ENVIADA`    
+
 
 ### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 
 
