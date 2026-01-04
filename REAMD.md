@@ -6,7 +6,8 @@
 
 ---
 
-### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)
+### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)  
+
 
 ### 🚫 _ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD_ 🚫
 1. Retire os filtros `OM Solicitante`e `Especialidade`    
