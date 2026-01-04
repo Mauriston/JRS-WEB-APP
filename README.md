@@ -109,10 +109,11 @@
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="event_busy" width="36" height="36">     |"person_cancel" |`#B71C1C`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Faltou` |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/118d2032-81c4-461d-b52a-9df7d19c12cf"/>   |"calendar_clock"| `#FAB932` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Remarcada`   |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/fb76cc51-47e1-4427-8965-692d00d512e7" />     |"unknown_document"| `#B71C1C`  | `FILL 1`, `wght 500`, `GRAD 0`, `opsz 40`|`Conclusão  Pendente`   |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/75531def-443b-4bf7-a239-865676d888be" /> |"content_paste_search"| `#FAB932` | `FILL 1`, `wght 400`, `GRAD -25`, `opsz 48`    |  `AUDITORIA CPMM`   | 
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/75531def-443b-4bf7-a239-865676d888be" /> |"document_search"| `#FAB932` | `FILL 1`, `wght 400`, `GRAD -25`, `opsz 48`    |  `AUDITORIA CPMM`   | 
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2a372b75-71db-45d9-8462-2703a4ec8a8c" />     |"gavel"| `#FAB932`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`   |  `REVISÃO JSD`   | 
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/d4483ddf-811a-4d71-a500-166ab772f523" /> |assignment_return| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 200`, `opsz 48`     | `Restituída AUDITORIA` | 
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/d4483ddf-811a-4d71-a500-166ab772f523" />     |assignment_return|`#FAB932` | `FILL 0`, `wght 700`, `GRAD 200`, `opsz 48`     | `Restituída  JSD` |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/25c16a28-b0e4-4a94-8c6d-4e1df91e41d7" />     |assignment_return|`#FAB932` | `FILL 1`, `wght 600`, `GRAD 200`, `opsz 40`     | `Homologada  JSD` |
+| <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/8620753d-5ecb-4536-88d4-9f15ff32bd66" /> |assignment_return| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 200`, `opsz 40`     | `Restituída AUDITORIA` | 
+| <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/8620753d-5ecb-4536-88d4-9f15ff32bd66" />     |assignment_return|`#FAB932` | `FILL 1`, `wght 700`, `GRAD 200`, `opsz 40`     | `Restituída  JSD` |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2b34e0bd-7511-4bae-9da2-fcf0c4fe082b"/>  | "how_to_vote" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `IS Concluída s/ voto`   |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/0e7b01b2-2d82-43be-9622-c5fac7ecba2e"/> |"signature"|`#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |  `IS Votada s/ assinatura` |
 | <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="unsubscribe" width="36" height="36">     |"unsubscribe" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `MSG PENDENTE`   | 
@@ -126,7 +127,8 @@
 ![MB](https://i.imgur.com/qt97XzO.png)  
 
 
-<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/75531def-443b-4bf7-a239-865676d888be" />
+<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/25c16a28-b0e4-4a94-8c6d-4e1df91e41d7" />
+
 
 
 
