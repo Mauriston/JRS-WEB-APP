@@ -1,8 +1,11 @@
+![JRS HNRe](https://i.imgur.com/QJOmuG0.png)
+
+
 # ‼️ LÓGICAS IMPORTANTES DO SCRIPT ‼️
 
 ---
 
-### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE <u>[`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)</u>
+### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)
 
 #### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫
 1. Retire os filtros `OM Solicitante`e `Especialidade`    
@@ -19,7 +22,7 @@
         - Na linha abaixo do numeral, onde nos outros cards há a referência de comparação, nesse card deverá haver o número de IS cujo `StatusIS` = `Restituída Auditoria`da seguinte forma - Ex: "Restituídas = 2"  \
     - 6º KPI card: `CANCELADAS`: Deverá mostrar o número de IS cujo `StatusIS` = `CANCELADA`  
     - 7º KPI card: `FALTAS`: Deverá mostrar o número de IS cujo `StatusIS` = `FALTOU`  
-    - 8º KPI card: `CONCURSOS`: Deverá mostrar o número de IS cuja `Finalidade` se inicie pela palavra "Ingresso" - Exs: "INGRESSO NA EFOMM" e "INGRESSO CFSD-FN"
+    - 8º KPI card: `CONCURSOS`: Deverá mostrar o número de IS cuja `Finalidade` se inicie pela palavra "Ingresso" - **Exs: "INGRESSO NA EFOMM" e "INGRESSO CFSD-FN"**
         - ⚠️  **ESSE CARD SÓ DEVERÁ SER EXIBIDO SE OS FILTROS DE DATAS ESTIVEREM SELECIONADOS E SE O NÚMERO DE IS de `Concursos` para o período selecionado seja diferente de zero.**  
 4. Altere os gráficos presentes após os KPI cards:  
 - Gráfico `Evolução de Atendimentos` deverá ser um gráfico de barras verticais empilhadas cujos marcados do eixo horizontal deverão ser o mês desde o início dos registros das IS na planilha. Ex: "SET25", "OUT25", "JAN26".
