@@ -109,7 +109,7 @@
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="event_busy" width="36" height="36">     |"person_cancel" |`#B71C1C`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Cancelada` | -   |
 | <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="unsubscribe" width="36" height="36">     |"unsubscribe" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`  | `MSG PENDENTE`   | -   |
 
-# ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES`
+### ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES`
 |  `Icon` | `Icon Name`  | `Color` | `Style` | `StatusIS` | 
 | :----------: | :----------: | :----------: |  :---------: | :----------: |
 | <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36">     |"mark_email_read"|`#079551`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|  `MSG ENVIADA`   | 
