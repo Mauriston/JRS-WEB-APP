@@ -8,7 +8,7 @@
 
 ### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)
 
-#### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫</br>
+#### 🚫 <u>ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD</u> 🚫
 1. Retire os filtros `OM Solicitante`e `Especialidade`    
 2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.    
 3. Altere os KPI cards para os seguintes:
