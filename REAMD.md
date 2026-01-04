@@ -1,7 +1,7 @@
 ![JRS HNRe](https://i.imgur.com/QJOmuG0.png)  
 
 </br>
-<hr>
+
 # ‼️ LÓGICAS IMPORTANTES DO SCRIPT ‼️
 
 ---
@@ -9,7 +9,7 @@
 ### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)
 
 #### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫
-1. Retire os filtros `OM Solicitante`e `Especialidade`    
+<p>1. Retire os filtros `OM Solicitante`e `Especialidade`</p>    
 2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.    
 3. Altere os KPI cards para os seguintes:
     - 1º KPI card: `Total Inspeções` (Mantido): Porém a referência dele não deve ser os últimos 30 dias como consta na legenda abaixo do numeral e sim o total de Inspeções registradas, desde que os filtros de data não estejam sendo usados. 
