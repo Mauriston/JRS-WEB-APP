@@ -88,9 +88,9 @@
 
 
 
-| Icon | Icon Name | Style | `StatusIS` | Action |
-| :---------- | :---------- |  :--------- | :---------- | :---------- |
-| <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36">     |"outgoing_mail"|`#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| -   | `Reg MSG ennviada` |
+| Icon | Color  | Icon Name | Style | `StatusIS` | Action |
+| :---------- | :---------- | :---------- |  :--------- | :---------- | :---------- |
+| <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36">     |"outgoing_mail"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| -   | `Reg MSG ennviada` |
 | <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36">     |"mark_email_read"|`#079551`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|  `MSG ENVIADA`   | - |
 | <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="how_to_vote" width="36" height="36">      | "how_to_vote" | `#050F41` | `Concluída`   | -   |
 | <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="calendar_check" width="36" height="36">     |"calendar_check"|`#079551` | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48` |`Agendada`   | -   | 
