@@ -8,7 +8,7 @@
 
 ### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)
 
-#### 🚫 <u>ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD</u> 🚫
+### 🚫 _ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD_ 🚫
 1. Retire os filtros `OM Solicitante`e `Especialidade`    
 2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.    
 3. Altere os KPI cards para os seguintes:
@@ -37,7 +37,7 @@
 
 ---
 
-#### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫
+### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫
 1. Altere as colunas da tabela de forma que tem a seguinte ordem:
     - `STATUS`: Deverá ter os ícones relativos às colunas `StatusIS` e `MSG`. Sempre apenas um dos ícones, nunca os dois ao mesmo (vide lógica no item 3)
     - `DATA` = coluna `DataEntrevista` da planilha
