@@ -128,6 +128,6 @@
 
 ---
 
-![MB]([https://i.imgur.com/qt97XzO.png](https://i.imgur.com/lYp37Ar.png))  
+![MB](https://i.imgur.com/lYp37Ar.png)  
 
 
