@@ -2,7 +2,7 @@
 
 ---
 
-### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE `Inspecoes.html` [Inspecoes.html](https://eagletecnologia.com)
+### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [Inspecoes.html](https://github.com/Mauriston/JRS-WEB-APP.git/Inspecoes.html)
 
 #### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫
 1. Retire os filtros `OM Solicitante`e `Especialidade`    
