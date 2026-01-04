@@ -93,7 +93,7 @@
 | <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |"Edit"| `#050F41`   |`FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Editar` |
 | <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Detalhamento IS` |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/faa744e4-95e5-4442-8608-9e3dad1c62a2" /> |"event_repeat"| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 0`, `opsz 40`   | `Reagendar`   |
-| <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/cccd802a-7f00-430f-af9c-326a9b5650fc" /> |"reply"| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 0`, `opsz 24` | `Restituir`|
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cccd802a-7f00-430f-af9c-326a9b5650fc" /> |"reply"| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 0`, `opsz 24` | `Restituir`|
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |"close"|`#B71C1C` |`FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | `Cancelar` |
 
 
