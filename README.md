@@ -56,6 +56,7 @@
         - Uma vez clicado nesse ícone o `StatusIS` deverá ser atualizado para `Cancelada` e o ícone da primeira coluna da tabela deverá ser (("person_cancel"))
     - Icone Registrar MSG ENVIADA ("outgoing_mail"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** 'TIS assinado' e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
        - ⚠️‼️ **EXCEÇÃO** ⚠️‼️ _Quando o `StatusIs` na planilha for 'Faltou' ou 'Cancelada' o ícone da ação `Registrar MSG ENVIADA` deverá ser exibido._ Uma vez clicado no ícone da ação `Registrar MSG ENVIADA`a coluna `MSG` da planilha deverá ser alterada para `ENVIADA`. Nessa situação, **excepcionalmente**, onde a **coluna `StatusIS` é 'Faltou' ou 'Cancelada' e a coluna `MSG` é 'ENVIADA' deverá haver 2 ícones na coluna `STATUS` da tabela da página Inspeções: o ícone relativo a `Faltou` ou `Cancelada` acompanhado do ícone referente a `MSG ENVIADA`**
+         
 3. Lógicas para exibiçãos dos ícones da coluna 'STATUS' da tabela de acordo com as colunas da planilha 'StatusIS' e `MSG`:
 - O ícone de `MSG PENDENTE`("unsubscribe") só deverá surgir se a coluna `StatusIS`= `TIS assinado` e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
     - Esse ícone deverá substituir o ícone de `StatusIS`= `TIS assinado`, caso esteja eventualmente presente previamente, na primeira coluna da tabela.
@@ -71,12 +72,12 @@
     - Se o `StatusIS` for igual a `JSD`: tooltip "Registrar restituição pela JSD" | Ação: altera a coluna `StatusIS` para `Restituída JSD`
     - Nessas duas situações, o ícone a ser colocado na primeira coluna da tabela da página Inspeções deverá ser o mesmo (("gavel"))
 - ⚠️ Diariamente as 6h da manhã deverá ser acionada um função em segundo plano na planilha do google sheets que vai **checar em todas as IS com `StatusIS` = `Agendada` ou `Remarcada` se `DataEntrevista` > a DATA ATUAL**, pois se for a coluna **`StatusIS` deverá ser ajustada automaticamente para ⌛️ `Faltou`**
-- `STATUS` `MSG ENVIADA` com ícone (("mark_email_read")) originário de dados da coluna `MSG` da planilha, é o **STATUS final da IS**. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))  
-4. Todos os ícones da tabela deverão ter os respectivos tooltips  
-5. Deverão estar na cor vermelha os ícones: "unsubscribe" "cancel" "person_cancel"  
-6. Deverão estar na cor verde os ícones: "calendar_check" "outgoing_mail"  
-7. Deverão estar na cor cinza os ícones: "visibility" "how_to_vote" "Edit" "check"  
-8. Deverão estar na cor amarelo escuro os ícones: "event_repeat" "reply"  
+- `STATUS` `MSG ENVIADA` com ícone (("mark_email_read")) originário de dados da coluna `MSG` da planilha, é o **STATUS final da IS**. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))      
+4. Todos os ícones da tabela deverão ter os respectivos tooltips    
+5. Deverão estar na cor vermelha os ícones: "unsubscribe" "cancel" "person_cancel"    
+6. Deverão estar na cor verde os ícones: "calendar_check" "outgoing_mail"    
+7. Deverão estar na cor cinza os ícones: "visibility" "how_to_vote" "Edit" "check"    
+8. Deverão estar na cor amarelo escuro os ícones: "event_repeat" "reply"    
 
 #### Também diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30% na página Inspeções.
 
