@@ -94,7 +94,7 @@
 | <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Detalhamento IS` |
 | <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="event_repeat" width="36" height="36">     |"event_repeat"| `#FAB932` | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`   | `Reagendar`   |
 | <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="reply" width="36" height="36">     |"reply"| `#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Restituir`|
-| <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cancel" width="36" height="36">     |"cancel"|`#B71C1C` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Cancelar` |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |"close"|`#B71C1C` |`FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | `Cancelar` |
 
 
 ### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑 
