@@ -80,7 +80,8 @@
 
 ---
 
-### _🔗 LISTA DE ÍCONES_  
+```
+# _🔗  LISTA DE ÍCONES_  
 
 
 
@@ -95,17 +96,19 @@
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     | -   | `Detalhamento IS` |
 | <img src="https://github.com/user-attachments/assets/59d4addd-210c-463f-a70d-ad4cad198825" alt="cencel" width="36" height="36">     | `Votada JRS` | -   |
 | <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="cencel" width="36" height="36">     | -   | `Reagendar`   |
-| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="cencel" width="36" height="36">     | `Restituída AUDIT/JSD` | `Restituir`|
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     | `AUDITORIA/JSD`   | - |
+| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="cencel" width="36" height="36">     | `Restituída AUDITORIA` | `Restituir`|
+| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="cencel" width="36" height="36">     | `Restituída JSD` | `Restituir`|
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     | `AUDITORIA`   | - |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     | `JSD`   | - |
 | <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="36" height="36">     | -    | `Cancelar` |
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">     | `Cancelada` | -   |
 | <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="cencel" width="36" height="36">     | `MSG PENDENTE`   | -   |
 
 
 
+```
 
 
----
 
 
 ![MB](https://i.imgur.com/qt97XzO.png)  
