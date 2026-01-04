@@ -1,6 +1,6 @@
 ![JRS HNRe](https://i.imgur.com/QJOmuG0.png)  
 
-
+</br>
 
 # ‼️ LÓGICAS IMPORTANTES DO SCRIPT ‼️
 
