@@ -95,7 +95,7 @@
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/18afcb36-eb57-4394-bc10-f476b7b0fa70" /> |"close"|`#B71C1C` |`FILL 1`, `wght 700`, `GRAD 200`, `opsz 24` | `Cancelar` |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cccd802a-7f00-430f-af9c-326a9b5650fc" /> |"reply"| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 0`, `opsz 24` | `Restituir`|
 | <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36"> |"outgoing_mail"| `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Registrar MSG enviada`|
-| <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Abrir Detalhamento IS` |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/b78ed295-1c66-4985-ac96-fe0cf75a1113" /> |"visibility"| `#050F41`   | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48`| `Abrir Detalhamento IS` |
 
 
 ### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑 
