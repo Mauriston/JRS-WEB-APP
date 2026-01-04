@@ -2,7 +2,7 @@
 
 ---
 
-### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE `Inspecoes.html`
+### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE `Inspecoes.html` [Inspecoes.html](https://eagletecnologia.com)
 
 #### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫
 1. Retire os filtros `OM Solicitante`e `Especialidade`    
@@ -80,7 +80,6 @@
 | :---------- | :---------: | ----------: |
 | <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="36" height="36">   | -    | `Cancelar`   |
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">   | `Cancelada`   | -   |
-
 
 
 
