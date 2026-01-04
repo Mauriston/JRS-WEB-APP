@@ -128,9 +128,6 @@
 
 ---
 
-![MB](https://i.imgur.com/qt97XzO.png)  
-<img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/a3365faf-0da0-496e-bacb-944860c85711" />
+![MB]([https://i.imgur.com/qt97XzO.png](https://i.imgur.com/lYp37Ar.png))  
 
-
-<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/bad966bc-efe6-44b1-9a46-6fb1e64a6b39" />
 
