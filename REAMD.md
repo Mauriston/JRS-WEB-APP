@@ -74,7 +74,7 @@
 
 ---
 
-### 🔗 <span style="color: #FF5733;">LISTA DE ÍCONES:</span>
+### 🔗 #blue(LISTA DE ÍCONES)
 
 | Icon | `StatusIS` | Action |
 | :---------- | :---------: | ----------: |
