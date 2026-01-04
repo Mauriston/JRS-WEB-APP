@@ -1,14 +1,10 @@
-# ⚠️ ** ATENÇÃO!!!** ⚠️
-
-# VOCÊ ESTÁ ALUCINANDO!!!
-
-## De onde você tirou esse ícone de impressão na página inspeções? Ele nunca existiu!
-
-## ⚠️ Além disso há vários outros erros nas páginas Dashboard e Inspeções. **O primeiro deles é que nenhuma das duas páginas estão carregando os dados.**
+# ‼️ LÓGICAS IMPORTANTES DO SCRIPT ‼️
 
 ---
 
-# 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫
+### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE `Inspecoes.html`
+
+#### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD 🚫
 1. Retire os filtros `OM Solicitante`e `Especialidade`
 2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.
 3. Altere os KPI cards para os seguintes:
@@ -37,7 +33,7 @@
 
 ---
 
-# 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫
+#### 🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫
 1. Altere as colunas da tabela de forma que tem a seguinte ordem:
     - `STATUS`: Deverá ter os ícones relativos às colunas `StatusIS` e `MSG`. Sempre apenas um dos ícones, nunca os dois ao mesmo (vide lógica no item 3)
     - `DATA` = coluna `DataEntrevista` da planilha
@@ -74,5 +70,8 @@
 7. Deverão estar na cor cinza os ícones: "visibility" "how_to_vote" "Edit" "check"
 8. Deverão estar na cor amarelo escuro os ícones: "event_repeat" "reply"
 
+##### Também diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30% na página Inspeções.
+
 ---
-### Também diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30% na página Inspeções.
+
+
