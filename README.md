@@ -128,7 +128,7 @@
 1. A coluna da tabela `STATUS` deverá ter 01 ícone relativo às colunas da planilha `StatusIS` **OU** `MSG`
 2. A coluna da tabela `FINALIDADE`deverá ter o texto correspondente à coluna na planiha alinhado à esquerda e um ou mais ícones de ação alinhados à direita. Na ordem da direita para esquerda os ícones devem ser:
     2.1 **_Icon Name_ "visibility"** - Tooltip: `Abrir Detalhamento da IS` | Ação: Abrir o modal de Detalhamento da IS relacionada
-        2.1.1 **RESTRIÇÕEDS:** Esse ícone só deverá ser exibido em 2 grupos de situações: Quando a `IS ainda não foi iniciada` (coluna `StatusIS` = `IS aberta`, `Inspecionado atrasado`, `IS Agendada`, `IS Cancelada` **OU** `Faltou`) ou quando a `IS já foi encerrada` (coluna `StatusIS` = `Homologada  JSD` ou coluna `MSG` = `ENVIADA`
+        2.1.1 *RESTRIÇÕEDS:* Esse ícone só deverá ser exibido em 2 grupos de situações: Quando a `IS ainda não foi iniciada` (coluna `StatusIS` = `IS aberta`, `Inspecionado atrasado`, `IS Agendada`, `IS Cancelada` **OU** `Faltou`) ou quando a `IS já foi encerrada` (coluna `StatusIS` = `Homologada  JSD` ou coluna `MSG` = `ENVIADA`
     2.2. _Icon Name_ "visibility" - Tooltip:      
 
 
