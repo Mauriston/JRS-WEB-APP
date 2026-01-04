@@ -76,9 +76,9 @@
 
 ### 🔗 LISTA DE ÍCONES:
 
-<img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="48" height="48">
+<img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="36" height="36">
 
-<img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="48" height="48">
+<img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="cencel" width="36" height="36">
 
 
 
