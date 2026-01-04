@@ -37,38 +37,14 @@
     - ⚠️ **CRIE UM TERCEIRO GRÁFICO: `IS de ROTINA`**: Ele deverá mostrar apenas as IS que não tem `Finalidade` = `CONCURSO` e a sua distribuição em um gráfico de barras horizontais de acordo com a `Finalidade` da IS na planilha. Esse gráfico deverá ter no máximo 6 barras horizontais, onde as 5 primeiras serão as `Finalidades` com maior número de IS e a 6ª barra será referente a `Outras`. Cada barra horizontal deverá ter uma cor diferente, porém obedecendo a paleta de cores do app web. ⚠️ **Esse gráfico deverá ser alterado dinamicamente de acordo com os filtros de data.**  
 5. Diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30%
 
----
-
-### _🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫_  
-
-     
-
-    - Icone Registrar MSG ENVIADA ("outgoing_mail"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** 'TIS assinado' e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
-       - ⚠️‼️ **EXCEÇÃO** ⚠️‼️ _Quando o `StatusIs` na planilha for 'Faltou' ou 'Cancelada' o ícone da ação `Registrar MSG ENVIADA` deverá ser exibido._ Uma vez clicado no ícone da ação `Registrar MSG ENVIADA`a coluna `MSG` da planilha deverá ser alterada para `ENVIADA`. Nessa situação, **excepcionalmente**, onde a **coluna `StatusIS` é 'Faltou' ou 'Cancelada' e a coluna `MSG` é 'ENVIADA' deverá haver 2 ícones na coluna `STATUS` da tabela da página Inspeções: o ícone relativo a `Faltou` ou `Cancelada` acompanhado do ícone referente a `MSG ENVIADA`**
-         
-3. Lógicas para exibiçãos dos ícones da coluna 'STATUS' da tabela de acordo com as colunas da planilha 'StatusIS' e `MSG`:
-- O ícone de `MSG PENDENTE`("unsubscribe") só deverá surgir se a coluna `StatusIS`= `TIS assinado` e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
-    - Esse ícone deverá substituir o ícone de `StatusIS`= `TIS assinado`, caso esteja eventualmente presente previamente, na primeira coluna da tabela.
-- O ícone de `Agendada` ("calendar_check"): esse é o ícone de `STATUS` padrão para novas IS inseridas através do modal de Nova Inspeção, **a não ser que no momento da inserção de nova IS:**
-    - A coluna `Laudo` da planilha esteja preenchida - o `STATUS` deverá ser `Concluída` ("check")
-    - As colunas `Laudo` e `TIS` da planilha estejam preenchidas - o `STATUS` deverá ser `Votada JRS` ("how_to_vote")
-    - As colunas `Laudo`, `TIS` e `DS-1a` da planilha estejam preenchidas -  ⚠️ **nesse cenário  `STATUS` deverá ser `MSG PENDENTE` ("unsubscribe")** - não deverá ser `TIS assinado`
-- ⚠️  **ATENÇÃO** - **Ou seja, sempre que forem editadas informação (nas colunas da planilha 🔎 `Laudo`, 🔎 `TIS` ou 🔎 `DS-1a`) através do modal ou até mesmo diretamente na própria planilha, as colunas da planilha `StatusIS` e `MSG` deverão ser 🔁 alteradas automaticamente de acordo com a lógica explicada acima**
-- Se no modal de edição for inserida informações no `Laudo` mas não forem inseridos `TIS` e/ou `DS-1a`, ao tentar fechar o modal deverá surgir um dialog alert com a pergunta: "Qual o Status da IS no momento?" e com 3 text buttom para ser escolhido obrigatoriamente 1: `Concluída`, `AUDITORIA CPMM` e `REVISÃO EX-OFFICIO JSD` - e a coluna `StatusIS` deverá ser alterada de acordo com a opção escolhida.
-    - ⚠️  **ATENÇÃO** - Se esse padrão de edição for feito diretamente na planilha do google sheets, deverá surgir um modal com a mesma pergunta e os mesmos text buttons (e a mesma estilização do app web) e com a mesma lógica de alteração da coluna `StatusIS`
-- Se o `StatusIS` for igual a `AUDITORIA` ou 'JSD' deverá surgir o ícone de ação Restituída (("reply")). O mesmo ícone, no entanto serão diferentes o tooltip e a ação sobre a coluna da planilha `StatusIS`:
-    - Se o `StatusIS` for igual a `AUDITORIA`: tooltip do ícone de ação (("reply")) deverá ser "Registrar restituição Auditoria CPMM" | Ação: altera a coluna `StatusIS` para `Restituída Auditoria`
-    - Se o `StatusIS` for igual a `JSD`: tooltip "Registrar restituição pela JSD" | Ação: altera a coluna `StatusIS` para `Restituída JSD`
-    - Nessas duas situações, o ícone a ser colocado na primeira coluna da tabela da página Inspeções deverá ser o mesmo (("gavel"))
-- ⚠️ Diariamente as 6h da manhã deverá ser acionada um função em segundo plano na planilha do google sheets que vai **checar em todas as IS com `StatusIS` = `Agendada` ou `Remarcada` se `DataEntrevista` > a DATA ATUAL**, pois se for a coluna **`StatusIS` deverá ser ajustada automaticamente para ⌛️ `Faltou`**
-- `STATUS` `MSG ENVIADA` com ícone (("mark_email_read")) originário de dados da coluna `MSG` da planilha, é o **STATUS final da IS**. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))         
-
-#### Também diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30% na página Inspeções.
 
 ---  
 
+````md
 
-## 📝 LISTAS DE ÍCONES  📝    
+# ⚓️ REGRAS DE CORRELAÇÕES E EXIBIÇÃO DOS ÍCONES DA TABELA DA PÁGINA INSPEÇÃO ⚓️
+
+### 📝 LISTAS DE ÍCONES  📝    
 
 ### ÍCONES DE ⏩ AÇÃO DA COLUNA `FINALIDADE` DA TABELA DA PÁGINA `INSPEÇÕES`  
 
@@ -119,7 +95,7 @@
 
 1. A coluna da tabela `FINALIDADE`deverá ter o texto correspondente à coluna na planiha alinhado à esquerda e um ou mais ícones de ação alinhados à direita. `Na ordem da direita para esquerda (NÃO OBRIGATORIAMENTE SIMULTÂNEOS) os ícones devem ser`:
     1.1 `Icon Name = "visibility"` - Tooltip: `Abrir Detalhamento da IS` | Ação: Abrir o modal de Detalhamento da IS relacionada
-        2.1.1 `RESTRIÇÕES:` Esse ícone só deverá ser exibido em 2 grupos de situações: Quando a `IS ainda não foi iniciada` (coluna `StatusIS` = `IS aberta`, `Inspecionado atrasado`, `IS Cancelada` **OU** `Faltou`) ou quando a `IS já foi encerrada` (coluna `StatusIS` = `Homologada  JSD`, `AUDITORIA CPMM`, `REVISÃO JSD`  ou coluna `MSG` = `ENVIADA`
+        2.1.1 `RESTRIÇÕES:` Esse ícone só deverá ser exibido em 2 grupos de situações: Quando a `IS ainda não foi iniciada` (coluna `StatusIS` = `IS aberta`, `Inspecionado atrasado`, `IS Cancelada` OU `Faltou`) ou quando a `IS já foi encerrada` (coluna `StatusIS` = `Homologada  JSD`, `AUDITORIA CPMM`, `REVISÃO JSD`  ou coluna `MSG` = `ENVIADA`
     1.2. `Icon Name = "Edit"` - Tooltip: `Editar IS` | Ação: Abrir o modal de Edição da IS relacionada
          1.2.1 `RESTRIÇÕES:` esse ícone tem lógica de exibição oposta à lógica do ícone "visibility", ou seja ele só deverá ser exibido quando a IS já tiver sido iniciada mas ainda não encerrada. | `Condições:` quando a coluna da planilha `StatusIS` for igual a `Declínio de competência de MPI`, `Revisão Ex-officio de MPI`, `Revisão Ex-officio de MPI`,  `IS Agendada`, `IS Remarcada`, `Conclusão  Pendente`, `Aprovada AUDITORIA CPMM`, `Restituída AUDITORIA CPMM`, Restituída JSD`, `IS Concluída s/ voto`, `IS Votada s/ assinatura` ou coluna `MSG` = 'PENDENTE' OU `ATRASADA`
     1.3 `Icon name = "event_repeat"`- Tooltip: `Reagendar IS` | Ação: abrir o modal de reagendamento para inserir um valor de data na coluna da planilha `DataEntrevista`, desde que essa coluna já esteja previamente preenchida com outra data
@@ -133,23 +109,16 @@
     1.6 `Icon name = "event_upcoming"`- Tooltip = `Agendar IS` | Ação: abrir o modal de reagendamento para inserir um valor de data na coluna da planilha `DataEntrevista`, desde que `DataEntrevista` = "" + `Status IS` = `IS Aberta`, `Declínio de competência de MPI` OU `Revisão Ex-officio de MPI`  
     1.7 `Icon name = "reply"`- Tooltip = `Registrar IS restituida`| Ação: Altera a coluna da planilha `StatusIS` - se `StatusIS` = `AUDITORIA CPMM` é alterada para `Restituida AUDITORIA CPMM`, se `StatusIS` = `REVISÃO JSD` é alterada para `Restituida JSD` | Ou seja, `este ícone só deverá ser exibido se` `StatusIS` = `AUDITORIA CPMM` ou `REVISÃO JSD`  
 2. A coluna da tabela `STATUS` deverá ter 01 ícone relativo às colunas da planilha `StatusIS` OU `MSG, ⚠️ onde há prioridade de alocar o ícone referente à coluna `MSG` caso ela esteja preenchida.⚠️  
-    - Exceção 1: se `StatusIS = `Homologada JSD`, o ícone relativo a esse valor (""folder_check"") `tem proridade` sobre os ícones relativos à `MSG` e deverá ocupar a coluna sozinho  
-    - Exceção 2: se `StatusIS = `Cancelada` ou `Faltou`, os ícones referentes a esses valores deverão ocupar a coluna `STATUS` na tabela da página `Inspeções` simultaneamente ao ícone relativo à coluna `MSG`. Ou seja: `STATUS` - `Icon name = "person_cancel" OU "folder_delete" + "unsubscribe" OU "bomb" ou "mark_email_read"
-
-
-### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 
-
-1. Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `ENVIADA`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "mark_email_read"    
-2. Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `PENDENTE`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "unsubscribe"
-
-3. ✔️ Se a coluna da planilha `StatusIS` = `TIS assinado` ➡️ ícone na coluna `STATUS` da tabela = **"mark_email_read"** ou **"unsubscribe"**, dependendo da coluna `MSG`da planilha, respectivamente, **ENVIADA** e **PENDENTE**
-
-4.
+    - 🛑 Exceção 1: se `StatusIS = `Homologada JSD`, o ícone relativo a esse valor (""folder_check"") `tem proridade` sobre os ícones relativos à `MSG` e deverá ocupar a coluna sozinho  
+    - 🛑 Exceção 2: se `StatusIS = `Cancelada` ou `Faltou`, os ícones referentes a esses valores deverão ocupar a coluna `STATUS` na tabela da página `Inspeções` simultaneamente ao ícone relativo à coluna `MSG`. Ou seja: `STATUS` - `Icon name = "person_cancel" OU "folder_delete" + "unsubscribe" OU "bomb" ou "mark_email_read"  
+    2.1 O ícone referente à `MSG` = `PENDENTE` ("unsubscribe") e o ícone referente à `MSG` = `ATRASADA` ("bomb") só deverão surgir na coluna `STATUS` da tabela SE: `STATUS` -> Icon name =  "person_cancel" OU "folder_delete" OU colunas da planilha `StatusIS` = `TIS assinado` + 'TIS' <> "" + `DS-1a` <> ""| Já o ícone referente à `MSG` = `ENVIADA` ("mark_email_read") só surgirá através do botão de ação `Registrar MSG enviada` ("outgoing_mail")  
+3. O ícone de `StatusIS` = `IS Aberta` ("folder_open") é o ícone de `STATUS` padrão para novas IS inseridas através do modal de Nova Inspeção, exceto se no momento da inserção da nova IS já seja inserida uma data na coluna da planilha `DataEntrevista` -> 'StatusIS' = `IS Agendada` ("calendar_check")  
+4. O ícone de `MSG` = `ENVIADA` ("mark_email_read") é o ícone de `STATUS` final da IS. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))   
 
 ```  
+````
 
-  
-  ---
+---
 
 ![MB](https://i.imgur.com/lYp37Ar.png)  
 
