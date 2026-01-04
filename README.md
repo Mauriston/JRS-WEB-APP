@@ -81,7 +81,8 @@
 
 #### Também diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30% na página Inspeções.
 
----
+---  
+
 
 ## 📝 LISTAS DE ÍCONES  📝    
 
@@ -126,7 +127,13 @@
 |           `MSG ENVIADA`          |  "mark_email_read"  | `#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |<img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36"> |  
 
 
+
+### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 🛑
   
+1. Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `ENVIADA`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "mark_email_read"  
+2. Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `PENDENTE`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "unsubscribe"
+
+3. ✔️ Se a coluna da planilha `StatusIS` = `TIS assinado` ➡️ ícone na coluna `STATUS` da tabela = **"mark_email_read"** ou **"unsubscribe"**, dependendo da coluna `MSG`da planilha, respectivamente, **ENVIADA** e PENDENTE 
 
 
   
