@@ -111,6 +111,7 @@
 
 ### 🛑 ÍCONES DA COLUNA `STATUS` DA TABELA DA PÁGINA `INSPEÇÕES` 🛑  
 
+
 |  `Icon` | `Icon Name`  | `Color` | `Style` | `StatusIS` | 
 | :----------: | :----------: | :----------: |  :---------: | :----------: |
 | <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36">     |"mark_email_read"|`#079551`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|  `MSG ENVIADA`   | 
