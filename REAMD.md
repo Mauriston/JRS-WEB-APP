@@ -1,7 +1,7 @@
 ![JRS HNRe](https://i.imgur.com/QJOmuG0.png)  
 
 </br>
-
+<hr>
 # ‼️ LÓGICAS IMPORTANTES DO SCRIPT ‼️
 
 ---
