@@ -39,7 +39,8 @@
 
 ---
 
-### _🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫_
+### _🚫 ERROS A SEREM AJUSTADOS NA PÁGINA INSPEÇÕES 🚫_  
+
 1. Altere as colunas da tabela de forma que tem a seguinte ordem:
     - `STATUS`: Deverá ter os ícones relativos às colunas `StatusIS` e `MSG`. Sempre apenas um dos ícones, nunca os dois ao mesmo (vide lógica no item 3)
     - `DATA` = coluna `DataEntrevista` da planilha
@@ -52,7 +53,7 @@
     - Icone editar ("Edit"): Só deverá surgir se a coluna da planilha 'StatusIs' **NÃO** FOR IGUAL A `Faltou`, `Cancelada`, `Auditoria`, `JSD ` ou `TIS assinado`. Deverá abrir o modal de edição.
     -  Icone Reagendar ("event_repeat"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** `Agendada`, `Remarcada` ou `Faltou`
     - Icone de ação Cancelar ("cancel"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** `Agendada`, `Remarcada`ou `Conclusão Pendente`
-        - Uma vez clicado nesse ícone o `StatusIS` deverá ser atualizado para `Cancelada` e o ícone da primeira coluna da tabela deverá ser (("person_cancel"  - <style> 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48))
+        - Uma vez clicado nesse ícone o `StatusIS` deverá ser atualizado para `Cancelada` e o ícone da primeira coluna da tabela deverá ser (("person_cancel"))
     - Icone Registrar MSG ENVIADA ("outgoing_mail"): Só deverá surgir se a coluna da planilha 'StatusIs' **FOR IGUAL A** 'TIS assinado' e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.  
 3. Lógicas para exibiçãos dos ícones da coluna 'STATUS' da tabela de acordo com as colunas da planilha 'StatusIS' e `MSG`:
 - O ícone de `MSG PENDENTE`("unsubscribe") só deverá surgir se a coluna `StatusIS`= `TIS assinado` e as colunas `TIS` e `DS-1a` estiverem preenchidas na planilha.
@@ -64,12 +65,12 @@
 - ⚠️  **ATENÇÃO** - **Ou seja, sempre que forem editadas informação (nas colunas da planilha 🔎 `Laudo`, 🔎 `TIS` ou 🔎 `DS-1a`) através do modal ou até mesmo diretamente na própria planilha, as colunas da planilha `StatusIS` e `MSG` deverão ser 🔁 alteradas automaticamente de acordo com a lógica explicada acima**
 - Se no modal de edição for inserida informações no `Laudo` mas não forem inseridos `TIS` e/ou `DS-1a`, ao tentar fechar o modal deverá surgir um dialog alert com a pergunta: "Qual o Status da IS no momento?" e com 3 text buttom para ser escolhido obrigatoriamente 1: `Concluída`, `AUDITORIA CPMM` e `REVISÃO EX-OFFICIO JSD` - e a coluna `StatusIS` deverá ser alterada de acordo com a opção escolhida.
     - ⚠️  **ATENÇÃO** - Se esse padrão de edição for feito diretamente na planilha do google sheets, deverá surgir um modal com a mesma pergunta e os mesmos text buttons (e a mesma estilização do app web) e com a mesma lógica de alteração da coluna `StatusIS`
-- Se o `StatusIS` for igual a `AUDITORIA` ou 'JSD' deverá surgir o ícone de ação Restituída (("reply")). O mesmo ícone para os dois `StatusIS`, no entanto serão diferentes o tooltip e a ação sobre a coluna da planilha `StatusIS`:
-    - Se o `StatusIS` for igual a `AUDITORIA`: tooltip "Restituída pela Auditoria CPMM" | Ação: altera a coluna `StatusIS` para `Restituída Auditoria`
-    - Se o `StatusIS` for igual a `JSD`: tooltip "Restituída pela JSD" | Ação: altera a coluna `StatusIS` para `Restituída JSD`
-    - Nessas duas situações, o ícone a ser colocado na primeira coluna da tabela da página Inspeções deverá ser o mesmo (("reply"))
+- Se o `StatusIS` for igual a `AUDITORIA` ou 'JSD' deverá surgir o ícone de ação Restituída (("reply")). O mesmo ícone, no entanto serão diferentes o tooltip e a ação sobre a coluna da planilha `StatusIS`:
+    - Se o `StatusIS` for igual a `AUDITORIA`: tooltip do ícone de ação (("reply")) deverá ser "Registrar restituição Auditoria CPMM" | Ação: altera a coluna `StatusIS` para `Restituída Auditoria`
+    - Se o `StatusIS` for igual a `JSD`: tooltip "Registrar restituição pela JSD" | Ação: altera a coluna `StatusIS` para `Restituída JSD`
+    - Nessas duas situações, o ícone a ser colocado na primeira coluna da tabela da página Inspeções deverá ser o mesmo (("gavel"))
 - ⚠️ Diariamente as 6h da manhã deverá ser acionada um função em segundo plano na planilha do google sheets que vai **checar em todas as IS com `StatusIS` = `Agendada` ou `Remarcada` se `DataEntrevista` > a DATA ATUAL**, pois se for a coluna **`StatusIS` deverá ser ajustada automaticamente para ⌛️ `Faltou`**
-- `STATUS` `MSG ENVIADA` com ícone (("mark_email_read" - <style> 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48)) originário de dados da coluna `MSG` da planilha, é o **STATUS final da IS**. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))  
+- `STATUS` `MSG ENVIADA` com ícone (("mark_email_read")) originário de dados da coluna `MSG` da planilha, é o **STATUS final da IS**. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))  
 4. Todos os ícones da tabela deverão ter os respectivos tooltips  
 5. Deverão estar na cor vermelha os ícones: "unsubscribe" "cancel" "person_cancel"  
 6. Deverão estar na cor verde os ícones: "calendar_check" "outgoing_mail"  
