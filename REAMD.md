@@ -74,7 +74,7 @@
 
 ---
 
-### 🔗 !!!LISTA DE ÍCONES
+### 🔗 `!!!`LISTA DE ÍCONES
 
 | Icon | `StatusIS` | Action |
 | :---------- | :---------: | ----------: |
