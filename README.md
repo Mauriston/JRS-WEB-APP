@@ -104,13 +104,13 @@
 | :----------: | :----------: | :----------: |  :---------: | :----------: |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/77487421-ff09-4915-af18-2e3a00887fac" /> |"folder_open"|`#050F41` | `FILL 1`, `wght 400`, `GRAD -25`, `opsz 48` |`IS aberta`   | 
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/6348cf28-1695-48bb-a17b-bea87f8bd5c7" /> |"acute"|`#050F41` | `FILL 0`, `wght 600`, `GRAD -25`, `opsz 24` |`Inspecionado atrasado`   |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/88dc069a-375d-4ea8-a768-d690f917dc6c" />     |"person_cancel" |`#B71C1C`| `FILL 1`, `wght 700`, `GRAD 200`, `opsz 40` | `IS Cancelada` | 
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/88dc069a-375d-4ea8-a768-d690f917dc6c" />     |"folder_delete" |`#B71C1C`| `FILL 1`, `wght 700`, `GRAD 200`, `opsz 40` | `IS Cancelada` | 
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/15696efe-ebf2-4885-9814-5881ca6878bf" /> |"calendar_check"|`#079551` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |`IS Agendada`   |
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="event_busy" width="36" height="36">     |"person_cancel" |`#B71C1C`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Faltou` |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/118d2032-81c4-461d-b52a-9df7d19c12cf"/>   |"calendar_clock"| `#FAB932` |`FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` | `Remarcada`   |
-| <img width="36" height="36" alt="question_mark" src="https://github.com/user-attachments/assets/cc07c386-66cc-49ca-af68-467548b4fdc7"/>     |"question_mark"| `#B71C1C`  | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|`Conclusão  Pendente`   |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2a372b75-71db-45d9-8462-2703a4ec8a8c" /> |"gavel"| `#FAB932` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`    |  `AUDITORIA`   | 
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2a372b75-71db-45d9-8462-2703a4ec8a8c" />     |"gavel"| `#FAB932`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`   |  `JSD`   | 
+| <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/fb76cc51-47e1-4427-8965-692d00d512e7" />     |"unknown_document"| `#B71C1C`  | `FILL 1`, `wght 500`, `GRAD 0`, `opsz 40`|`Conclusão  Pendente`   |
+| <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/25be7862-d375-4058-9f29-d37f773980d9" /> |"content_paste_search"| `#FAB932` | `FILL 0`, `wght 600`, `GRAD -25`, `opsz 48`    |  `AUDITORIA CPMM`   | 
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2a372b75-71db-45d9-8462-2703a4ec8a8c" />     |"gavel"| `#FAB932`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`   |  `REVISÃO JSD`   | 
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/d4483ddf-811a-4d71-a500-166ab772f523" /> |assignment_return| `#FAB932` | `FILL 0`, `wght 700`, `GRAD 200`, `opsz 48`     | `Restituída AUDITORIA` | 
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/d4483ddf-811a-4d71-a500-166ab772f523" />     |assignment_return|`#FAB932` | `FILL 0`, `wght 700`, `GRAD 200`, `opsz 48`     | `Restituída  JSD` |
 | <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2b34e0bd-7511-4bae-9da2-fcf0c4fe082b"/>  | "how_to_vote" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `IS Concluída s/ voto`   |
@@ -126,6 +126,8 @@
 ![MB](https://i.imgur.com/qt97XzO.png)  
 
 
+<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/fb76cc51-47e1-4427-8965-692d00d512e7" />
 
 
+<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/25be7862-d375-4058-9f29-d37f773980d9" />
 
