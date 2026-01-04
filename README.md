@@ -90,23 +90,24 @@
 
 | Icon | Icon Name | Style | `StatusIS` | Action |
 | :---------- | :---------- |  :--------- | :---------- | :---------- |
-| <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="cancel" width="36" height="36">     | -   | -   | -   | `Reg MSG ennviada` |
-| <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="cencel" width="36" height="36">     | -   | -   | `MSG ENVIADA`   | - |
-| <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="check" width="36" height="36">      | "signature" | -   | `Concluída`   | -   |
-| <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="cencel" width="36" height="36">     | -   | -   | `Agendada`   | -   | 
-| <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="cencel" width="36" height="36">     | -   | -   | -   | `Editar` |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/cc07c386-66cc-49ca-af68-467548b4fdc7"/>     | -   | -   | `Conclusão  Pendente`   | - |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     | -   | -   | -   | `Detalhamento IS` |
-| <img src="https://github.com/user-attachments/assets/59d4addd-210c-463f-a70d-ad4cad198825" alt="cencel" width="36" height="36">     | -   | -   | `Votada JRS` | -   |
-| <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="cencel" width="36" height="36">     | -   | -   | -   | `Reagendar`   |
-| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="cencel" width="36" height="36">     | -   | -   | `Restituída AUDITORIA` | `Restituir`|
-| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="cencel" width="36" height="36">     | -   | -   | `Restituída  JSD` | `Restituir`|
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     | -   | -   | `AUDITORIA`   | - |
-| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     | -   | -   | `JSD`   | - |
-| <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cencel" width="36" height="36">     | -   | -   | -    | `Cancelar` |
+| <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="outgoing_mail" width="36" height="36">     |"outgoing_mail"| -   | -   | `Reg MSG ennviada` |
+| <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36">     |"mark_email_read"| -   | `MSG ENVIADA`   | - |
+| <img src="https://github.com/user-attachments/assets/735f053e-bb8b-44f4-bbb0-d65bd266bd80" alt="how_to_vote" width="36" height="36">      | "how_to_vote" | -   | `Concluída`   | -   |
+| <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="calendar_check" width="36" height="36">     |"calendar_check"| -   | `Agendada`   | -   | 
+| <img src="https://github.com/user-attachments/assets/4280fda5-e7d6-4e58-a282-f4aec1c91d48" alt="Edit" width="36" height="36">     |"Edit"| -   | -   | `Editar` |
+| <img width="36" height="36" alt="question_mark" src="https://github.com/user-attachments/assets/cc07c386-66cc-49ca-af68-467548b4fdc7"/>     |"question_mark"| -   | `Conclusão  Pendente`   | - |
+| <img width="36" height="36" alt="visibility" src="https://github.com/user-attachments/assets/c592a78f-a947-4ab2-ae12-6ab76178f4f5"/>     |"visibility"| -   | -   | `Detalhamento IS` |
+| <img src="https://github.com/user-attachments/assets/59d4addd-210c-463f-a70d-ad4cad198825" alt="signature" width="36" height="36">     |"signature"| -   | `Votada JRS` | -   |
+| <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="event_repeat" width="36" height="36">     |"event_repeat"| -   | -   | `Reagendar`   |
+| <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="calendar_clock" alend=r_cl ck" wi=th="3     |"calendar_clock"| -   | -   | `Remarcada`   |
+| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="reply" width="36" height="36">     |"reply"| -   | `Restituída AUDITORIA` | `Restituir`|
+| <img src="https://github.com/user-attachments/assets/78f6a8fd-fdcc-4612-9296-31de5599afa2" alt="reply" width="36" height="36">     |"reply"| -   | `Restituída  JSD` | `Restituir`|
+| <img width="36" height="36" alt="gavel" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     |"gavel"| -   | `AUDITORIA`   | - |
+| <img width="36" height="36" alt="gavel" src="https://github.com/user-attachments/assets/e7ee0df7-eab8-4ebf-a28a-fafad366d94a"/>     |"gavel"| -   | `JSD`   | - |
+| <img src="https://github.com/user-attachments/assets/62657bf1-d09e-47b1-90af-91528b737648" alt="cancel" width="36" height="36">     |"cancel"| -   | -    | `Cancelar` |
 | <img width="36" height="36" alt="event_busy" src="https://github.com/user-attachments/assets/0b18dccd-dd91-47af-aa8b-2e04560957bf"/>   |"event_busy" | -   | `Faltou` | -   |
 | <img src="https://github.com/user-attachments/assets/0e2f75ad-c85f-4395-b960-9adc34d5201c" alt="event_busy" width="36" height="36">     |"person_cancel" | -   | `Cancelada` | -   |
-| <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="cencel" width="36" height="36">     | -   | -   | `MSG PENDENTE`   | -   |
+| <img src="https://github.com/user-attachments/assets/fb72cab9-688e-4b19-85ed-57e96e916c53" alt="unsubscribe" width="36" height="36">     |"unsubscribe" | -   | `MSG PENDENTE`   | -   |
 
 
 
