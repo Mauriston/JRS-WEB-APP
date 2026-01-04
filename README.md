@@ -129,14 +129,16 @@
 
 
 ### 🛑 LÓGICAS ESPECÍFICAS DOS ÍCONES DE `STATUS`E DE AÇÃO 🛑
-  
-1. Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `ENVIADA`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "mark_email_read"  
+
+```  
+Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `ENVIADA`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "mark_email_read"    
 2. Se `STATUS` = **`Faltou` ou `Cancelada` + `MSG` = `PENDENTE`** ➡️ 2 ícones na coluna `STATUS` da tabela = "event_busy" ou "person_cancel" + "unsubscribe"
 
-3. ✔️ Se a coluna da planilha `StatusIS` = `TIS assinado` ➡️ ícone na coluna `STATUS` da tabela = **"mark_email_read"** ou **"unsubscribe"**, dependendo da coluna `MSG`da planilha, respectivamente, **ENVIADA** e PENDENTE 
+3. ✔️ Se a coluna da planilha `StatusIS` = `TIS assinado` ➡️ ícone na coluna `STATUS` da tabela = **"mark_email_read"** ou **"unsubscribe"**, dependendo da coluna `MSG`da planilha, respectivamente, **ENVIADA** e **PENDENTE**
 
+4.
 
-  
+```  
 
   
   ---
