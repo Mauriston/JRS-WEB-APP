@@ -113,7 +113,7 @@
 | Icon | Icon Name  | Color | Style | `StatusIS` | 
 | :---------- | :---------- | :---------- |  :--------- | :---------- |
 | <img src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" alt="mark_email_read" width="36" height="36">     |"mark_email_read"|`#079551`| `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|  `MSG ENVIADA`   | 
-| <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/2b34e0bd-7511-4bae-9da2-fcf0c4fe082b"/>  | "how_to_vote" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Concluída`   | 
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/2b34e0bd-7511-4bae-9da2-fcf0c4fe082b"/>  | "how_to_vote" | `#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`| `Concluída`   | 
 | <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="calendar_check" width="36" height="36">     |"calendar_check"|`#079551` | `FILL 0`, `wght 400`, `GRAD 0`, `opsz 48` |`Agendada`   | 
 | <img width="36" height="36" alt="question_mark" src="https://github.com/user-attachments/assets/cc07c386-66cc-49ca-af68-467548b4fdc7"/>     |"question_mark"| `#B71C1C`  | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48`|`Conclusão  Pendente`   | 
 | <img src="https://github.com/user-attachments/assets/59d4addd-210c-463f-a70d-ad4cad198825" alt="signature" width="36" height="36">     |"signature"|`#B71C1C` | `FILL 1`, `wght 500`, `GRAD 200`, `opsz 48` |  `Votada JRS` | 
