@@ -97,7 +97,7 @@
 | <img src="https://github.com/user-attachments/assets/423f7dc1-a9a0-4719-b3b5-9f0ea8975551" alt="cencel" width="36" height="36">   | `Agendada`   | -   | 
 | <img src="https://github.com/user-attachments/assets/254dc1a3-cea2-44de-9691-c2c2735f14d9" alt="cencel" width="36" height="36">   | -   | `Reagendar`   |
 | <img src="https://github.com/user-attachments/assets/cd2b2f36-5869-4ccb-80a3-300ae72520ad" alt="cencel" width="36" height="36">   | -   | `Reg MSG ennviada` |
-| <img width="144" height="144" alt="image" src="https://github.com/user-attachments/assets/96c7d76d-37d6-4b4b-83db-10798a790d7c" />| `Conclusão Pend`   | - |
+| <img width="36" height="36" alt="image" src="https://github.com/user-attachments/assets/0a6a53f2-c13b-45bb-bf6a-fd844bddc52b"/>   | `Conclusão Pend`   | - |
 
 
 <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/81e473d7-f8c5-42ac-8ad4-7db764e5bc33" />
