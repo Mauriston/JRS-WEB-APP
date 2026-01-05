@@ -227,13 +227,6 @@ Está perfeito!
     * Coloque um ícone de lupa semelhante ao exemplo da imagem (não coloque o ícone de microfone)
     * Ajuste a label do campos para "Nome do Inspecionado"
 
-## Crie um floating action buttom apenas com um ícone adequedo que leve o usuário ao topo da página. Esse botão só deverá surgir após realizada alguma rolagem de tela.
-
-## Insira um Middle divider antes da tabela de detalhes das inspeções e após os gráficos.
-
-
-# O QUE VOCÊ ACHOU DAS MINHAS SUGESTÕES DE AJUSTES? VALEM A PENA?
-
 
 ---
 
