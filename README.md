@@ -93,7 +93,7 @@
 
 ## LÓGICAS EM RASCUNHO
 
-  # Após a seção de KPIs e gráficos, deverá haver uma tabela com a função CRUD
+  ### Após a seção de KPIs e gráficos, deverá haver uma tabela com a função CRUD
 * Colunas da tabela: 'Status', 'MSG', 'Data (entrevista)', 'Inspecionado', 'Finalidade'
 * Nessa tabela deverá haver artíficios para editar/inserir dos na planilha de dados, de acordo com as seguintes funções:
     * 'Remarcação de IS': Apenas para as IS com 'Status'  igual a 'AGENDADA', onde será possível editar a 'Data da Entrevista'. Essa edição ao ser executada, deverá alterar o 'Status' automaticamente para 'Remarcada'
@@ -109,7 +109,7 @@
     * 'Registrar MSG': Apenas para as IS com 'Status'  igual a  'TIS Assinado' e deverá alterar a coluna 'MSG' para 'ENVIADA'
         * Uma vez que a IS esteja com a coluna 'MSG' igual a 'ENVIADA', toda e qualquer edição dessa IS deverá ser desabilitada.
 
-## Para as funções: 'Inserir laudo', 'Inserir Nº TIS' e 'Inserir Código DS-1A', eu sugiro que seja colocado um ícone "more_vert" alinhado à direita na coluna 'Finalidade', que ao ser clicado abrirá um modal com os respectivos campos para inserção/edição desses campos (ou qualquer outra forma que ache mais apropriada)
+#### Para as funções: 'Inserir laudo', 'Inserir Nº TIS' e 'Inserir Código DS-1A', eu sugiro que seja colocado um ícone "more_vert" alinhado à direita na coluna 'Finalidade', que ao ser clicado abrirá um modal com os respectivos campos para inserção/edição desses campos (ou qualquer outra forma que ache mais apropriada)
 
 ---
 
