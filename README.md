@@ -89,6 +89,27 @@
 4. O ícone de `MSG` = `ENVIADA` ("mark_email_read") é o ícone de `STATUS` final da IS. Uma vez com esse STATUS, nenhuma edição deverá ser permitida e deverá haver apenas o ícone de ação para abrir o modal de detalhamento (("visibility"))   
 
 ```  
+---  
+
+## LÓGICAS EM RASCUNHO
+
+  # Após a seção de KPIs e gráficos, deverá haver uma tabela com a função CRUD
+* Colunas da tabela: 'Status', 'MSG', 'Data (entrevista)', 'Inspecionado', 'Finalidade'
+* Nessa tabela deverá haver artíficios para editar/inserir dos na planilha de dados, de acordo com as seguintes funções:
+    * 'Remarcação de IS': Apenas para as IS com 'Status'  igual a 'AGENDADA', onde será possível editar a 'Data da Entrevista'. Essa edição ao ser executada, deverá alterar o 'Status' automaticamente para 'Remarcada'
+    * 'Inserir laudo': Apenas para as IS com 'Status'  igual a 'AGENDADA' ou 'REMARCADA' e que estejam com a coluna 'Laudo' em branco. Deverá inserir dados na coluna 'Laudo'. Ao ser inserido um 'LAUDO', o 'Status' deverá ser automaticamente alterado para 'Concluída'
+    * 'Auditoria': Função para alterar o 'Status' da IS para 'Auditoria' apenas para as IS que estejam com 'Status' igual a 'Concluída'
+    * 'Restituída Auditoria': Função para alterar o 'Status' da IS para 'Restituída Auditoria' apenas para as IS que estejam com 'Status' igual a 'Auditoria' 
+    * 'Revisão JSD': função para alterar o 'Status' da IS para 'JSD' apenas para as IS que estejam com 'Status' igual a 'Concluída'
+    * 'Restituída JSD': função para alterar o 'Status' da IS para 'Restituída JSD' apenas para as IS que estejam com 'Status' igual a 'JSD'
+    * 'Inserir Nº TIS': Apenas para as IS com 'Status'  igual a  'Concluída', 'Restituída Auditoria' ou 'Restituída JSD e que estejam com a coluna 'TIS' em branco. Deverá inserir dados na coluna 'TIS' com a máscara "000.000.00000". Ao ser inserido um ' Nº TIS', o 'Status' deverá ser automaticamente alterado para 'Votada JRS'.
+    * 'Inserir Código DS-1A': Apenas para as IS com 'Status'  igual a  ''Votada JRS' e que estejam com a coluna 'DS-1a' em branco. Deverá inserir dados na coluna 'DS-1a' ". Ao ser inserido um 'Código DS-1A', deverá haver 2 ajustes automáticos:
+        * A coluna 'StatusIS' deverá ser alterada para 'TIS Assinado'
+        * A coluna 'MSG' deverá ser alterada para 'PENDENTE'
+    * 'Registrar MSG': Apenas para as IS com 'Status'  igual a  'TIS Assinado' e deverá alterar a coluna 'MSG' para 'ENVIADA'
+        * Uma vez que a IS esteja com a coluna 'MSG' igual a 'ENVIADA', toda e qualquer edição dessa IS deverá ser desabilitada.
+
+## Para as funções: 'Inserir laudo', 'Inserir Nº TIS' e 'Inserir Código DS-1A', eu sugiro que seja colocado um ícone "more_vert" alinhado à direita na coluna 'Finalidade', que ao ser clicado abrirá um modal com os respectivos campos para inserção/edição desses campos (ou qualquer outra forma que ache mais apropriada)
 
 ---
 
