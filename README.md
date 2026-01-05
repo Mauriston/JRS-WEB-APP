@@ -4,6 +4,7 @@
 
 # ‼️ LÓGICAS IMPORTANTES DO SCRIPT ‼️
 
+[ACESSAR O DASHBOARD](https://script.google.com/macros/s/AKfycbwQrRBreeORWB4CwwB1r9gK03GcLDEH_WQohCIbhRO5NDAY5otXhQFT6lw1tUJVMBIOQA/exec)
 ---  
 
 
