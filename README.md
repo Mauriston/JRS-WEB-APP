@@ -168,6 +168,71 @@ A tabela possui as seguintes colunas, com seus respectivos tipos de dados e exem
       * *Exemplos:* `298749849`, `2025Z10B7D5`, `2025D75694`.
   * **MSG** (`object`): Status da mensagem ou comunicação relacionada à IS.
       * *Exemplos:* `ENVIADA`.
+   
+
+
+
+
+
+
+
+
+     https://gemini.google.com/gem/coding-partner/a0b241178a57c28b
+
+Está perfeito!
+
+## AJUSTES NA PRIMEIRA PARTE DO DASHBOARD (antes da tabela com as inspeções) :
+1.  Na primeira parte do dashboard crie um filtro para o mês (Ex: SET/2025). Esse filtro servirá para todos os elementos do dahsboard (card, gráficos e tabela), exceto para o gráfico 'Entrevistas por Mês'
+2. Ajuste o terceiro card KPI 'Pendentes/Outros' para 'MSG Pendentes' de acordo com os dados da coluna N da aba 'ListaControle' (soma de 'PENDENTE').  Deixe o numeral desse KPI na cor vermelha (#990000)
+3. Crie novos card KPI: 
+* Quarto card KPI: 'MSG Enviadas' de acordo com os dados da coluna N da aba 'ListaControle' (soma de 'ENVIADA'). Deixe o numeral desse KPI na cor verde um pouco mais escuro.
+* Quinto card KPI: 'Conclusões Pendentes' que será a soma das inspeções com Status 'AGU exame' (coluna H da aba 'ListaControle')
+* Sexto card KPI: 'Votações Pendentes' que será a soma das inspeções com Status 'Concluída' (coluna H da aba 'ListaControle')
+* Sétimo card KPI: 'Assinaturas Pendentes' que será a soma das inspeções com Status 'Votada JRS' (coluna H da aba 'ListaControle')
+* Oitavo card KPI: 'Auditoria CPMM' que será a soma das inspeções com Status 'Auditoria' (coluna H da aba 'ListaControle')
+* Nono card KPI: 'Revisão Ex-Officio JSD' que será a soma das inspeções com Status 'JSD' (coluna H da aba 'ListaControle')
+* Décimo card KPI: 'Canceladas' que será a soma das inspeções com Status 'Cancelada' (coluna H da aba 'ListaControle')
+* Décimo primeiro card KPI: 'Faltas' que será a soma das inspeções com Status 'Faltou' (coluna H da aba 'ListaControle')
+4. Insira ícones do google fonts adequados nos títulos dos cards KPI
+5. Altere o gráfico de pizza de 'Inspeções por Finalidade' para um gráfico de barras horizontais.
+6. Altere o gráfico de barras de 'Entrevistas por Mês' para um gráfico do mesmo tipo o exemplo que eu anexei (print de tela).
+
+## AJUSTES NA SEGUNDA PARTE DO DASHBOARD (Tabela 'Detalhe das Inspeções') : 
+1. Acrescente uma coluna após a coluna 'Laudo' chamada 'MSG' para colocar os dados da coluna 'MSG' da planilha (coluna N)
+* Se a MSG for 'PENDENTE' deixe a fonte de toda a linha correspondente em negrito na cor vermelha (#990000)
+* Se a MSG for 'ENVIADA': coloque apenas um ícone do goole fonts que signifique check na cor verde um pouco mais escuro.
+2. Em relação à coluna 'Status' faça os seguintes ajustes:
+* Quando o Status inspeção for 'AGU exames': 
+    * Escreva 'Conclusão Pendente' em negrito e na cor vermelha (#990000)
+    * Apenas nesse cenário, se houver a IS na planilha tiver algo escrito na coluna 'Laudo', coloque ao lado da palavra 'Conclusão Pendente' um ícone do google fonts que signifique um lupa, que ao ser clicado, abrirá um modal de título 'Observações' onde será mostrado o texto que há na coluna 'Laudo' da planilha.
+        * Crie um tooltip ao passar o mouse em cima do ícone de lupa com o texto "Observações"
+    * Deixe a coluna 'Laudo' em branco, mesmo que na planilha haja algo escrito (já que essa informação poderá ser mostrada no modal através do ícone de lupa)
+* Quando o Status inspeção for 'Concluída': 
+    * Escreva 'Votação Pendente' em negrito e na cor vermelha (#990000)
+* Quando o Status inspeção for 'Votada JRS': 
+    * Escreva 'Assinaturas Pendentes' em negrito e na cor vermelha (#990000)
+3. Em relação à coluna 'Laudo': Se houver algo inserido, faça com o texto seja um link clicável (com um tooltip com o texto "Detalhes") para abrir um modal com as seguintes informações:
+* Laudo (Escrever o texto do laudo completo conforme está na planilha)
+* Data (Colocar a informação da coluna DataLaudo da planilha (coluna I))
+* TIS (Colocar a informação da coluna TIS da planilha (coluna L))
+* Código DS-1A (Colocar a informação da coluna DS-1a da planilha (coluna M))
+4. Inverta a posição nas colunas 'IS' e 'Data Entrevista' nessa tabela
+4. Em relação aos filtros dessa tabela:
+* Coloque um filtro em destaque para filtrar as inspeções cuja coluna 'MSG' seja 'PENDENTE' utlizando um botão do tipo Switch (no estilo na segunda imagem anexada, porém, quando esse switch estiver selecionado, a sua cor deverá ser vermelha #990000)
+* Para os filtros 'Finalidade' e 'Status' deixe-os em alert dialogs com checkboxes, de modo que se possa filtrar mais de uma condição. Depois de selecionado uma ou mais opções, mostre as opções escolhidas para filtro no formato de chips.
+* Ajuste a lista do filtro 'Status' de acordo com as mesmas orientações do item 2.
+* Ajuste o campos de busca pelo nome do inspecionado de acordo com a terceira imagem anexada
+    * Mantenha a mesma curvatura dos ângulos dos demais campos do dashboard
+    * Deixe-o sem borda e com a mesma cor da fundo da imagem anexada
+    * Coloque um ícone de lupa semelhante ao exemplo da imagem (não coloque o ícone de microfone)
+    * Ajuste a label do campos para "Nome do Inspecionado"
+
+## Crie um floating action buttom apenas com um ícone adequedo que leve o usuário ao topo da página. Esse botão só deverá surgir após realizada alguma rolagem de tela.
+
+## Insira um Middle divider antes da tabela de detalhes das inspeções e após os gráficos.
+
+
+# O QUE VOCÊ ACHOU DAS MINHAS SUGESTÕES DE AJUSTES? VALEM A PENA?
 
 
 ---
