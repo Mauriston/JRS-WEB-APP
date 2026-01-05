@@ -91,6 +91,56 @@
 ```  
 ---  
 
+
+```md
+# PROMPT PARA EXTRAÇÃO DE IS
+# AJUSTE E ORGANIZE OS DADOS DA PRIMEIRA TABELA ANEXADA EM UMA OUTRA TABELA CONFORME AS ORIENTAÇÕES A SEGUIR.
+## 1. A nova tabela criada deverá ter as seguintes colunas (nem todas precisão ser preenchidas):
+- IS	
+- DataEntrevista 
+- Finalidade	
+- OM	
+- P/G/Q	
+- NIP	
+- Inspecionado	
+- StatusIS **(Sempre será preenchida com "TIS assinado")**
+- DataLaudo	
+- Laudo	(não será preenchida)
+- Restrições	(não será preenchida)
+- TIS	 
+- DS-1a	MSG  (não será preenchida)
+- MSG **(Sempre será preenchida com "PENDENTE")**
+## 2. desmembre as informações da coluna 'Inspecionado' em 3 outras colunas:
+- Inspecionado: Nome com todas as letras MAÍUSCULAS que está antes do texto 'NIP'
+- NIP: número de 8 dígitos presente após o texto 'NIP'. Formate-o no formato 00"."0000"."00
+- P/G/Q: texto de que está entre parênteses na coluna 'Inspecionado' do arquivo anexado.
+## 3. Insira todos os NIP devidamente formatados obtidos do arquivo anexado e aplique uma lógica semelhante à fórmula 'PROCX' do google sheets, só que entre arquivos diferentes:
+- Os valores de consulta serão os 'NIP' obtidos e formatados de acordo com o explicado no item 2.
+- O intervalo de busca será a coluna 'NIP' do arquivo 'ControleInspeçõesJRS - MilitaresHNRe.csv' (esse arquivo fará parte dos arquivos anexados para conhecimento do Gems)
+- Os intervalos de resultados serão 2, para preencher 2 colunas da tabela a ser criada:
+    - P/G/Q
+    - INSPECIONADO
+- Uma vez havendo correspondência do NIP, deverá ser inserido "HNRe" na coluna 'OM' da tabela a ser gerada
+- Após isso preencha as outras coluna da tabela de acordo com o arquivo anexado de entrada
+## 4. Para os NIP que não tiveram correspondência, você preencherá de acordo com arquivo de entrada, as colunas:
+- IS: coluna 'Código' do arquivo de entrada
+- DataEntrevista: coluna 'Laudo' do arquivo de entrada
+- Finalidade: coluna 'Finalidade' do arquivo de entrada	
+- P/G/Q: texto de que está entre parênteses na coluna 'Inspecionado' do arquivo anexado.	
+- NIP: número de 8 dígitos presente após o texto 'NIP'. Formate-o no formato 00"."0000"."00	
+- Inspecionado: Nome com todas as letras MAÍUSCULAS que está antes do texto 'NIP'	
+- DataLaudo: coluna 'Laudo' do arquivo de entrada	
+- TIS: coluna 'TIS' do arquivo de entrada
+## 5. Ajustes nos formatos de algumas colunas:
+- NIP: 00"."0000"."00
+- DataLaudo: dd/mm/aaaa
+- DataEntrevista: dd/mm/aaaa
+- 000"."000"."00000
+## 6. Substituição de texto na coluna 'Finalidade':
+- **Se o texto da coluna iniciar por "BENEFÍCIO", substitua todo o texto por "BENEFÍCIO"**
+## 7. Ao final, **ordene toda a tabela de acordo com a coluna 'DataLaudo' de forma crescente** e mostre a tabela completa com todos as linhas do arquivo de entrada anexado.
+# A# ATENÇÃO: MOSTRE TODOS DOS DADOS DA TABELA DE ENTRADA, E NÃO APENAS ALGUMAS LINHAS. NÃO MOSTRE O LINK PARA ABRI O ARQUIVO CRIADO.
+
 ## LÓGICAS EM RASCUNHO
 
   ### Após a seção de KPIs e gráficos, deverá haver uma tabela com a função CRUD
@@ -113,7 +163,7 @@
 
 
 
-    Prezado Presidente,
+```    Prezado Presidente,
 
 A tabela "ListaControle" é um registro abrangente das Inspeções de Saúde (IS) realizadas pela Junta Regular de Saúde (JRS). Ela contém informações detalhadas sobre cada inspeção, desde a sua identificação e data da entrevista até o laudo final, passando pelos dados do inspecionado, sua Organização Militar (OM), Posto/Graduação/Quadro (P/G/Q) e o status do processo.
 
