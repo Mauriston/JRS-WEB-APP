@@ -14,34 +14,6 @@
 ## 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)  
 
 
-### 🚫 _ERROS A SEREM AJUSTADOS NA PÁGINA DASHBOARD_ 🚫
-1. Retire os filtros `OM Solicitante`e `Especialidade`    
-2. Ajuste o botão `FILTRAR` para que se os dados estejam sendo filtrados pelas datas, o botão seja alterado para `LIMPAR FILTROS` - Altere o texto do botão, a cor e o seu ícone.    
-3. Altere os KPI cards para os seguintes:
-    - 1º KPI card: `Total Inspeções` (Mantido): Porém a referência dele não deve ser os últimos 30 dias como consta na legenda abaixo do numeral e sim o total de Inspeções registradas, desde que os filtros de data não estejam sendo usados. 
-    - 2º KPI card: ~~`Concluídas`~~ ˜MSG Pendentes`: Deverá mostrar o número de inspeções cuja coluna `MSG` da planilha = `PENDENTE`  
-        - A cor da fonte do numeral e do ícone do card deverão ser alterados para vermelho. O ícone do card também deverá ser alterado para um mais apropriado.
-        - O valor de comparação embaixo do numeral, ex: "68% do total" deverá ser mantido, porém deverá ser alterado dinamicamente de acordo com a seleção de filtros.
-    - 3º KPI card: `Pendentes`: Mantido  
-    - 4º KPI card: ~~`Tempo Médio`~~ `REVISÃO JSD`: Deverá mostrar o número de IS cujo `StatusIS` = `REVISÃO JSD`
-         - Na linha abaixo do numeral, onde nos outros cards há a referência de comparação, nesse card deverá haver o número de IS cujo `StatusIS` = `Restituída JSD`da seguinte forma - Ex: "Restituídas = 3"  \
-    - 5º KPI card: `AUDITORIA CPMM`: Deverá mostrar o número de IS cujo `StatusIS` = `AUDITORIA CPMM`
-        - Na linha abaixo do numeral, onde nos outros cards há a referência de comparação, nesse card deverá haver o número de IS cujo `StatusIS` = `Restituída Auditoria`da seguinte forma - Ex: "Restituídas = 2"  \
-    - 6º KPI card: `CANCELADAS`: Deverá mostrar o número de IS cujo `StatusIS` = `CANCELADA`  
-    - 7º KPI card: `FALTAS`: Deverá mostrar o número de IS cujo `StatusIS` = `FALTOU`  
-    - 8º KPI card: `CONCURSOS`: Deverá mostrar o número de IS cuja `Finalidade` se inicie pela palavra "Ingresso" - **Exs: "INGRESSO NA EFOMM" e "INGRESSO CFSD-FN"**
-        - ⚠️  **ESSE CARD SÓ DEVERÁ SER EXIBIDO SE OS FILTROS DE DATAS ESTIVEREM SELECIONADOS E SE O NÚMERO DE IS de `Concursos` para o período selecionado seja diferente de zero.**  
-4. Altere os gráficos presentes após os KPI cards:  
-- Gráfico `Evolução de Atendimentos` deverá ser um gráfico de barras verticais empilhadas cujos marcados do eixo horizontal deverão ser o mês desde o início dos registros das IS na planilha. Ex: "SET25", "OUT25", "JAN26".
-    - Os valores do eixo vertical deverão ser os totais de IS de 'CONCURSOS' e de IS de 'ROTINA' (todas as outras que não são de CONCURSOS)
-    - A porção da barra referente as IS de 'CONCURSOS' deverão estar posicionadas acima de IS de 'ROTINA' e deverão ter uma cor vermelha, enquanto as IS de 'ROTINA' na cor azul.
-    - As subpartes das barras verticais deverão ter o marcado númerico nos seus interiores com alinhamento vertical ao meio da subbarra e de cor de fundo branca.
-    - ⚠️ **ESSE GRÁFICO NÃO DEVERÁ SOFRER ALTERAÇÕES DE ACORDO COM OS FILTROS DE DATA**
-    - ⚠️ **RETIRE O GRÁFICO `Por Especialidade`**, em seu lugar insira um gráfico do tipo donut com a distrubuição das IS de acordo com a `OM`
-    - ⚠️ **CRIE UM TERCEIRO GRÁFICO: `IS de ROTINA`**: Ele deverá mostrar apenas as IS que não tem `Finalidade` = `CONCURSO` e a sua distribuição em um gráfico de barras horizontais de acordo com a `Finalidade` da IS na planilha. Esse gráfico deverá ter no máximo 6 barras horizontais, onde as 5 primeiras serão as `Finalidades` com maior número de IS e a 6ª barra será referente a `Outras`. Cada barra horizontal deverá ter uma cor diferente, porém obedecendo a paleta de cores do app web. ⚠️ **Esse gráfico deverá ser alterado dinamicamente de acordo com os filtros de data.**  
-5. Diminua o padding inferior da logo da Marinha do rodapé e aumento o tamanho da logo em cerca de 30%
-
-
 ---  
 
 ```md
