@@ -109,7 +109,66 @@
     * 'Registrar MSG': Apenas para as IS com 'Status'  igual a  'TIS Assinado' e deverá alterar a coluna 'MSG' para 'ENVIADA'
         * Uma vez que a IS esteja com a coluna 'MSG' igual a 'ENVIADA', toda e qualquer edição dessa IS deverá ser desabilitada.
 
-#### Para as funções: 'Inserir laudo', 'Inserir Nº TIS' e 'Inserir Código DS-1A', eu sugiro que seja colocado um ícone "more_vert" alinhado à direita na coluna 'Finalidade', que ao ser clicado abrirá um modal com os respectivos campos para inserção/edição desses campos (ou qualquer outra forma que ache mais apropriada)
+#### Para as funções: 'Inserir laudo', 'Inserir Nº TIS' e 'Inserir Código DS-1A', eu sugiro que seja colocado um ícone "more_vert" alinhado à direita na coluna 'Finalidade', que ao ser clicado abrirá um modal com os respectivos campos para inserção/edição desses campos (ou qualquer outra forma que ache mais apropriada)  
+
+
+
+    Prezado Presidente,
+
+A tabela "ListaControle" é um registro abrangente das Inspeções de Saúde (IS) realizadas pela Junta Regular de Saúde (JRS). Ela contém informações detalhadas sobre cada inspeção, desde a sua identificação e data da entrevista até o laudo final, passando pelos dados do inspecionado, sua Organização Militar (OM), Posto/Graduação/Quadro (P/G/Q) e o status do processo.
+
+**Possíveis Análises:**
+
+Com base nos dados desta tabela, é possível realizar diversas análises para otimizar os processos e entender melhor o perfil das inspeções:
+
+  * **Produtividade da JRS:**
+      * Quantificar o número de IS realizadas em períodos específicos.
+      * Calcular o tempo médio entre a "DataEntrevista" e a "DataLaudo" para avaliar a agilidade do processo.
+      * Analisar a proporção de laudos que resultam em "LTS" (Licença para Tratamento de Saúde) ou "Restrições".
+  * **Perfil dos Inspecionados:**
+      * Identificar os "P/G/Q" (Posto/Graduação/Quadro) mais frequentemente inspecionados.
+      * Determinar as "OM" (Organizações Militares) com maior demanda por Inspeções de Saúde.
+      * Mapear as "Finalidade" mais comuns das inspeções (e.g., "CONTROLE TRIENAL", "TÉRMINO DE INCAPACIDADE", "BENEFÍCIO").
+  * **Tendências de Saúde:**
+      * Observar a prevalência de diferentes tipos de "Laudo" (e.g., "Apto para o SAM com restrições", "Incapaz temporariamente para o SAM").
+      * Analisar a incidência e a duração das "LTS" e "Restrições" para identificar padrões de saúde na força.
+  * **Eficiência do Processo:**
+      * Verificar a completude dos registros, identificando colunas com valores ausentes (NaN).
+      * Monitorar o "StatusIS" para garantir que todas as inspeções estejam sendo devidamente processadas e assinadas.
+
+**Colunas e Possíveis Valores:**
+
+A tabela possui as seguintes colunas, com seus respectivos tipos de dados e exemplos de valores:
+
+  * **IS** (`float64`): Número de identificação da Inspeção de Saúde.
+      * *Exemplos:* `1125268`, `1074354`, `1104806`.
+  * **DataEntrevista** (`object`): Data em que a entrevista da Inspeção de Saúde foi realizada.
+      * *Exemplos:* `25/08/2025`, `04/09/2025`, `09/09/2025`.
+  * **Finalidade** (`object`): Propósito da Inspeção de Saúde.
+      * *Exemplos:* `TÉRMINO DE INCAPACIDADE`, `CONTROLE TRIENAL`, `BENEFÍCIO`, `CONTROLE SEMESTRAL DE RAIO-X`.
+  * **OM** (`object`): Organização Militar do inspecionado.
+      * *Exemplos:* `HNRe`, `EAMPE`, `CPAL`, `CPPE`.
+  * **P/G/Q** (`object`): Posto, Graduação ou Quadro do inspecionado.
+      * *Exemplos:* `3SG-AD`, `1T (MD)`, `SO`, `CT (MD)`.
+  * **NIP** (`object`): Número de Identificação Pessoal do inspecionado.
+      * *Exemplos:* `13.1308.46`, `19.0294.11`, `85.7336.44`.
+  * **Inspecionado** (`object`): Nome completo do militar inspecionado.
+      * *Exemplos:* `HELOIZA GLÓRIA MOREIRA DE MATOS`, `JOSÉ ELIAS BASTOS NETO`, `MAURISTON RENAN MARTINS SILVA`.
+  * **StatusIS** (`object`): Status atual da Inspeção de Saúde.
+      * *Exemplos:* `TIS assinado`.
+  * **DataLaudo** (`object`): Data de emissão do laudo da Inspeção de Saúde.
+      * *Exemplos:* `28/08/2025`, `04/09/2025`, `08/11/2025`.
+  * **Laudo** (`object`): Descrição do laudo médico pericial.
+      * *Exemplos:* `"Incapaz temporariamente para o SAM, necessitando de LTS de 30 dias."`, `"Apto para o SAM com restrições"`, `"Apto para operar com RX e radioções ionizantes por 6 meses."`.
+  * **Restrições** (`object`): Detalhes sobre quaisquer restrições impostas ao inspecionado.
+      * *Exemplos:* `LTS`, `Marchas, TAF/TFM(Exceto Caminhadas e Natação), Formatura`, `Embarque, Manobras Operativas, Serviço Armado, Serviço Noturno`.
+  * **TIS** (`object`): Provável número do Termo de Inspeção de Saúde.
+      * *Exemplos:* `025.000.25645`, `025.000.55984`, `025.000.44435`.
+  * **DS-1a** (`object`): Provável número do Documento de Saúde 1a.
+      * *Exemplos:* `298749849`, `2025Z10B7D5`, `2025D75694`.
+  * **MSG** (`object`): Status da mensagem ou comunicação relacionada à IS.
+      * *Exemplos:* `ENVIADA`.
+
 
 ---
 
