@@ -7,6 +7,8 @@
 
 # 1. BECKEND
 
+## Código descrito no arquivo [`Code.gs`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs) 
+
 ## ESTRUTURA DA PLANILHA DE DADOS DO GOOGLE SHEETS:
 - ID:`12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw`
 - Principais Abas: `ListaControle`, `ListasRef` e `MilitaresHNRe`
@@ -71,8 +73,14 @@ A folha **"MilitaresHNRe"** parece ser uma lista ou cadastro detalhado dos milit
 ----- 
 
 # 2. FRONTEND
-## 2.1 PÁGINA [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs
 
+## O FRONTEND É COMPOSTO POR 3 PÁGINAS QUE APRESENTAM UM MENU DE NAVEGAÇÃO EM COMUN COM ITENS CLICÁVEIS QUE DIRECIONAIS PARA AS PÁGINAS:
+* Dashboard: [`Dashboard.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Dashbpard.html)
+* Inspeções: [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Inspecoes.html)
+* Parecer: [`Parecer.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Parecer.html)
+
+
+## 2.1 Inspeções: [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Inspecoes.html)
 
 ### 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)  
 
