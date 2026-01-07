@@ -52,9 +52,6 @@ Essa correlação funciona da seguinte forma:
 
 Ao invés de ter que digitar as opções manualmente em cada célula de Validação de Dados, a planilha aponta para o intervalo correspondente na folha **ListasRef**. Isto centraliza a gestão das opções, facilitando a manutenção e garantindo a integridade e padronização dos dados em toda a sua pasta de trabalho. Se uma nova "Finalidade" for adicionada em `ListasRef!A:A`, essa nova opção aparecerá automaticamente no menu suspenso da coluna **Finalidade** na `ListaControle`.
 
-
------
-
 ## 3\. Estrutura da Aba 'MilitaresHNRe' (A1:E261)
 
 A folha **"MilitaresHNRe"** parece ser uma lista ou cadastro detalhado dos militares inspecionados ou a serem inspecionados, contendo dados de identificação e contato.
@@ -71,7 +68,10 @@ A folha **"MilitaresHNRe"** parece ser uma lista ou cadastro detalhado dos milit
 
 
    
----  
+----- 
+
+# 2. FRONTEND
+# 2,1
 
 
 ## 📎 LÓGICAS DOS ÍCONES E EDIÇÕES DE STATUS DA TABELA DE [`Inspecoes.html`](https://github.com/Mauriston/JRS-WEB-APP/tree/main/Code.gs)  
