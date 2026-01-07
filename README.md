@@ -1,12 +1,13 @@
 ![JRS HNRe](https://i.imgur.com/QJOmuG0.png)  
 
 
-
-# ‼️ LÓGICAS IMPORTANTES DO SCRIPT ‼️
+# ‼️ ESTRUTURA DO APPWEB ‼️
 
 ##  ACESSE:    [DASHBOARD](https://script.google.com/macros/s/AKfycbwQrRBreeORWB4CwwB1r9gK03GcLDEH_WQohCIbhRO5NDAY5otXhQFT6lw1tUJVMBIOQA/exec)     |    [PLANILHA](https://docs.google.com/spreadsheets/d/12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw/edit?usp=sharing)   
 
-# ESTRUTURA DA PLANILHA DE DADOS DO GOOGLE SHEETS:
+# 1. BECKEND
+
+## ESTRUTURA DA PLANILHA DE DADOS DO GOOGLE SHEETS:
 - ID:`12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw`
 - Principais Abas: `ListaControle`, `ListasRef` e `MilitaresHNRe`
 
@@ -50,6 +51,24 @@ Essa correlação funciona da seguinte forma:
 | **MSG**                   | **MSG**                                         | Padroniza os status de envio/recebimento de documentos/mensagens. |
 
 Ao invés de ter que digitar as opções manualmente em cada célula de Validação de Dados, a planilha aponta para o intervalo correspondente na folha **ListasRef**. Isto centraliza a gestão das opções, facilitando a manutenção e garantindo a integridade e padronização dos dados em toda a sua pasta de trabalho. Se uma nova "Finalidade" for adicionada em `ListasRef!A:A`, essa nova opção aparecerá automaticamente no menu suspenso da coluna **Finalidade** na `ListaControle`.
+
+
+-----
+
+## 3\. Estrutura da Aba 'MilitaresHNRe' (A1:E261)
+
+A folha **"MilitaresHNRe"** parece ser uma lista ou cadastro detalhado dos militares inspecionados ou a serem inspecionados, contendo dados de identificação e contato.
+
+### 3.1. Detalhes das Colunas da 'MilitaresHNRe'
+
+| Coluna                      | Tipo de Dado Primário | Formato/Natureza dos Dados                                                                  | Exemplos de Dados Possíveis (Amostra)                          | Menu Suspenso (Validação)? |
+| :-------------------------- | :-------------------- | :------------------------------------------------------------------------------------------ | :------------------------------------------------------------- | :------------------------- |
+| **P/G/Q** (Coluna A)        | Texto (Sigla)         | Posto/Graduação/Quadro do inspecionado.                                                     | CMG (MD), CF (CD), CC (S), CT (IM)                             | Não (Dados de entrada)     |
+| **NIP** (Coluna B)          | Texto/Numérico        | Número de Identificação Pessoal, formato geralmente `XX.XXXX.XX`. Inclui células em branco. | 97.0429.27, 00.0617.43, (vazio)                                | Não                        |
+| **INSPECIONADO** (Coluna C) | Texto                 | Nome Completo do inspecionado.                                                              | LISA TIEMI OGAWA, ARNALDO OLIVEIRA DE JESUS, ELIZABETH LACERDA | Não                        |
+| **E-MAIL** (Coluna D)       | Texto                 | Endereço de e-mail. Inclui células em branco.                                               | lisa@marinha.mil.br, fernanda.rocha@marinha.mil.br, (vazio)    | Não                        |
+| **Column 5** (Coluna E)     | Texto                 | Gênero ou Categoria. Valores binários.                                                      | Feminino, Masculino                                            | **Sim** (Provável)         |
+
 
    
 ---  
