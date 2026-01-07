@@ -6,6 +6,50 @@
 
 ##  ACESSE:    [DASHBOARD](https://script.google.com/macros/s/AKfycbwQrRBreeORWB4CwwB1r9gK03GcLDEH_WQohCIbhRO5NDAY5otXhQFT6lw1tUJVMBIOQA/exec)     |    [PLANILHA](https://docs.google.com/spreadsheets/d/12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw/edit?usp=sharing)   
 
+# ESTRUTURA DA PLANILHA DE DADOS DO GOOGLE SHEETS:
+- ID:`12_X8hKR4T_ok33Tv-M8rwpKSUeJNwIAjo9rWzfoA2Nw`
+- Principais Abas: `ListaControle`, `ListasRef` e `MilitaresHNRe`
+
+A planilha **"ListaControle"** (Intervalo A1:O592) é uma tabela de controle de Inspeções de Saúde (IS), que monitora o processo desde a abertura até a conclusão e envio do Termo de Inspeção de Saúde (TIS).
+
+1.  **Detalhes das Colunas da "ListaControle"**
+
+A tabela possui 15 colunas com diferentes tipos e formatos de dados:
+
+| Coluna             | Tipo de Dado Primário | Formato/Natureza dos Dados                                                                       | Exemplos de Dados Possíveis (Amostra)                                       | Menu Suspenso (Validação)? | Correlação com Outras Abas (Menu Suspenso)                                                                                                             |
+| :----------------: | :-------------------: | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------: | :------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------: |
+| **IS**             | Numérico/Texto        | Número de protocolo da Inspeção de Saúde. Pode incluir hífens ou letras (e.g., para candidatos). | 1127905, 11320-8, 100059-8                                                  | Não                        | Não                                                                                                                                                    |
+| **DataAberturaIS** | Data                  | Data no formato DD/MM/AAAA.                                                                      | 05/06/2025, 03/09/2025                                                      | Não                        | Não                                                                                                                                                    |
+| **DataEntrevista** | Data                  | Data no formato DD/MM/AAAA.                                                                      | 11/06/2025, 16/09/2025                                                      | Não                        | Não                                                                                                                                                    |
+| **Finalidade**     | Texto                 | Descrição do motivo da Inspeção de Saúde.                                                        | BENEFÍCIO, TÉRMINO DE INCAPACIDADE, INGRESSO CFSD-FN                        | **Sim**                    | **ListasRef\!FINALIDADES** (Se a coluna D na **ListaControle** utiliza validação de dados, a fonte é a coluna **FINALIDADES** da folha **ListasRef**). |
+| **OM**             | Texto (Sigla)         | Sigla da Organização Militar do Inspecionado.                                                    | CPAL, EAMPE, HNRe, CPPE                                                     | **Sim**                    | **ListasRef\!OM** (A fonte das opções para esta coluna é a coluna **OM** da folha **ListasRef**).                                                      |
+| **P/G/Q**          | Texto (Sigla)         | Posto/Graduação/Quadro do Inspecionado.                                                          | DEP, 3SG-AD, 1T (MD), CANDIDATO, SO                                         | **Sim**                    | **ListasRef\!P/G** (A fonte das opções para esta coluna é a coluna **P/G** da folha **ListasRef**).                                                    |
+| **NIP**            | Numérico/Texto        | Número de Identificação Pessoal (NIP/CPF). Pode ser vazio para alguns casos (e.g., candidatos).  | 03.8589.61, 113.207.654-40, 10.1229.74                                      | Não                        | Não                                                                                                                                                    |
+| **Inspecionado**   | Texto                 | Nome Completo da pessoa inspecionada.                                                            | MARIA DALVA LEITE TITO, SAMUEL LUCAS MOURA E SILVA                          | Não                        | Não                                                                                                                                                    |
+| **StatusIS**       | Texto                 | Status atual da Inspeção de Saúde.                                                               | TIS assinado, Faltou, IS Cancelada                                          | **Sim**                    | **ListasRef\!StatusIS** (A fonte das opções para esta coluna é a coluna **StatusIS** da folha **ListasRef**).                                          |
+| **DataLaudo**      | Data                  | Data em que o laudo da Inspeção de Saúde foi emitido.                                            | 26/08/2025, 22/10/2025, 14/11/2025                                          | Não                        | Não                                                                                                                                                    |
+| **Laudo**          | Texto                 | Resultado e observações principais do Laudo (e.g., Aptidão, Inaptidão, Restrições).              | "Apto para o SAM.", "Incapaz temporariamente...", "Inapto para ingresso..." | Não                        | Não                                                                                                                                                    |
+| **Restrições**     | Texto                 | Descrição das restrições aplicadas. Pode conter múltiplos itens ou ser vazio.                    | Marchas, TAF/TFM, Serviço Armado                                            | **Sim**                    | **ListasRef\!Restrições** (A fonte das opções para esta coluna é a coluna **Restrições** da folha **ListasRef**).                                      |
+| **TIS**            | Texto/Numérico        | Número do TIS (Termo de Inspeção de Saúde).                                                      | 025.000.58169, xxx                                                          | Não                        | Não                                                                                                                                                    |
+| **DS-1a**          | Texto                 | Número do Documento que acompanha o TIS.                                                         | 2025Z1135E1, 2025D75694, xxx                                                | Não                        | Não                                                                                                                                                    |
+| **MSG**            | Texto                 | Status da mensagem ou comunicação.                                                               | MSG ENVIADA, MSG PENDENTE                                                   | **Sim**                    | **ListasRef\!MSG** (A fonte das opções para esta coluna é a coluna **MSG** da folha **ListasRef**).                                                    |
+
+2.  **Correlação de Validação de Dados das Colunas do Tipo Menu Suspenso com Outras Abas**
+
+As colunas identificadas como "Menu Suspenso (Validação)" utilizam a funcionalidade de **Validação de Dados** com listas baseadas em intervalos, e a origem dessas listas está localizada numa folha de referência separada, chamada **"ListasRef"** (conforme inferido pela estrutura típica de planilhas de controle).
+
+Essa correlação funciona da seguinte forma:
+
+| Coluna em "ListaControle" | Nome da Lista de Opções (Coluna em "ListasRef") | Função da Correlação                                              |
+| :-----------------------: | :---------------------------------------------: | :---------------------------------------------------------------: |
+| **Finalidade**            | **FINALIDADES**                                 | Garante que apenas finalidades padronizadas sejam selecionadas.   |
+| **OM**                    | **OM**                                          | Padroniza as siglas das Organizações Militares.                   |
+| **P/G/Q**                 | **P/G**                                         | Padroniza os Postos/Graduações/Quadros.                           |
+| **StatusIS**              | **StatusIS**                                    | Padroniza os estágios e resultados da Inspeção de Saúde.          |
+| **Restrições**            | **Restrições**                                  | Padroniza as restrições médicas aplicáveis.                       |
+| **MSG**                   | **MSG**                                         | Padroniza os status de envio/recebimento de documentos/mensagens. |
+
+Ao invés de ter que digitar as opções manualmente em cada célula de Validação de Dados, a planilha aponta para o intervalo correspondente na folha **ListasRef**. Isto centraliza a gestão das opções, facilitando a manutenção e garantindo a integridade e padronização dos dados em toda a sua pasta de trabalho. Se uma nova "Finalidade" for adicionada em `ListasRef!A:A`, essa nova opção aparecerá automaticamente no menu suspenso da coluna **Finalidade** na `ListaControle`.
 
    
 ---  
