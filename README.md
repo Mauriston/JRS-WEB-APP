@@ -41,7 +41,7 @@ A tabela possui 19 colunas com diferentes tipos e formatos de dados:
 | **DS-1a** | Texto | Documento anexo ao TIS. | 2025Z1135E1 | Não | Não |
 | **MSG** | Texto | Status da comunicação (Mensagem). | MSG ENVIADA, MSG PENDENTE | **Sim** | **ListasRef!MSG** (Atualizado autom. pelo script). |
 
-## 2.  **Correlação de Validação e Automação de Dados com Outras Abas
+## 2. Correlação de Validação e Automação de Dados com Outras Abas
 
 As colunas da planilha utilizam duas formas distintas de conexão com abas externas para garantir a integridade dos dados:
 2.1.  **Validação de Dados Estática:** Menus suspensos nativos do Google Sheets, baseados na aba **"ListasRef"**.
