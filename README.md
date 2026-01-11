@@ -17,42 +17,56 @@ A planilha **"ListaControle"** (Intervalo A1:O592) é uma tabela de controle de 
 
 1.  **Detalhes das Colunas da "ListaControle"**
 
-A tabela possui 15 colunas com diferentes tipos e formatos de dados:
+A tabela possui 19 colunas com diferentes tipos e formatos de dados:
 
-| Coluna             | Tipo de Dado Primário | Formato/Natureza dos Dados                                                                       | Exemplos de Dados Possíveis (Amostra)                                       | Menu Suspenso (Validação)? | Correlação com Outras Abas (Menu Suspenso)                                                                                                             |
-| :----------------: | :-------------------: | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------: | :------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------: |
-| **IS**             | Numérico/Texto        | Número de protocolo da Inspeção de Saúde. Pode incluir hífens ou letras (e.g., para candidatos). | 1127905, 11320-8, 100059-8                                                  | Não                        | Não                                                                                                                                                    |
-| **DataAberturaIS** | Data                  | Data no formato DD/MM/AAAA.                                                                      | 05/06/2025, 03/09/2025                                                      | Não                        | Não                                                                                                                                                    |
-| **DataEntrevista** | Data                  | Data no formato DD/MM/AAAA.                                                                      | 11/06/2025, 16/09/2025                                                      | Não                        | Não                                                                                                                                                    |
-| **Finalidade**     | Texto                 | Descrição do motivo da Inspeção de Saúde.                                                        | BENEFÍCIO, TÉRMINO DE INCAPACIDADE, INGRESSO CFSD-FN                        | **Sim**                    | **ListasRef\!FINALIDADES** (Se a coluna D na **ListaControle** utiliza validação de dados, a fonte é a coluna **FINALIDADES** da folha **ListasRef**). |
-| **OM**             | Texto (Sigla)         | Sigla da Organização Militar do Inspecionado.                                                    | CPAL, EAMPE, HNRe, CPPE                                                     | **Sim**                    | **ListasRef\!OM** (A fonte das opções para esta coluna é a coluna **OM** da folha **ListasRef**).                                                      |
-| **P/G/Q**          | Texto (Sigla)         | Posto/Graduação/Quadro do Inspecionado.                                                          | DEP, 3SG-AD, 1T (MD), CANDIDATO, SO                                         | **Sim**                    | **ListasRef\!P/G** (A fonte das opções para esta coluna é a coluna **P/G** da folha **ListasRef**).                                                    |
-| **NIP**            | Numérico/Texto        | Número de Identificação Pessoal (NIP/CPF). Pode ser vazio para alguns casos (e.g., candidatos).  | 03.8589.61, 113.207.654-40, 10.1229.74                                      | Não                        | Não                                                                                                                                                    |
-| **Inspecionado**   | Texto                 | Nome Completo da pessoa inspecionada.                                                            | MARIA DALVA LEITE TITO, SAMUEL LUCAS MOURA E SILVA                          | Não                        | Não                                                                                                                                                    |
-| **StatusIS**       | Texto                 | Status atual da Inspeção de Saúde.                                                               | TIS assinado, Faltou, IS Cancelada                                          | **Sim**                    | **ListasRef\!StatusIS** (A fonte das opções para esta coluna é a coluna **StatusIS** da folha **ListasRef**).                                          |
-| **DataLaudo**      | Data                  | Data em que o laudo da Inspeção de Saúde foi emitido.                                            | 26/08/2025, 22/10/2025, 14/11/2025                                          | Não                        | Não                                                                                                                                                    |
-| **Laudo**          | Texto                 | Resultado e observações principais do Laudo (e.g., Aptidão, Inaptidão, Restrições).              | "Apto para o SAM.", "Incapaz temporariamente...", "Inapto para ingresso..." | Não                        | Não                                                                                                                                                    |
-| **Restrições**     | Texto                 | Descrição das restrições aplicadas. Pode conter múltiplos itens ou ser vazio.                    | Marchas, TAF/TFM, Serviço Armado                                            | **Sim**                    | **ListasRef\!Restrições** (A fonte das opções para esta coluna é a coluna **Restrições** da folha **ListasRef**).                                      |
-| **TIS**            | Texto/Numérico        | Número do TIS (Termo de Inspeção de Saúde).                                                      | 025.000.58169, xxx                                                          | Não                        | Não                                                                                                                                                    |
-| **DS-1a**          | Texto                 | Número do Documento que acompanha o TIS.                                                         | 2025Z1135E1, 2025D75694, xxx                                                | Não                        | Não                                                                                                                                                    |
-| **MSG**            | Texto                 | Status da mensagem ou comunicação.                                                               | MSG ENVIADA, MSG PENDENTE                                                   | **Sim**                    | **ListasRef\!MSG** (A fonte das opções para esta coluna é a coluna **MSG** da folha **ListasRef**).                                                    |
+| Coluna | Tipo de Dado Primário | Formato/Natureza dos Dados | Exemplos de Dados Possíveis (Amostra) | Menu Suspenso (Validação)? | Correlação com Outras Abas (Menu Suspenso) |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **IS** | Numérico/Texto | Número de protocolo da Inspeção de Saúde. | 1127905, 11320-8 | Não | Não |
+| **DataAberturaIS** | Data | Data no formato DD/MM/AAAA. | 05/06/2025, 03/09/2025 | Não | Não |
+| **DataEntrevista** | Data | Data no formato DD/MM/AAAA. | 11/06/2025, 16/09/2025 | Não | Não |
+| **HoraEntrevista** | Hora | Hora no formato HH:MM. | 07:30, 08:00 | Não | Não |
+| **Finalidade** | Texto | Descrição do motivo da Inspeção. | BENEFÍCIO, TÉRMINO DE INCAPACIDADE | **Sim** | **ListasRef!FINALIDADES** |
+| **AMP** | Texto | Sigla da Agência (JRS ou MPI). Preenchido automaticamente pelo script. | JRS, MPI | Não (Automático) | Derivado da aba **FinalidadesAMP** baseado na Finalidade escolhida. |
+| **Médico** | Texto | Nome/Patente do Médico encarregado. | CT LUZ, CT MAURISTON | **Sim** (Dinâmico) | **AMPMedicos** (Menu criado pelo script, filtrado por AMP e Dia da Semana). |
+| **OM** | Texto (Sigla) | Sigla da Organização Militar. | CPAL, HNRe, CPPE | **Sim** | **ListasRef!OM** |
+| **P/G/Q** | Texto (Sigla) | Posto/Graduação/Quadro. | DEP, 3SG-AD, 1T (MD) | **Sim** | **ListasRef!P/G** (Ou preenchido automaticamente para HNRe). |
+| **NIP** | Numérico/Texto | Número de Identificação Pessoal. | 03.8589.61, 113.207.654-40 | Não | Preenchido automaticamente para HNRe (Aba **MilitaresHNRe**). |
+| **Inspecionado** | Texto | Nome Completo. | MARIA DALVA LEITE TITO | **Sim** (Condicional) | **MilitaresHNRe** (Menu aparece apenas se OM for HNRe). |
+| **StatusIS** | Texto | Status atual do fluxo da Inspeção. | TIS assinado, IS aberta, IS Cancelada | **Sim** | **ListasRef!StatusIS** (Atualizado automaticamente pelo script). |
+| **DataLaudo** | Data | Data de emissão do laudo. | 26/08/2025, 22/10/2025 | Não | Não (Preenchido autom. pelo script). |
+| **Laudo** | Texto | Parecer final do laudo. | "Apto para o SAM.", "Incapaz temporariamente..." | Não | Não |
+| **Observações** | Texto | Notas adicionais sobre o processo. | "Toxicológico pendente", "Aguarda parecer" | Não | Não |
+| **Restrições** | Texto | Restrições laborais/físicas. | Marchas, TAF/TFM | **Sim** | **ListasRef!Restrições** |
+| **TIS** | Texto/Numérico | Número do Termo de Inspeção. | 025.000.58169 | Não | Não |
+| **DS-1a** | Texto | Documento anexo ao TIS. | 2025Z1135E1 | Não | Não |
+| **MSG** | Texto | Status da comunicação (Mensagem). | MSG ENVIADA, MSG PENDENTE | **Sim** | **ListasRef!MSG** (Atualizado autom. pelo script). |
 
-2.  **Correlação de Validação de Dados das Colunas do Tipo Menu Suspenso com Outras Abas**
+## 2.  **Correlação de Validação e Automação de Dados com Outras Abas
 
-As colunas identificadas como "Menu Suspenso (Validação)" utilizam a funcionalidade de **Validação de Dados** com listas baseadas em intervalos, e a origem dessas listas está localizada numa folha de referência separada, chamada **"ListasRef"** (conforme inferido pela estrutura típica de planilhas de controle).
+As colunas da planilha utilizam duas formas distintas de conexão com abas externas para garantir a integridade dos dados:
+2.1.  **Validação de Dados Estática:** Menus suspensos nativos do Google Sheets, baseados na aba **"ListasRef"**.
+2.2.  **Correlação Dinâmica (Script):** Preenchimento automático e menus inteligentes gerados pelo Google Apps Script, baseados nas abas de regras **"FinalidadesAMP"**, **"AMPMedicos"** e **"MilitaresHNRe"**.
 
-Essa correlação funciona da seguinte forma:
+A tabela abaixo detalha o funcionamento de cada coluna:
 
-| Coluna em "ListaControle" | Nome da Lista de Opções (Coluna em "ListasRef") | Função da Correlação                                              |
-| :-----------------------: | :---------------------------------------------: | :---------------------------------------------------------------: |
-| **Finalidade**            | **FINALIDADES**                                 | Garante que apenas finalidades padronizadas sejam selecionadas.   |
-| **OM**                    | **OM**                                          | Padroniza as siglas das Organizações Militares.                   |
-| **P/G/Q**                 | **P/G**                                         | Padroniza os Postos/Graduações/Quadros.                           |
-| **StatusIS**              | **StatusIS**                                    | Padroniza os estágios e resultados da Inspeção de Saúde.          |
-| **Restrições**            | **Restrições**                                  | Padroniza as restrições médicas aplicáveis.                       |
-| **MSG**                   | **MSG**                                         | Padroniza os status de envio/recebimento de documentos/mensagens. |
+| Coluna em "ListaControle" | Aba/Fonte de Referência | Como Funciona a Correlação |
+| :---: | :---: | :--- |
+| **Finalidade** | **ListasRef** (Coluna FINALIDADES) | **Menu Suspenso (Nativo):** Garante que apenas finalidades padronizadas sejam selecionadas pelo usuário. |
+| **AMP** | **FinalidadesAMP** | **Automação (Script):** O código consulta esta aba. Ao escolher uma *Finalidade*, ele busca a correspondência nesta tabela para preencher automaticamente se é **JRS** ou **MPI**. |
+| **Médico** | **AMPMedicos** | **Menu Dinâmico (Script):** O código consulta esta aba. Ele cruza o tipo de **AMP** (JRS/MPI) com o **Dia da Semana** da entrevista para gerar um menu suspenso exclusivo, exibindo apenas os médicos disponíveis naquele dia. |
+| **OM** | **ListasRef** (Coluna OM) | **Menu Suspenso (Nativo):** Padroniza as siglas das Organizações Militares. |
+| **P/G/Q** | **ListasRef** (Coluna P/G) | **Menu Suspenso (Nativo) / Automação:** Padroniza os Postos/Graduações. Se a OM for "HNRe", esta coluna é preenchida automaticamente pelo script. |
+| **StatusIS** | **ListasRef** (Coluna StatusIS) | **Menu Suspenso (Nativo) / Automação:** Padroniza os estágios da Inspeção. O script utiliza estes termos exatos para atualizar o fluxo de trabalho (Workflow) automaticamente. |
+| **Restrições** | **ListasRef** (Coluna Restrições) | **Menu Suspenso (Nativo):** Padroniza as restrições médicas aplicáveis. |
+| **MSG** | **ListasRef** (Coluna MSG) | **Menu Suspenso (Nativo) / Automação:** Padroniza os status de comunicação. O script usa estes termos para definir pendências ou atrasos. |
+| **Inspecionado** | **MilitaresHNRe** | **Menu Dinâmico (Script):** Este menu aparece **apenas** se a OM selecionada for "HNRe". Ele lista os nomes contidos na coluna C desta aba para facilitar a busca. |
 
-Ao invés de ter que digitar as opções manualmente em cada célula de Validação de Dados, a planilha aponta para o intervalo correspondente na folha **ListasRef**. Isto centraliza a gestão das opções, facilitando a manutenção e garantindo a integridade e padronização dos dados em toda a sua pasta de trabalho. Se uma nova "Finalidade" for adicionada em `ListasRef!A:A`, essa nova opção aparecerá automaticamente no menu suspenso da coluna **Finalidade** na `ListaControle`.
+### Diferença Importante para Manutenção:
+* **Colunas baseadas em `ListasRef`:** São atualizadas nativamente. Se você adicionar um novo item na aba `ListasRef`, ele aparecerá imediatamente no menu suspenso da planilha principal.
+* **Colunas baseadas em Script (`AMP`, `Médico`, `Inspecionado`):** Dependem da execução do código.
+    * A aba `FinalidadesAMP` funciona como um "dicionário" para o robô saber qual AMP atribuir.
+    * A aba `AMPMedicos` funciona como a "escala" que o robô lê para construir o menu correto.
+    * A aba `MilitaresHNRe` funciona como o "banco de dados" de pessoal para o preenchimento automático.
 
 ## 3\. Estrutura da Aba 'MilitaresHNRe' (A1:E261)
 
